@@ -9,49 +9,57 @@
 			"plugins": [
 				{
 					"type": "module",
-					"name": "AgoraRtcEngineModule",
+					"name": "Agora-RTC-EngineModule",
 					"class": "io.agora.rtc.uni.AgoraRtcEngineModule"
 				},
 				{
 					"type": "module",
-					"name": "AgoraRtcChannelModule",
+					"name": "Agora-RTC-ChannelModule",
 					"class": "io.agora.rtc.uni.AgoraRtcChannelModule"
 				},
 				{
 					"type": "component",
-					"name": "AgoraRtcSurfaceView",
+					"name": "Agora-RTC-SurfaceView",
 					"class": "io.agora.rtc.uni.AgoraRtcSurfaceView"
 				},
 				{
 					"type": "component",
-					"name": "AgoraRtcTextureView",
+					"name": "Agora-RTC-TextureView",
 					"class": "io.agora.rtc.uni.AgoraRtcTextureView"
 				}
 			],
-			"hooksClass": "",
 			"integrateType": "aar",
 			"dependencies": [
 				"io.agora.rtc:full-sdk:3.2.0",
 				"org.jetbrains.kotlin:kotlin-stdlib:1.3.50",
 				"org.jetbrains.kotlin:kotlin-reflect:1.3.50"
 			],
-			"minSdkVersion": "16"
+			"compileOptions": {
+				"sourceCompatibility": "1.8",
+				"targetCompatibility": "1.8"
+			},
+			"abis": [
+				"armeabi-v7a",
+				"arm64-v8a",
+				"x86"
+			],
+			"minSdkVersion": "19"
 		},
 		"ios": {
 			"plugins": [
 				{
 					"type": "module",
-					"name": "AgoraRtcEngineModule",
+					"name": "Agora-RTC-EngineModule",
 					"class": "AgoraRtcEngineModule"
 				},
 				{
 					"type": "module",
-					"name": "AgoraRtcChannelModule",
+					"name": "Agora-RTC-ChannelModule",
 					"class": "AgoraRtcChannelModule"
 				},
 				{
 					"type": "component",
-					"name": "AgoraRtcSurfaceView",
+					"name": "Agora-RTC-SurfaceView",
 					"class": "AgoraRtcSurfaceView"
 				}
 			],

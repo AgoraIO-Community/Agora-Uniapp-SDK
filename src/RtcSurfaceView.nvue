@@ -1,6 +1,6 @@
 <template>
-	<AgoraRtcSurfaceView :zOrderMediaOverlay="zOrderMediaOverlay" :zOrderOnTop="zOrderOnTop" :renderMode="renderMode"
-	 :data="{uid:uid, channelId:channelId}" :mirrorMode="mirrorMode"></AgoraRtcSurfaceView>
+	<Agora-RTC-SurfaceView :zOrderMediaOverlay="zOrderMediaOverlay" :zOrderOnTop="zOrderOnTop" :renderMode="renderMode"
+	 :data="{uid:uid, channelId:channelId}" :mirrorMode="mirrorMode"></Agora-RTC-SurfaceView>
 </template>
 
 <script>

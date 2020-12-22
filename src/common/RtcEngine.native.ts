@@ -45,7 +45,7 @@ type Rate = 1 | 2 | 3 | 4 | 5;
  * @ignore
  */
 // @ts-ignore
-const AgoraRtcEngineModule = uni.requireNativePlugin('AgoraRtcEngineModule');
+const AgoraRtcEngineModule = uni.requireNativePlugin('Agora-RTC-EngineModule');
 /**
  * @ignore
  */

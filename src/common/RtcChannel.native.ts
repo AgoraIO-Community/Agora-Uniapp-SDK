@@ -19,7 +19,7 @@ import { Listener, RtcChannelEvents, Subscription } from './RtcEvents';
  * @ignore
  */
 // @ts-ignore
-const AgoraRtcChannelModule = uni.requireNativePlugin('AgoraRtcChannelModule');
+const AgoraRtcChannelModule = uni.requireNativePlugin('Agora-RTC-ChannelModule');
 /**
  * @ignore
  */
