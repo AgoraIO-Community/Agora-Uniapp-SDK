@@ -47,7 +47,7 @@ project(':uniplugin_agora_rtc').projectDir = new File(rootProject.projectDir, 'a
 ## 如何使用
 
 ```javascript
-const AgoraRtcEngineModule = uni.requireNativePlugin('AgoraRtcEngineModule');
+const AgoraRtcEngineModule = uni.requireNativePlugin('Agora-RTC-EngineModule');
 AgoraRtcEngineModule.callMethod({ method: string, args: {} }, (res) => {});
 ```
 
