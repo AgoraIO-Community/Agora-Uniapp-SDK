@@ -1,0 +1,84 @@
+{
+	"name": "声网音视频插件",
+	"id": "AGORA_RTC",
+	"version": "3.2.0",
+	"description": "声网音视频插件",
+	"_dp_type": "nativeplugin",
+	"_dp_nativeplugin": {
+		"android": {
+			"plugins": [
+				{
+					"type": "module",
+					"name": "AgoraRtcEngineModule",
+					"class": "io.agora.rtc.uni.AgoraRtcEngineModule"
+				},
+				{
+					"type": "module",
+					"name": "AgoraRtcChannelModule",
+					"class": "io.agora.rtc.uni.AgoraRtcChannelModule"
+				},
+				{
+					"type": "component",
+					"name": "AgoraRtcSurfaceView",
+					"class": "io.agora.rtc.uni.AgoraRtcSurfaceView"
+				},
+				{
+					"type": "component",
+					"name": "AgoraRtcTextureView",
+					"class": "io.agora.rtc.uni.AgoraRtcTextureView"
+				}
+			],
+			"hooksClass": "",
+			"integrateType": "aar",
+			"dependencies": [
+				"io.agora.rtc:full-sdk:3.2.0",
+				"org.jetbrains.kotlin:kotlin-stdlib:1.3.50",
+				"org.jetbrains.kotlin:kotlin-reflect:1.3.50"
+			],
+			"minSdkVersion": "16"
+		},
+		"ios": {
+			"plugins": [
+				{
+					"type": "module",
+					"name": "AgoraRtcEngineModule",
+					"class": "AgoraRtcEngineModule"
+				},
+				{
+					"type": "module",
+					"name": "AgoraRtcChannelModule",
+					"class": "AgoraRtcChannelModule"
+				},
+				{
+					"type": "component",
+					"name": "AgoraRtcSurfaceView",
+					"class": "AgoraRtcSurfaceView"
+				}
+			],
+			"integrateType": "framework",
+			"frameworks": [
+				"Agorafdkaac.framework",
+				"Agoraffmpeg.framework",
+				"AgoraRtcKit.framework",
+				"AgoraSoundTouch.framework"
+			],
+			"embedFrameworks": [
+				"Agorafdkaac.framework",
+				"Agoraffmpeg.framework",
+				"AgoraRtcKit.framework",
+				"AgoraSoundTouch.framework"
+			],
+			"plists": {
+				"UIBackgroundModes": [
+					"audio"
+				]
+			},
+			"privacies": [
+				"NSCameraUsageDescription",
+				"NSMicrophoneUsageDescription"
+			],
+			"embedSwift": true,
+			"deploymentTarget": "9.0"
+		}
+	}
+}
