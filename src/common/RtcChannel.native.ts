@@ -1,4 +1,4 @@
-import {
+import type {
   ChannelMediaOptions,
   ChannelMediaRelayConfiguration,
   ClientRoleOptions,
@@ -6,20 +6,22 @@ import {
   LiveInjectStreamConfig,
   LiveTranscoding,
 } from './Classes';
-import {
+import type {
   ClientRole,
   ConnectionStateType,
   EncryptionMode,
   UserPriority,
   VideoStreamType,
 } from './Enums';
-import { Listener, RtcChannelEvents, Subscription } from './RtcEvents';
+import type { Listener, RtcChannelEvents, Subscription } from './RtcEvents';
 
 /**
  * @ignore
  */
 // @ts-ignore
-const AgoraRtcChannelModule = uni.requireNativePlugin('Agora-RTC-ChannelModule');
+const AgoraRtcChannelModule: {
+  callMethod: (params: {}, callback: (res: any) => void) => void;
+} = uni.requireNativePlugin('Agora-RTC-ChannelModule');
 /**
  * @ignore
  */
@@ -28,7 +30,11 @@ const Prefix = 'io.agora.rtc.';
  * @ignore
  */
 // @ts-ignore
-const RtcChannelEvent = uni.requireNativePlugin('globalEvent');
+const RtcChannelEvent: {
+  addEventListener: (event: string, callback: Function) => void;
+  removeEventListener: (event: string, callback: Function) => void;
+  removeAllEventListeners: (event: string) => void;
+} = uni.requireNativePlugin('globalEvent');
 
 /**
  * @ignore

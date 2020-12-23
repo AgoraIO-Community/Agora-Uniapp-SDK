@@ -1,7 +1,7 @@
 /**
  * Regions for connection.
  */
-enum AreaCode {
+export enum AreaCode {
   /**
    * Mainland China
    */
@@ -35,7 +35,7 @@ enum AreaCode {
 /**
  * Audio codec profile.
  */
-enum AudioCodecProfileType {
+export enum AudioCodecProfileType {
   /**
    * 0: (Default) LC-AAC, which is the low-complexity audio codec profile.
    */
@@ -49,7 +49,7 @@ enum AudioCodecProfileType {
 /**
  * Audio equalization band frequency.
  */
-enum AudioEqualizationBandFrequency {
+export enum AudioEqualizationBandFrequency {
   /**
    * 0: 31 Hz.
    */
@@ -95,7 +95,7 @@ enum AudioEqualizationBandFrequency {
 /**
  * The error information of the local audio.
  */
-enum AudioLocalError {
+export enum AudioLocalError {
   /**
    * 0: The local audio is normal.
    */
@@ -125,7 +125,7 @@ enum AudioLocalError {
 /**
  * The state of the local audio.
  */
-enum AudioLocalState {
+export enum AudioLocalState {
   /**
    * 0: The local audio is in the initial state.
    */
@@ -147,7 +147,7 @@ enum AudioLocalState {
 /**
  * The error code of the audio mixing file.
  */
-enum AudioMixingErrorCode {
+export enum AudioMixingErrorCode {
   /**
    * 701: The SDK cannot open the audio mixing file.
    */
@@ -169,7 +169,7 @@ enum AudioMixingErrorCode {
 /**
  * The state of the audio mixing file.
  */
-enum AudioMixingStateCode {
+export enum AudioMixingStateCode {
   /**
    * 710: The audio mixing file is playing.
    */
@@ -191,7 +191,7 @@ enum AudioMixingStateCode {
 /**
  * Audio output routing.
  */
-enum AudioOutputRouting {
+export enum AudioOutputRouting {
   /**
    * -1: Default.
    */
@@ -225,7 +225,7 @@ enum AudioOutputRouting {
 /**
  * Audio profile.
  */
-enum AudioProfile {
+export enum AudioProfile {
   /**
    * 0: Default audio profile.
    * - In the `Communication` profile: A sample rate of 32 KHz, audio encoding, mono, and a bitrate of up to 18 Kbps.
@@ -257,7 +257,7 @@ enum AudioProfile {
 /**
  * Audio recording quality.
  */
-enum AudioRecordingQuality {
+export enum AudioRecordingQuality {
   /**
    * 0: The sample rate is 32 KHz, and the file size is around 1.2 MB after 10 minutes of recording.
    */
@@ -275,7 +275,7 @@ enum AudioRecordingQuality {
 /**
  * The state of the remote audio.
  */
-enum AudioRemoteState {
+export enum AudioRemoteState {
   /**
    * 0: The remote audio is in the default state, probably due to:
    * - [`LocalMuted`]{@link AudioRemoteStateReason.LocalMuted}
@@ -309,7 +309,7 @@ enum AudioRemoteState {
 /**
  * The reason of the remote audio state change.
  */
-enum AudioRemoteStateReason {
+export enum AudioRemoteStateReason {
   /**
    * 0: Internal reasons.
    */
@@ -347,7 +347,7 @@ enum AudioRemoteStateReason {
 /**
  * The preset local voice reverberation option.
  */
-enum AudioReverbPreset {
+export enum AudioReverbPreset {
   /**
    * The original voice (no local voice reverberation).
    */
@@ -424,7 +424,7 @@ enum AudioReverbPreset {
 /**
  * Audio reverberation type.
  */
-enum AudioReverbType {
+export enum AudioReverbType {
   /**
    * 0: The level of the dry signal (dB). The value ranges between -20 and 10.
    */
@@ -450,7 +450,7 @@ enum AudioReverbType {
 /**
  * Audio sample rate.
  */
-enum AudioSampleRateType {
+export enum AudioSampleRateType {
   /**
    * 32000: 32 kHz.
    */
@@ -468,7 +468,7 @@ enum AudioSampleRateType {
 /**
  * Audio scenario.
  */
-enum AudioScenario {
+export enum AudioScenario {
   /**
    * 0: Default audio scenario.
    */
@@ -510,7 +510,7 @@ enum AudioScenario {
 /**
  * The preset audio voice configuration used to change the voice effect.
  */
-enum AudioVoiceChanger {
+export enum AudioVoiceChanger {
   /**
    * The original voice (no local voice change).
    */
@@ -592,7 +592,7 @@ enum AudioVoiceChanger {
 /**
  * The camera capturer configuration.
  */
-enum CameraCaptureOutputPreference {
+export enum CameraCaptureOutputPreference {
   /**
    * 0: (default) Self-adapts the camera output parameters to the system performance and network conditions to balance CPU consumption and video preview quality.
    */
@@ -614,7 +614,7 @@ enum CameraCaptureOutputPreference {
 /**
  * The camera direction.
  */
-enum CameraDirection {
+export enum CameraDirection {
   /**
    * 0: The rear camera.
    */
@@ -628,7 +628,7 @@ enum CameraDirection {
 /**
  * The error code in AgoraChannelMediaRelayError.
  */
-enum ChannelMediaRelayError {
+export enum ChannelMediaRelayError {
   /**
    * 0: The state is normal.
    */
@@ -683,7 +683,7 @@ enum ChannelMediaRelayError {
 /**
  * The event code in `ChannelMediaRelayEvent`.
  */
-enum ChannelMediaRelayEvent {
+export enum ChannelMediaRelayEvent {
   /**
    * 0: The user disconnects from the server due to poor network connections.
    */
@@ -737,7 +737,7 @@ enum ChannelMediaRelayEvent {
 /**
  * The state code in [`ChannelMediaRelayState`]{@link ChannelMediaRelayState}.
  */
-enum ChannelMediaRelayState {
+export enum ChannelMediaRelayState {
   /**
    * 0: The SDK is initializing.
    */
@@ -759,7 +759,7 @@ enum ChannelMediaRelayState {
 /**
  * Channel profile.
  */
-enum ChannelProfile {
+export enum ChannelProfile {
   /**
    * 0: (Default) The Communication profile.
    * Use this profile in one-on-one calls or group calls, where all users can talk freely.
@@ -780,7 +780,7 @@ enum ChannelProfile {
 /**
  * Client role in the `LiveBroadcasting` profile.
  */
-enum ClientRole {
+export enum ClientRole {
   /**
    * 1: A host can both send and receive streams.
    */
@@ -794,7 +794,7 @@ enum ClientRole {
 /**
  * Reasons for the connection state change.
  */
-enum ConnectionChangedReason {
+export enum ConnectionChangedReason {
   /**
    * 0: The SDK is connecting to Agora’s edge server.
    */
@@ -863,7 +863,7 @@ enum ConnectionChangedReason {
 /**
  * Connection states.
  */
-enum ConnectionStateType {
+export enum ConnectionStateType {
   /**
    * 1: The SDK is disconnected from Agora's edge server.
    * - This is the initial state before [`joinChannel`]{@link RtcEngine.joinChannel}.
@@ -903,7 +903,7 @@ enum ConnectionStateType {
 /**
  * The video encoding degradation preference under limited bandwidth.
  */
-enum DegradationPreference {
+export enum DegradationPreference {
   /**
    * 0: (Default) Degrades the frame rate to guarantee the video quality.
    */
@@ -921,7 +921,7 @@ enum DegradationPreference {
 /**
  * Encryption mode.
  */
-enum EncryptionMode {
+export enum EncryptionMode {
   /**
    * @deprecated
    * 0: This mode is deprecated.
@@ -950,7 +950,7 @@ enum EncryptionMode {
 /**
  * Error codes occur when the SDK encounters an error that cannot be recovered automatically without any app intervention.
  */
-enum ErrorCode {
+export enum ErrorCode {
   /**
    * 0: No error occurs.
    */
@@ -1291,7 +1291,7 @@ enum ErrorCode {
 /**
  * State of importing an external video stream in a live broadcast.
  */
-enum InjectStreamStatus {
+export enum InjectStreamStatus {
   /**
    * 0: The external video stream imported successfully.
    */
@@ -1341,7 +1341,7 @@ enum InjectStreamStatus {
 /**
  * The state of the probe test result.
  */
-enum LastmileProbeResultState {
+export enum LastmileProbeResultState {
   /**
    * 1: the last-mile network probe test is complete.
    */
@@ -1359,7 +1359,7 @@ enum LastmileProbeResultState {
 /**
  * The lightening contrast level.
  */
-enum LighteningContrastLevel {
+export enum LighteningContrastLevel {
   /**
    * 0: Low contrast level.
    */
@@ -1377,7 +1377,7 @@ enum LighteningContrastLevel {
 /**
  * The detailed error information of the local video.
  */
-enum LocalVideoStreamError {
+export enum LocalVideoStreamError {
   /**
    * 0: The local video is normal.
    */
@@ -1407,7 +1407,7 @@ enum LocalVideoStreamError {
 /**
  * The state of the local video stream.
  */
-enum LocalVideoStreamState {
+export enum LocalVideoStreamState {
   /**
    * 0: The local video is in the initial state.
    */
@@ -1429,7 +1429,7 @@ enum LocalVideoStreamState {
 /**
  * Output log filter level.
  */
-enum LogFilter {
+export enum LogFilter {
   /**
    * 0: Do not output any log information.
    */
@@ -1459,7 +1459,7 @@ enum LogFilter {
 /**
  * Network quality.
  */
-enum NetworkQuality {
+export enum NetworkQuality {
   /**
    * 0: The network quality is unknown.
    */
@@ -1501,7 +1501,7 @@ enum NetworkQuality {
 /**
  * Network type.
  */
-enum NetworkType {
+export enum NetworkType {
   /**
    * -1: The network type is unknown.
    */
@@ -1535,7 +1535,7 @@ enum NetworkType {
 /**
  * The detailed error information for streaming.
  */
-enum RtmpStreamingErrorCode {
+export enum RtmpStreamingErrorCode {
   /**
    * 0: The RTMP or RTMPS streaming publishes successfully.
    */
@@ -1587,7 +1587,7 @@ enum RtmpStreamingErrorCode {
 /**
  * The RTMP or RTMPS streaming state.
  */
-enum RtmpStreamingState {
+export enum RtmpStreamingState {
   /**
    * 0: The RTMP or RTMPS streaming has not started or has ended. This state is also triggered after you
    * remove an RTMP or RTMPS stream* from the CDN by calling [`removePublishStreamUrl`]{@link RtcEngine.removePublishStreamUrl}.
@@ -1623,7 +1623,7 @@ enum RtmpStreamingState {
 /**
  * Stream fallback option.
  */
-enum StreamFallbackOptions {
+export enum StreamFallbackOptions {
   /**
    * 0: No fallback behavior for the local/remote video stream when the uplink/downlink network condition is unreliable. The quality of the stream is not guaranteed.
    */
@@ -1644,7 +1644,7 @@ enum StreamFallbackOptions {
 /**
  * Reason for the user being offline.
  */
-enum UserOfflineReason {
+export enum UserOfflineReason {
   /**
    * 0: The user left the current channel.
    */
@@ -1662,7 +1662,7 @@ enum UserOfflineReason {
 /**
  * The priority of the remote user.
  */
-enum UserPriority {
+export enum UserPriority {
   /**
    * 50: The user’s priority is high.
    */
@@ -1676,7 +1676,7 @@ enum UserPriority {
 /**
  * Self-defined video codec profile.
  */
-enum VideoCodecProfileType {
+export enum VideoCodecProfileType {
   /**
    * 66: Baseline video codec profile. Generally used in video calls on mobile phones.
    */
@@ -1694,7 +1694,7 @@ enum VideoCodecProfileType {
 /**
  * Video frame rate.
  */
-enum VideoFrameRate {
+export enum VideoFrameRate {
   /**
    * -1: The minimum frame rate of the video.
    */
@@ -1897,7 +1897,7 @@ enum VideoFrameRate {
  * the Communication profile prioritizes the smoothness while the LIVE_BROADCASTING profile prioritizes the
  * video quality (a higher bitrate). Therefore, We recommend setting this parameter as STANDARD_BITRATE = 0.
  */
-enum BitRate {
+export enum BitRate {
   /**
    * 0: (Recommended) the standard bitrate mode. In this mode, the bitrates differ between the Live-broadcast and Communication profiles:
    * - Communication profile: the video bitrate is the same as the base bitrate.
@@ -1914,7 +1914,7 @@ enum BitRate {
 /**
  * Video mirror mode.
  */
-enum VideoMirrorMode {
+export enum VideoMirrorMode {
   /**
    * 0: (Default) The SDK determines the mirror mode.
    */
@@ -1932,7 +1932,7 @@ enum VideoMirrorMode {
 /**
  * Video output orientation mode.
  */
-enum VideoOutputOrientationMode {
+export enum VideoOutputOrientationMode {
   /**
    * 0: Adaptive mode (Default).
    *
@@ -1958,7 +1958,7 @@ enum VideoOutputOrientationMode {
 /**
  * Quality change of the local video in terms of target frame rate and target bit rate since last count.
  */
-enum VideoQualityAdaptIndication {
+export enum VideoQualityAdaptIndication {
   /**
    * 0: The quality of the local video stays the same.
    */
@@ -1976,7 +1976,7 @@ enum VideoQualityAdaptIndication {
 /**
  * The state of the remote video.
  */
-enum VideoRemoteState {
+export enum VideoRemoteState {
   /**
    * 0: The remote video is in the default state, probably due to:
    * - [`LocalMuted`]{@link VideoRemoteStateReason.LocalMuted}
@@ -2011,7 +2011,7 @@ enum VideoRemoteState {
 /**
  * The reason of the remote video state change.
  */
-enum VideoRemoteStateReason {
+export enum VideoRemoteStateReason {
   /**
    * 0: Internal reasons.
    */
@@ -2057,7 +2057,7 @@ enum VideoRemoteStateReason {
 /**
  * Video display mode.
  */
-enum VideoRenderMode {
+export enum VideoRenderMode {
   /**
    * 1: Uniformly scale the video until it fills the visible boundaries (cropped). One dimension of the video may have clipped contents.
    */
@@ -2080,7 +2080,7 @@ enum VideoRenderMode {
 /**
  * Video stream type.
  */
-enum VideoStreamType {
+export enum VideoStreamType {
   /**
    * 0: High-bitrate, high-resolution video stream.
    */
@@ -2096,7 +2096,7 @@ enum VideoStreamType {
  * These are only notifications, and can generally be ignored. For example, when the SDK loses connection to the server,
  * the SDK reports the [`OpenChannelTimeout(106)`]{@link WarningCode.OpenChannelTimeout} warning and tries to reconnect automatically.
  */
-enum WarningCode {
+export enum WarningCode {
   /**
    * 8: The specified view is invalid. Specify a view when using the video call function.
    */
@@ -2245,7 +2245,7 @@ enum WarningCode {
 /**
  * The audio channel of the sound.
  */
-enum AudioChannel {
+export enum AudioChannel {
   /**
    * 0: (Default) Supports dual channels. Depends on the upstream of the host.
    */
@@ -2275,7 +2275,7 @@ enum AudioChannel {
 /**
  * Video codec types.
  */
-enum VideoCodecType {
+export enum VideoCodecType {
   /**
    * 1: Standard VP8.
    */
@@ -2299,7 +2299,7 @@ enum VideoCodecType {
  *
  * @since v3.1.2.
  */
-enum StreamPublishState {
+export enum StreamPublishState {
   /**
    * 0: The initial publishing state after joining the channel.
    */
@@ -2327,7 +2327,7 @@ enum StreamPublishState {
  *
  * @since v3.1.2.
  */
-enum StreamSubscribeState {
+export enum StreamSubscribeState {
   /**
    * 0: The initial subscribing state after joining the channel.
    */
@@ -2357,7 +2357,7 @@ enum StreamSubscribeState {
 /**
  * Events during the RTMP or RTMPS streaming.
  */
-enum RtmpStreamingEvent {
+export enum RtmpStreamingEvent {
   /**
    * 1: An error occurs when you add a background image or a watermark image to the RTMP or RTMPS stream.
    */
@@ -2367,7 +2367,7 @@ enum RtmpStreamingEvent {
 /**
  * Audio session restriction.
  */
-enum AudioSessionOperationRestriction {
+export enum AudioSessionOperationRestriction {
   /**
    * No restriction, the SDK has full control of the audio session operations.
    */
@@ -2393,7 +2393,7 @@ enum AudioSessionOperationRestriction {
 /**
  * The options for SDK preset audio effects.
  */
-enum AudioEffectPreset {
+export enum AudioEffectPreset {
   /**
    * Turn off audio effects and use the original voice.
    */
@@ -2590,7 +2590,7 @@ enum AudioEffectPreset {
 /**
  * The options for SDK preset voice beautifier effects.
  */
-enum VoiceBeautifierPreset {
+export enum VoiceBeautifierPreset {
   /**
    * Turn off voice beautifier effects and use the original voice.
    */
@@ -2671,7 +2671,7 @@ enum VoiceBeautifierPreset {
  *
  * Takes effect only when the user role is `Broadcaster`.
  */
-enum AudienceLatencyLevelType {
+export enum AudienceLatencyLevelType {
   /**
    * 1: Low latency.
    */
@@ -2682,68 +2682,3 @@ enum AudienceLatencyLevelType {
    */
   UltraLowLatency = 2,
 }
-
-export {
-  AreaCode,
-  AudioCodecProfileType,
-  AudioEqualizationBandFrequency,
-  AudioLocalError,
-  AudioLocalState,
-  AudioMixingErrorCode,
-  AudioMixingStateCode,
-  AudioOutputRouting,
-  AudioProfile,
-  AudioRecordingQuality,
-  AudioRemoteState,
-  AudioRemoteStateReason,
-  AudioReverbPreset,
-  AudioReverbType,
-  AudioSampleRateType,
-  AudioScenario,
-  AudioVoiceChanger,
-  CameraCaptureOutputPreference,
-  CameraDirection,
-  ChannelMediaRelayError,
-  ChannelMediaRelayEvent,
-  ChannelMediaRelayState,
-  ChannelProfile,
-  ClientRole,
-  ConnectionChangedReason,
-  ConnectionStateType,
-  DegradationPreference,
-  EncryptionMode,
-  ErrorCode,
-  InjectStreamStatus,
-  LastmileProbeResultState,
-  LighteningContrastLevel,
-  LocalVideoStreamError,
-  LocalVideoStreamState,
-  LogFilter,
-  NetworkQuality,
-  NetworkType,
-  RtmpStreamingErrorCode,
-  RtmpStreamingState,
-  StreamFallbackOptions,
-  UserOfflineReason,
-  UserPriority,
-  VideoCodecProfileType,
-  VideoFrameRate,
-  BitRate,
-  VideoMirrorMode,
-  VideoOutputOrientationMode,
-  VideoQualityAdaptIndication,
-  VideoRemoteState,
-  VideoRemoteStateReason,
-  VideoRenderMode,
-  VideoStreamType,
-  WarningCode,
-  AudioChannel,
-  VideoCodecType,
-  StreamPublishState,
-  StreamSubscribeState,
-  RtmpStreamingEvent,
-  AudioSessionOperationRestriction,
-  AudioEffectPreset,
-  VoiceBeautifierPreset,
-  AudienceLatencyLevelType,
-};

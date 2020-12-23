@@ -1,4 +1,4 @@
-import {
+import type {
   BeautyOptions,
   CameraCapturerConfiguration,
   ChannelMediaRelayConfiguration,
@@ -33,7 +33,7 @@ import {
   VideoStreamType,
   VoiceBeautifierPreset,
 } from './Enums';
-import { Listener, RtcEngineEvents, Subscription } from './RtcEvents';
+import type { Listener, RtcEngineEvents, Subscription } from './RtcEvents';
 import RtcChannel from './RtcChannel.native';
 
 /**
@@ -45,7 +45,9 @@ type Rate = 1 | 2 | 3 | 4 | 5;
  * @ignore
  */
 // @ts-ignore
-const AgoraRtcEngineModule = uni.requireNativePlugin('Agora-RTC-EngineModule');
+const AgoraRtcEngineModule: {
+  callMethod: (params: {}, callback: (res: any) => void) => void;
+} = uni.requireNativePlugin('Agora-RTC-EngineModule');
 /**
  * @ignore
  */
@@ -54,7 +56,11 @@ const Prefix = 'io.agora.rtc.';
  * @ignore
  */
 // @ts-ignore
-const RtcEngineEvent = uni.requireNativePlugin('globalEvent');
+const RtcEngineEvent: {
+  addEventListener: (event: string, callback: Function) => void;
+  removeEventListener: (event: string, callback: Function) => void;
+  removeAllEventListeners: (event: string) => void;
+} = uni.requireNativePlugin('globalEvent');
 
 /**
  * @ignore

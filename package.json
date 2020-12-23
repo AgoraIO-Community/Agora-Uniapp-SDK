@@ -1,92 +1,138 @@
 {
-	"name": "Agora音视频插件",
-	"id": "Agora-RTC",
-	"version": "3.2.0",
-	"description": "Agora官方维护的音视频插件，并且在GitHub上开源，欢迎大家积极参与问题反馈和代码贡献",
-	"_dp_type": "nativeplugin",
-	"_dp_nativeplugin": {
-		"android": {
-			"plugins": [
-				{
-					"type": "module",
-					"name": "Agora-RTC-EngineModule",
-					"class": "io.agora.rtc.uni.AgoraRtcEngineModule"
-				},
-				{
-					"type": "module",
-					"name": "Agora-RTC-ChannelModule",
-					"class": "io.agora.rtc.uni.AgoraRtcChannelModule"
-				},
-				{
-					"type": "component",
-					"name": "Agora-RTC-SurfaceView",
-					"class": "io.agora.rtc.uni.AgoraRtcSurfaceView"
-				},
-				{
-					"type": "component",
-					"name": "Agora-RTC-TextureView",
-					"class": "io.agora.rtc.uni.AgoraRtcTextureView"
-				}
-			],
-			"integrateType": "aar",
-			"dependencies": [
-				"io.agora.rtc:full-sdk:3.2.0",
-				"org.jetbrains.kotlin:kotlin-stdlib:1.3.50",
-				"org.jetbrains.kotlin:kotlin-reflect:1.3.50"
-			],
-			"compileOptions": {
-				"sourceCompatibility": "1.8",
-				"targetCompatibility": "1.8"
-			},
-			"abis": [
-				"armeabi-v7a",
-				"arm64-v8a",
-				"x86"
-			],
-			"minSdkVersion": "19"
-		},
-		"ios": {
-			"plugins": [
-				{
-					"type": "module",
-					"name": "Agora-RTC-EngineModule",
-					"class": "AgoraRtcEngineModule"
-				},
-				{
-					"type": "module",
-					"name": "Agora-RTC-ChannelModule",
-					"class": "AgoraRtcChannelModule"
-				},
-				{
-					"type": "component",
-					"name": "Agora-RTC-SurfaceView",
-					"class": "AgoraRtcSurfaceView"
-				}
-			],
-			"integrateType": "framework",
-			"frameworks": [
-				"Agorafdkaac.framework",
-				"Agoraffmpeg.framework",
-				"AgoraRtcKit.framework",
-				"AgoraSoundTouch.framework"
-			],
-			"embedFrameworks": [
-				"Agorafdkaac.framework",
-				"Agoraffmpeg.framework",
-				"AgoraRtcKit.framework",
-				"AgoraSoundTouch.framework"
-			],
-			"plists": {
-				"UIBackgroundModes": [
-					"audio"
-				]
-			},
-			"privacies": [
-				"NSCameraUsageDescription",
-				"NSMicrophoneUsageDescription"
-			],
-			"embedSwift": true,
-			"deploymentTarget": "9.0"
-		}
-	}
+  "name": "agora-uniapp-sdk",
+  "version": "3.2.0",
+  "description": "Agora RTC SDK For Uni-App",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/src/index.d.ts",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "cpp",
+    "!lib/typescript/example",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "test": "jest",
+    "typescript": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "prepare": "bob build",
+    "release": "release-it",
+    "example": "yarn --cwd example",
+    "pods": "cd example && pod-install --quiet",
+    "bootstrap": "yarn example && yarn && yarn pods"
+  },
+  "keywords": [
+    "agora",
+    "audio",
+    "video",
+    "chat",
+    "live"
+  ],
+  "repository": "https://github.com/AgoraIO-Community/Agora-Uniapp-SDK",
+  "author": "HUI <luxuhui@agora.io> (https://github.com/LichKing-2234)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/issues"
+  },
+  "homepage": "https://github.com/AgoraIO-Community/Agora-Uniapp-SDK#readme",
+  "devDependencies": {
+    "@dcloudio/types": "*",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@react-native-community/bob": "^0.16.2",
+    "@release-it/conventional-changelog": "^1.1.4",
+    "@types/jest": "^26.0.0",
+    "commitlint": "^8.3.5",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5",
+    "release-it": "^13.5.8",
+    "typescript": "^3.8.3"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "yarn lint && yarn typescript"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
+      }
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "@react-native-community/bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      "typescript"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }

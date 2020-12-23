@@ -1,4 +1,4 @@
-import {
+import type {
   AudienceLatencyLevelType,
   AudioChannel,
   AudioCodecProfileType,
@@ -22,7 +22,7 @@ import {
 /**
  * The user information, including the user ID and user account.
  */
-interface UserInfo {
+export interface UserInfo {
   /**
    * The user ID of a user.
    */
@@ -36,7 +36,7 @@ interface UserInfo {
 /**
  * The video resolution.
  */
-class VideoDimensions {
+export class VideoDimensions {
   /**
    * The video resolution on the horizontal axis.
    */
@@ -55,7 +55,7 @@ class VideoDimensions {
 /**
  * Definition of VideoEncoderConfiguration.
  */
-class VideoEncoderConfiguration {
+export class VideoEncoderConfiguration {
   /**
    * The video frame dimensions (px), which is used to specify the video quality and measured by the total number of pixels along a
    * frame's width and height. The default value is 640 × 360.
@@ -317,7 +317,7 @@ class VideoEncoderConfiguration {
 /**
  * Sets the image enhancement options.
  */
-class BeautyOptions {
+export class BeautyOptions {
   /**
    * The lightening contrast level.
    */
@@ -355,7 +355,7 @@ class BeautyOptions {
 /**
  * Agora image properties. A class for setting the properties of the watermark and background images.
  */
-class AgoraImage {
+export class AgoraImage {
   /**
    * HTTP/HTTPS URL address of the image on the broadcasting video. The maximum length of this parameter is 1024 bytes.
    */
@@ -395,7 +395,7 @@ class AgoraImage {
 /**
  * The transcodingUser class, which defines the audio and video properties in the CDN live. Agora supports a maximum of 17 transcoding users in a CDN live streaming channel.
  */
-class TranscodingUser {
+export class TranscodingUser {
   /**
    * ID of the user in the CDN live streaming.
    */
@@ -468,7 +468,7 @@ class TranscodingUser {
 /**
  * Color.
  */
-class Color {
+export class Color {
   /**
    * Red.
    */
@@ -492,7 +492,7 @@ class Color {
 /**
  * A class for managing user-specific CDN live audio/video transcoding settings.
  */
-class LiveTranscoding {
+export class LiveTranscoding {
   /**
    * Width (pixel) of the video. The default value is 360. If you push video streams to the CDN, set the value of width × height to at least 64 × 64, or the SDK adjusts it to 64 x 64.
    * If you push audio streams to the CDN, set the value of width × height to 0 × 0.
@@ -617,7 +617,7 @@ class LiveTranscoding {
 /**
  * The ChannelMediaInfo class.
  */
-class ChannelMediaInfo {
+export class ChannelMediaInfo {
   /**
    * The channel name.
    */
@@ -643,7 +643,7 @@ class ChannelMediaInfo {
 /**
  * The ChannelMediaRelayConfiguration class.
  */
-class ChannelMediaRelayConfiguration {
+export class ChannelMediaRelayConfiguration {
   /**
    * The information of the source channel: [`ChannelMediaInfo`]{@link ChannelMediaInfo}. It contains the following members:
    * - `channelName`: The name of the source channel. The default value is null, which means the SDK applies the name of the current channel.
@@ -672,7 +672,7 @@ class ChannelMediaRelayConfiguration {
 /**
  * Lastmile probe configuration.
  */
-class LastmileProbeConfig {
+export class LastmileProbeConfig {
   /**
    * Whether to probe uplink of lastmile. i.e., audience don't need probe uplink bandwidth.
    */
@@ -706,7 +706,7 @@ class LastmileProbeConfig {
 /**
  * The position and size of the watermark image.
  */
-class Rectangle {
+export class Rectangle {
   /**
    * The horizontal offset from the top-left corner.
    */
@@ -735,7 +735,7 @@ class Rectangle {
 /**
  * Agora watermark options. A class for setting the properties of watermark.
  */
-class WatermarkOptions {
+export class WatermarkOptions {
   /**
    * Sets whether or not the watermark image is visible in the local video preview:
    * - `true`: (Default) The watermark image is visible in preview.
@@ -765,7 +765,7 @@ class WatermarkOptions {
 /**
  * Configuration of the imported live interactive voice or video stream.
  */
-class LiveInjectStreamConfig {
+export class LiveInjectStreamConfig {
   /**
    * Width (pixels) of the added stream to the live interactive streaming. The default value is 0, which is the same width as the original stream.
    */
@@ -841,7 +841,7 @@ class LiveInjectStreamConfig {
 /**
  * The definition of CameraCapturerConfiguration.
  */
-class CameraCapturerConfiguration {
+export class CameraCapturerConfiguration {
   /**
    * The camera capturer configuration.
    */
@@ -863,7 +863,7 @@ class CameraCapturerConfiguration {
 /**
  * The channel media options.
  */
-class ChannelMediaOptions {
+export class ChannelMediaOptions {
   /**
    * Determines whether to subscribe to audio streams when the user joins the channel.
    * - `true`: (Default) Subscribe.
@@ -892,7 +892,7 @@ class ChannelMediaOptions {
  *
  * @since v3.1.2.
  */
-class EncryptionConfig {
+export class EncryptionConfig {
   /**
    * Encryption mode. The default encryption mode is `AES128XTS`. See [`EncryptionMode`]{@link EncryptionMode}.
    */
@@ -915,7 +915,7 @@ class EncryptionConfig {
 /**
  * Statistics of the call.
  */
-interface RtcStats {
+export interface RtcStats {
   /**
    * Call duration in seconds, represented by an aggregate value.
    */
@@ -1032,7 +1032,7 @@ interface RtcStats {
 /**
  * Properties of the audio volume information. An array containing the user ID and volume information for each speaker.
  */
-interface AudioVolumeInfo {
+export interface AudioVolumeInfo {
   /**
    * The user ID of the speaker. The uid of the local user is 0.
    */
@@ -1060,7 +1060,7 @@ interface AudioVolumeInfo {
 /**
  * The rectangular area.
  */
-interface Rect {
+export interface Rect {
   /**
    * The horizontal coordinate of the left side of the rectangular area.
    */
@@ -1082,7 +1082,7 @@ interface Rect {
 /**
  * The one-way last-mile probe result.
  */
-interface LastmileProbeOneWayResult {
+export interface LastmileProbeOneWayResult {
   /**
    * The packet loss rate (%).
    */
@@ -1100,7 +1100,7 @@ interface LastmileProbeOneWayResult {
 /**
  * Statistics of the lastmile probe.
  */
-interface LastmileProbeResult {
+export interface LastmileProbeResult {
   /**
    * The state of the probe test.
    */
@@ -1122,7 +1122,7 @@ interface LastmileProbeResult {
 /**
  * Statistics of the local audio stream.
  */
-interface LocalAudioStats {
+export interface LocalAudioStats {
   /**
    * The number of channels.
    */
@@ -1146,7 +1146,7 @@ interface LocalAudioStats {
 /**
  * Statistics of the local video.
  */
-interface LocalVideoStats {
+export interface LocalVideoStats {
   /**
    * Bitrate (Kbps) sent in the reported interval, which does not include the bitrate of the re-transmission video after the packet loss.
    */
@@ -1212,7 +1212,7 @@ interface LocalVideoStats {
 /**
  * Statistics of the remote audio.
  */
-interface RemoteAudioStats {
+export interface RemoteAudioStats {
   /**
    * User ID of the user sending the audio streams.
    */
@@ -1273,7 +1273,7 @@ interface RemoteAudioStats {
 /**
  * Statistics of the remote video.
  */
-interface RemoteVideoStats {
+export interface RemoteVideoStats {
   /**
    * User ID of the user sending the video streams.
    */
@@ -1341,7 +1341,7 @@ interface RemoteVideoStats {
 /**
  * The information of the detected human face.
  */
-interface FacePositionInfo {
+export interface FacePositionInfo {
   /**
    * The x coordinate (px) of the human face in the local video. Taking the top left corner of the captured video as the origin,
    * the x coordinate represents the relative lateral displacement of the top left corner of the human face to the origin.
@@ -1371,7 +1371,7 @@ interface FacePositionInfo {
  *
  * @since v3.2.0.
  */
-class ClientRoleOptions {
+export class ClientRoleOptions {
   /**
    * The latency level of an audience member in a live interactive streaming. See {@link AudienceLatencyLevelType}.
    */
@@ -1381,34 +1381,3 @@ class ClientRoleOptions {
     this.audienceLatencyLevel = audienceLatencyLevel;
   }
 }
-
-export {
-  UserInfo,
-  VideoDimensions,
-  VideoEncoderConfiguration,
-  BeautyOptions,
-  AgoraImage,
-  TranscodingUser,
-  Color,
-  LiveTranscoding,
-  ChannelMediaInfo,
-  ChannelMediaRelayConfiguration,
-  LastmileProbeConfig,
-  Rectangle,
-  WatermarkOptions,
-  LiveInjectStreamConfig,
-  CameraCapturerConfiguration,
-  ChannelMediaOptions,
-  EncryptionConfig,
-  RtcStats,
-  AudioVolumeInfo,
-  Rect,
-  LastmileProbeOneWayResult,
-  LastmileProbeResult,
-  LocalAudioStats,
-  LocalVideoStats,
-  RemoteAudioStats,
-  RemoteVideoStats,
-  FacePositionInfo,
-  ClientRoleOptions,
-};

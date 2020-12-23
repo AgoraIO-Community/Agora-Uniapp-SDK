@@ -1,4 +1,4 @@
-import {
+import type {
   AudioVolumeInfo,
   FacePositionInfo,
   LastmileProbeResult,
@@ -10,7 +10,7 @@ import {
   RtcStats,
   UserInfo,
 } from './Classes';
-import {
+import type {
   AudioLocalError,
   AudioLocalState,
   AudioMixingErrorCode,
