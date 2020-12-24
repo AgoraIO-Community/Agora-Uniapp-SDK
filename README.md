@@ -5,17 +5,40 @@
 ## 发版说明
 [变更日志](CHANGELOG.md)
 
+## 集成文档（云打包）
+
+需要同时引用以下两个插件，JS 插件主要是为了做代码提示，且包含一些JS的逻辑，便于开发者使用 Native 插件
+
+[Native 插件](https://ext.dcloud.net.cn/plugin?id=3720)
+
+[JS 插件](https://ext.dcloud.net.cn/plugin?id=3741)
+
 ## 集成文档（离线打包）
 
-### 克隆或下载本工程
+### 克隆或下载本工程，并进入工程目录
 
-`git clone https://github.com/AgoraIO-Community/Agora-Uniapp-SDK.git`
+```shell
+git clone https://github.com/AgoraIO-Community/Agora-Uniapp-SDK.git
+cd Agora-Uniapp-SDK
+```
 
-### 进入工程目录，执行 **install.sh** 脚本以下载 Agora iOS SDK
+### 安装依赖项并编译 JavaScript 脚本
 
-`cd Agora-Uniapp-SDK && sh ./install.sh`
+```shell
+yarn
+```
 
-并确保 **ios/libs** 目录中包含 **.framework** 文件
+随后拷贝 [lib/commonjs](lib/commonjs) 中生成的源代码到你的工程
+
+**如果你的 uni-app 项目支持 TypeScript, 则直接拷贝 [src](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/tree/master/src) 内的源代码到你的工程即可**
+
+### 执行 **install.sh** 脚本以下载 Agora iOS SDK
+
+```shell
+sh ./install.sh
+```
+
+并确认 **ios/libs** 目录中包含 **.framework** 文件
 
 ### 将 Android 和 iOS 工程分别放到 uni-app 离线 SDK 对应的目录中
 
@@ -47,11 +70,14 @@ project(':uniplugin_agora_rtc').projectDir = new File(rootProject.projectDir, 'a
 ## 如何使用
 
 ```javascript
-const AgoraRtcEngineModule = uni.requireNativePlugin('Agora-RTC-EngineModule');
-AgoraRtcEngineModule.callMethod({ method: string, args: {} }, (res) => {});
+// 指向插件JS源码在你的工程中的相对路径，比如
+import RtcEngine from '../../components/Agora-RTC-JS/index';
+RtcEngine.create('你的AppID').then((engine) => {
+  console.log('init success');
+});
 ```
 
-具体如何调用可以参考[src](src)中的 **.ts** 文件
+**插件绝大部分 API 都使用 Promise 包装，为保证调用时序，请使用 await 关键字**
 
 ## 常见错误
 

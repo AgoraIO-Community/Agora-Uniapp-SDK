@@ -7,7 +7,7 @@
 	import {
 		VideoRenderMode,
 		VideoMirrorMode
-	} from './common/Enums.js';
+	} from './common/Enums';
 
 	export default {
 		name: 'RtcSurfaceView',
