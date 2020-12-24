@@ -1,0 +1,40 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "APIExample"
+			}
+		},
+		{
+			"path": "pages/Advanced/MultiChannel",
+			"style": {
+				"navigationBarTitleText": "MultiChannel"
+			}
+		},
+		{
+			"path": "pages/Basic/JoinChannelAudio",
+			"style": {
+				"navigationBarTitleText": "JoinChannelAudio"
+			}
+		},
+		{
+			"path": "pages/Basic/JoinChannelVideo",
+			"style": {
+				"navigationBarTitleText": "JoinChannelVideo"
+			}
+		},
+		{
+			"path": "pages/Basic/StringUid",
+			"style": {
+				"navigationBarTitleText": "StringUid"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
