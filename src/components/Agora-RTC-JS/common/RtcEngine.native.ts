@@ -159,7 +159,7 @@ export default class RtcEngine implements RtcEngineInterface {
     areaCode: AreaCode
   ): Promise<RtcEngine> {
     if (engine) return engine;
-    await RtcEngine._callMethod('create', { appId, areaCode, appType: 8 });
+    await RtcEngine._callMethod('create', { appId, areaCode, appType: 14 });
     engine = new RtcEngine();
     return engine;
   }
