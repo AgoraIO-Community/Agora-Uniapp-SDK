@@ -1,6 +1,6 @@
 {
   "name": "agora-uniapp-sdk",
-  "version": "3.2.0",
+  "version": "3.4.5",
   "description": "Agora RTC SDK For Uni-App",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
