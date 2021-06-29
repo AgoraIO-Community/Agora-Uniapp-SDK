@@ -28,7 +28,7 @@ echo "start transfer dynamic framework to $libs..."
 rm -rf $libs
 mkdir -p $libs
 
-for framework in $(find $temp/$zipName"$version" -maxdepth 3 -iname '*.framework'); do
+for framework in $(find $temp/$zipName"$version" -maxdepth 3 -iname '*.xcframework'); do
   mv -f "$framework" $libs
 done
 

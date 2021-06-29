@@ -38,7 +38,7 @@ yarn
 sh ./install.sh
 ```
 
-并确认 **ios/libs** 目录中包含 **.framework** 文件
+并确认 **ios/libs** 目录中包含 **.xcframework** 文件
 
 ### 将 Android 和 iOS 工程分别放到 uni-app 离线 SDK 对应的目录中
 
@@ -65,7 +65,94 @@ project(':uniplugin_agora_rtc').projectDir = new File(rootProject.projectDir, 'a
 
 * 在 **Dependencies** 中添加 **AgoraRtcUniPlugin**
 * 在 **Link Binary With Libraries** 中添加 **AgoraRtcUniPlugin.framework**
-* 在 **Embed Frameworks** 中添加 **AgoraRtcKit.framework** **Agorafdkaac.framework** **Agoraffmpeg.framework** **AgoraSoundTouch.framework** （需要通过 **Add Other...** 选择 **ios/libs** 目录中的 **.framework** 文件添加）
+* 在 **Embed Frameworks** 中添加 **AgoraCore.xcframework** **AgoraRtcKit.xcframework** **Agorafdkaac.xcframework** **Agoraffmpeg.xcframework** **AgoraSoundTouch.xcframework** （需要通过 **Add Other...** 选择 **ios/libs** 目录中的 **.xcframework** 文件添加）
+
+### 配置插件信息
+
+#### Android
+
+* 在 **app/src/main/assets/dcloud_uniplugins.json** 中添加
+```
+{
+  "nativePlugins": [
+...
+    {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "Agora-RTC-EngineModule",
+          "class": "io.agora.rtc.uni.AgoraRtcEngineModule"
+        },
+        {
+          "type": "module",
+          "name": "Agora-RTC-ChannelModule",
+          "class": "io.agora.rtc.uni.AgoraRtcChannelModule"
+        },
+        {
+          "type": "component",
+          "name": "Agora-RTC-SurfaceView",
+          "class": "io.agora.rtc.uni.AgoraRtcSurfaceView"
+        },
+        {
+          "type": "component",
+          "name": "Agora-RTC-TextureView",
+          "class": "io.agora.rtc.uni.AgoraRtcTextureView"
+        }
+      ]
+    },
+...
+  ]
+}    
+```
+
+#### iOS
+
+* 在 **HBuilder-Hello/HBuilder-uniPlugin-Info.plist** 中添加
+```
+...
+	<key>dcloud_uniplugins</key>
+	<array>	
+        <dict>
+            <key>plugins</key>
+            <array>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcEngineModule</string>
+                    <key>name</key>
+                    <string>Agora-RTC-EngineModule</string>
+                    <key>type</key>
+                    <string>module</string>
+                </dict>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcChannelModule</string>
+                    <key>name</key>
+                    <string>Agora-RTC-ChannelModule</string>
+                    <key>type</key>
+                    <string>module</string>
+                </dict>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcSurfaceView</string>
+                    <key>name</key>
+                    <string>Agora-RTC-SurfaceView</string>
+                    <key>type</key>
+                    <string>component</string>
+                </dict>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcTextureView</string>
+                    <key>name</key>
+                    <string>Agora-RTC-TextureView</string>
+                    <key>type</key>
+                    <string>component</string>
+                </dict>
+            </array>
+        </dict>
+...
+	</array>
+...
+```
 
 ## 如何使用
 
