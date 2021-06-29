@@ -1,7 +1,7 @@
 package io.agora.rtc.base
 
 import android.graphics.Rect
-import androidx.annotation.IntRange
+import android.support.annotation.IntRange
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.models.UserInfo
 
