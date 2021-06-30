@@ -7,8 +7,6 @@ import io.agora.rtc.base.RtcEngineEventHandler
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.bridge.UniJSCallback
 import io.dcloud.feature.uniapp.common.UniModule
-import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.jvm.javaMethod
 
 class AgoraRtcChannelModule : UniModule() {
     companion object {
@@ -33,8 +31,8 @@ class AgoraRtcChannelModule : UniModule() {
     @UniJSMethod(uiThread = false)
     fun callMethod(params: JSONObject?, callback: UniJSCallback?) {
         params?.getString("method")?.let { methodName ->
-            manager::class.declaredMemberFunctions.find { it.name == methodName }?.let { function ->
-                function.javaMethod?.let { method ->
+            manager.javaClass.declaredMethods.find { it.name == methodName }?.let { function ->
+                function.let { method ->
                     try {
                         val parameters = mutableListOf<Any?>()
                         params.getJSONObject("args")?.toMap()?.toMutableMap()?.let {

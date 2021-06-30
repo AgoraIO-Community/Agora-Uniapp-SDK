@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ClientRoleOptions = exports.EncryptionConfig = exports.ChannelMediaOptions = exports.CameraCapturerConfiguration = exports.LiveInjectStreamConfig = exports.WatermarkOptions = exports.Rectangle = exports.LastmileProbeConfig = exports.ChannelMediaRelayConfiguration = exports.ChannelMediaInfo = exports.LiveTranscoding = exports.Color = exports.TranscodingUser = exports.AgoraImage = exports.BeautyOptions = exports.VideoEncoderConfiguration = exports.VideoDimensions = void 0;
+exports.AudioRecordingConfiguration = exports.RtcEngineConfig = exports.RtcEngineContext = exports.DataStreamConfig = exports.LogConfig = exports.ClientRoleOptions = exports.EncryptionConfig = exports.ChannelMediaOptions = exports.CameraCapturerConfiguration = exports.RhythmPlayerConfig = exports.LiveInjectStreamConfig = exports.WatermarkOptions = exports.Rectangle = exports.LastmileProbeConfig = exports.ChannelMediaRelayConfiguration = exports.ChannelMediaInfo = exports.LiveTranscoding = exports.Color = exports.TranscodingUser = exports.AgoraImage = exports.BeautyOptions = exports.VideoEncoderConfiguration = exports.VideoDimensions = void 0;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -22,13 +22,15 @@ class VideoDimensions {
   /**
    * The video resolution on the vertical axis.
    */
-  constructor(width, height) {
+  constructor(params) {
     _defineProperty(this, "width", void 0);
 
     _defineProperty(this, "height", void 0);
 
-    this.width = width;
-    this.height = height;
+    if (params) {
+      this.width = params.width;
+      this.height = params.height;
+    }
   }
 
 }
@@ -373,7 +375,7 @@ class AgoraImage {
   /**
    * Height of the image on the broadcasting video.
    */
-  constructor(url, x, y, width, height) {
+  constructor(url, params) {
     _defineProperty(this, "url", void 0);
 
     _defineProperty(this, "x", void 0);
@@ -385,10 +387,13 @@ class AgoraImage {
     _defineProperty(this, "height", void 0);
 
     this.url = url;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+
+    if (params) {
+      this.x = params.x;
+      this.y = params.y;
+      this.width = params.width;
+      this.height = params.height;
+    }
   }
 
 }
@@ -442,7 +447,7 @@ class TranscodingUser {
    *
    * Special players are needed if `audioChannel` is not set as 0.
    */
-  constructor(uid, x, y, params) {
+  constructor(uid, params) {
     _defineProperty(this, "uid", void 0);
 
     _defineProperty(this, "x", void 0);
@@ -460,10 +465,10 @@ class TranscodingUser {
     _defineProperty(this, "audioChannel", void 0);
 
     this.uid = uid;
-    this.x = x;
-    this.y = y;
 
     if (params) {
+      this.x = params.x;
+      this.y = params.y;
       this.width = params.width;
       this.height = params.height;
       this.zOrder = params.zOrder;
@@ -665,15 +670,16 @@ class ChannelMediaInfo {
   /**
    * The user ID.
    */
-  constructor(uid, params) {
+  constructor(channelName, uid, params) {
     _defineProperty(this, "channelName", void 0);
 
     _defineProperty(this, "token", void 0);
 
     _defineProperty(this, "uid", void 0);
 
+    this.channelName = channelName;
+
     if (params) {
-      this.channelName = params.channelName;
       this.token = params.token;
     }
 
@@ -778,7 +784,7 @@ class Rectangle {
   /**
    * The height (pixels) of the watermark image.
    */
-  constructor(x, y, width, height) {
+  constructor(params) {
     _defineProperty(this, "x", void 0);
 
     _defineProperty(this, "y", void 0);
@@ -787,10 +793,12 @@ class Rectangle {
 
     _defineProperty(this, "height", void 0);
 
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+    if (params) {
+      this.x = params.x;
+      this.y = params.y;
+      this.width = params.width;
+      this.height = params.height;
+    }
   }
 
 }
@@ -815,16 +823,18 @@ class WatermarkOptions {
   /**
    * The watermark position in the portrait mode.
    */
-  constructor(positionInLandscapeMode, positionInPortraitMode, visibleInPreview) {
+  constructor(params) {
     _defineProperty(this, "visibleInPreview", void 0);
 
     _defineProperty(this, "positionInLandscapeMode", void 0);
 
     _defineProperty(this, "positionInPortraitMode", void 0);
 
-    this.visibleInPreview = visibleInPreview;
-    this.positionInLandscapeMode = positionInLandscapeMode;
-    this.positionInPortraitMode = positionInPortraitMode;
+    if (params) {
+      this.visibleInPreview = params.visibleInPreview;
+      this.positionInLandscapeMode = params.positionInLandscapeMode;
+      this.positionInPortraitMode = params.positionInPortraitMode;
+    }
   }
 
 }
@@ -914,27 +924,85 @@ class LiveInjectStreamConfig {
 
 }
 /**
- * The definition of CameraCapturerConfiguration.
+ * The metronome configuration, which is set in [`startRhythmPlayer`]{@link startRhythmPlayer} or [`configRhythmPlayer`]{@link configRhythmPlayer}.
+ *
+ * @since v3.4.2
  */
 
 
 exports.LiveInjectStreamConfig = LiveInjectStreamConfig;
 
+class RhythmPlayerConfig {
+  /**
+   * The number of beats per measure. The range is 1 to 9. The default value is 4, which means that each measure contains one downbeat and three upbeats.
+   */
+
+  /**
+   * Tempo (beats per minute). The range is 60 to 360. The default value is 60, which means that the metronome plays 60 beats in one minute.
+   */
+
+  /**
+   * Whether to publish the sound of the metronome to remote users:
+   * - `true`: (Default) Publish. Both the local user and remote users can hear the metronome.
+   * - `false`: Do not publish. Only the local user can hear the metronome.
+   */
+  constructor(params) {
+    _defineProperty(this, "beatsPerMeasure", void 0);
+
+    _defineProperty(this, "beatsPerMinute", void 0);
+
+    _defineProperty(this, "publish", void 0);
+
+    if (params) {
+      this.beatsPerMeasure = params.beatsPerMeasure;
+      this.beatsPerMinute = params.beatsPerMinute;
+      this.publish = params.publish;
+    }
+  }
+
+}
+/**
+ * The definition of CameraCapturerConfiguration.
+ */
+
+
+exports.RhythmPlayerConfig = RhythmPlayerConfig;
+
 class CameraCapturerConfiguration {
   /**
-   * The camera capturer configuration.
+   * The camera capture preference.
+   */
+
+  /**
+   * The width (px) of the video image captured by the local camera. To customize the width of the video image, set `preference` as [`Manual`]{@link CameraCaptureOutputPreference.Manual} first, and then use `captureWidth`.
+   *
+   * @since v3.3.1.
+   */
+
+  /**
+   * The height (px) of the video image captured by the local camera. To customize the height of the video image, set `preference` as [`Manual`]{@link CameraCaptureOutputPreference.Manual} first, and then use `captureHeight`.
+   *
+   * @since v3.3.1.
    */
 
   /**
    * The camera direction.
    */
-  constructor(preference, cameraDirection) {
+  constructor(params) {
     _defineProperty(this, "preference", void 0);
+
+    _defineProperty(this, "captureWidth", void 0);
+
+    _defineProperty(this, "captureHeight", void 0);
 
     _defineProperty(this, "cameraDirection", void 0);
 
-    this.preference = preference;
-    this.cameraDirection = cameraDirection;
+    if (params) {
+      this.preference = params.preference;
+      this.captureWidth = params.captureWidth;
+      this.captureHeight = params.captureHeight;
+      this.cameraDirection = params.cameraDirection;
+    }
   }
 
 }
@@ -961,13 +1029,29 @@ class ChannelMediaOptions {
    *
    * This member serves a similar function to the [`muteAllRemoteVideoStreams`]{@link RtcEngine.muteAllRemoteVideoStreams} method. After joining the channel, you can call the `muteAllRemoteVideoStreams` method to set whether to subscribe to audio streams in the channel.
    */
-  constructor(autoSubscribeAudio, autoSubscribeVideo) {
+
+  /**
+   * TODO(doc)
+   */
+
+  /**
+   * TODO(doc)
+   */
+  constructor(params) {
     _defineProperty(this, "autoSubscribeAudio", void 0);
 
     _defineProperty(this, "autoSubscribeVideo", void 0);
 
-    this.autoSubscribeAudio = autoSubscribeAudio;
-    this.autoSubscribeVideo = autoSubscribeVideo;
+    _defineProperty(this, "publishLocalAudio", void 0);
+
+    _defineProperty(this, "publishLocalVideo", void 0);
+
+    if (params) {
+      this.autoSubscribeAudio = params.autoSubscribeAudio;
+      this.autoSubscribeVideo = params.autoSubscribeVideo;
+      this.publishLocalAudio = params.publishLocalAudio;
+      this.publishLocalVideo = params.publishLocalVideo;
+    }
   }
 
 }
@@ -992,13 +1076,22 @@ class EncryptionConfig {
    *
    * If you do not set an encryption key or set it as null, you cannot use the built-in encryption, and the SDK returns [`InvalidArgument(2)`]{@link ErrorCode.InvalidArgument}.
    */
-  constructor(encryptionMode, encryptionKey) {
+
+  /**
+   * TODO(doc)
+   */
+  constructor(params) {
     _defineProperty(this, "encryptionMode", void 0);
 
     _defineProperty(this, "encryptionKey", void 0);
 
-    this.encryptionMode = encryptionMode;
-    this.encryptionKey = encryptionKey;
+    _defineProperty(this, "encryptionKdfSalt", void 0);
+
+    if (params) {
+      this.encryptionMode = params.encryptionMode;
+      this.encryptionKey = params.encryptionKey;
+      this.encryptionKdfSalt = params.encryptionKdfSalt;
+    }
   }
 
 }
@@ -1018,13 +1111,219 @@ class ClientRoleOptions {
   /**
    * The latency level of an audience member in a live interactive streaming. See {@link AudienceLatencyLevelType}.
    */
-  constructor(audienceLatencyLevel) {
+  constructor(params) {
     _defineProperty(this, "audienceLatencyLevel", void 0);
 
-    this.audienceLatencyLevel = audienceLatencyLevel;
+    if (params) {
+      this.audienceLatencyLevel = params.audienceLatencyLevel;
+    }
+  }
+
+}
+/**
+ * Log file configurations.
+ *
+ * @since v3.3.1.
+ */
+
+
+exports.ClientRoleOptions = ClientRoleOptions;
+
+class LogConfig {
+  /**
+   * The absolute path of log files. The default file path is as follows:
+   *   - Android: `/storage/emulated/0/Android/data/<package_name>/files/agorasdk.log`
+   *   - iOS: `App Sandbox/Library/caches/agorasdk.log`
+   * Ensure that the directory for the log files exists and is writable. You can use this parameter to rename the log files.
+   */
+
+  /**
+   * The size (KB) of a log file. The default value is 1024 KB. If you set `fileSize` to 1024 KB, the SDK outputs at most 5 MB log files; if you set it to less than 1024 KB, the setting is invalid, and the maximum size of a log file is still 1024 KB.
+   */
+
+  /**
+   * The output log level of the SDK.
+   *
+   * For example, if you set the log level to `WARN`, the SDK outputs the logs within levels `FATAL`, `ERROR`, and `WARN`.
+   *
+   * See [`LogLevel`]{@link enum LogLevel}.
+   */
+  constructor(params) {
+    _defineProperty(this, "filePath", void 0);
+
+    _defineProperty(this, "fileSize", void 0);
+
+    _defineProperty(this, "level", void 0);
+
+    if (params) {
+      this.filePath = params.filePath;
+      this.fileSize = params.fileSize;
+      this.level = params.level;
+    }
+  }
+
+}
+/**
+ * The configurations for the data stream.
+ *
+ * @since v3.3.1
+ *
+ * | `syncWithAudio` | `ordered` | SDK behaviors                                                |
+ * | :-------------- | :-------- | :----------------------------------------------------------- |
+ * | `false`         | `false`   | The SDK triggers the `StreamMessage` callback immediately after the receiver receives a data packet. |
+ * | `true`          | `false`   | <ul><li>If the data packet delay is within the audio delay, the SDK triggers the <code>StreamMessage</code> callback when the synchronized audio packet is played out</li><li>If the data packet delay exceeds the audio delay, the SDK triggers the <code>StreamMessage</code> callback as soon as the data packet is received. In this case, the data packet is not synchronized with the audio packet.</li></ul>.  |
+ * | `false`         | `true`    | <ul><li>If the delay of a data packet is within five seconds, the SDK corrects the order of the data packet.</li><li>If the delay of a data packet exceeds five seconds, the SDK discards the data packet.</li></ul> |
+ * | `true`          | `true`    |    <ul><li>If the delay of a data packet is within the audio delay, the SDK corrects the order of the data packet.</li><li>If the delay of a data packet exceeds the audio delay, the SDK discards this data packet.</li></ul>                                                          |
+ */
+
+
+exports.LogConfig = LogConfig;
+
+class DataStreamConfig {
+  /**
+   * Whether to synchronize the data packet with the published audio packet.
+   * - `true`: Synchronize the data packet with the audio packet.
+   * - `false`: Do not synchronize the data packet with the audio packet.
+   *
+   * When you set the data packet to synchronize with the audio, then if the data packet delay is within the audio delay range, the SDK triggers the [`StreamMessage`]{@link RtcEngineEvents.StreamMessage} callback when the synchronized audio packet is played out. Do not set this parameter as `true` if you need the receiver to receive the data packet immediately. Agora recommends that you set this parameter to `true` only when you need to implement specific functions, for example lyric synchronization.
+   */
+
+  /**
+   * Whether the SDK guarantees that the receiver receives the data in the sent order.
+   * - `true`: Guarantee that the receiver receives the data in the sent order.
+   * - `false`: Do not guarantee that the receiver receives the data in the sent order.
+   *
+   * Do not set this parameter to `true` if you need the receiver to receive the data immediately.
+   */
+  constructor(syncWithAudio, ordered) {
+    _defineProperty(this, "syncWithAudio", void 0);
+
+    _defineProperty(this, "ordered", void 0);
+
+    this.syncWithAudio = syncWithAudio;
+    this.ordered = ordered;
+  }
+
+}
+/**
+ * Configurations for the [`RtcEngine`]{@link RtcEngine}.
+ *
+ * @since v3.3.1
+ */
+
+
+exports.DataStreamConfig = DataStreamConfig;
+
+class RtcEngineContext {
+  /**
+   * The App ID issued to you by Agora. See [How to get the App ID](https://docs.agora.io/en/Agora%20Platform/token#get-an-app-id).
+   * Only users in apps with the same App ID can join the same channel and communicate with each other. Use an App ID to create only
+   * one `IRtcEngine` instance. To change your App ID, call `release` to destroy the current `IRtcEngine` instance and then call `createAgoraRtcEngine`
+   * and `initialize` to create an `IRtcEngine` instance with the new App ID.
+   */
+
+  /**
+   * The region for connection. This advanced feature applies to scenarios that have regional restrictions.
+   *
+   * For the regions that Agora supports, see [`AreaCode`]{@link AreaCode}. The area codes support bitwise operation.
+   *
+   * After specifying the region, the SDK connects to the Agora servers within that region.
+   *
+   */
+
+  /**
+   * The configuration of the log files that the SDK outputs. See [`LogConfig`]{@link LogConfig}.
+   *
+   * By default, the SDK outputs five log files, `agorasdk.log`, `agorasdk_1.log`, `agorasdk_2.log`, `agorasdk_3.log`, `agorasdk_4.log`, each with a default size of 1024 KB. These log files are encoded in UTF-8. The SDK writes the latest logs in `agorasdk.log`. When `agorasdk.log` is full, the SDK deletes the log file with the earliest modification time among the other four, renames `agorasdk.log` to the name of the deleted log file, and creates a new `agorasdk.log` to record latest logs.
+   *
+   * The log file records all log data for the SDK’s operation. Ensure that the directory for the log file exists and is writable.
+   */
+  constructor(appId, params) {
+    _defineProperty(this, "appId", void 0);
+
+    _defineProperty(this, "areaCode", void 0);
+
+    _defineProperty(this, "logConfig", void 0);
+
+    this.appId = appId;
+
+    if (params) {
+      this.areaCode = params.areaCode;
+      this.logConfig = params.logConfig;
+    }
+  }
+
+}
+/**
+ * @deprecated
+ *
+ * Configurations for the [`RtcEngine`]{@link RtcEngine}.
+ *
+ * @since v3.3.1
+ */
+
+
+exports.RtcEngineContext = RtcEngineContext;
+
+class RtcEngineConfig extends RtcEngineContext {}
+/**
+ * Recording configuration, which is set in [`startAudioRecordingWithConfig`]{@link startAudioRecordingWithConfig}.
+ */
+
+
+exports.RtcEngineConfig = RtcEngineConfig;
+
+class AudioRecordingConfiguration {
+  /**
+   *
+   * The absolute path (including the filename extensions) of the recording file. For example:
+   * - On Android: `/sdcard/emulated/0/audio.aac`.
+   * - On iOS: `/var/mobile/Containers/Data/audio.aac`.
+   *
+   * @note
+   * Ensure that the path you specify exists and is writable.
+   */
+
+  /**
+   * Audio recording quality. See [`AudioRecordingQuality`]{@link AudioRecordingQuality}.
+   *
+   * @note This parameter applies to AAC files only.
+   */
+
+  /**
+   * Recording content. See [`AudioRecordingPosition`]{@link AudioRecordingPosition}.
+   */
+
+  /**
+   * Recording sample rate (Hz). The following values are supported:
+   * - 16000
+   * - (Default) 32000
+   * - 44100
+   * - 48000
+   *
+   * @note
+   * If this parameter is set to `44100` or `48000`, for better recording effects, Agora recommends recording WAV files or AAC files whose `recordingQuality` is `Medium` or `High`.
+   *
+   */
+  constructor(filePath, params) {
+    _defineProperty(this, "filePath", void 0);
+
+    _defineProperty(this, "recordingQuality", void 0);
+
+    _defineProperty(this, "recordingPosition", void 0);
+
+    _defineProperty(this, "recordingSampleRate", void 0);
+
+    this.filePath = filePath;
+
+    if (params) {
+      this.recordingQuality = params.recordingQuality;
+      this.recordingPosition = params.recordingPosition;
+      this.recordingSampleRate = params.recordingSampleRate;
+    }
   }
 
 }
 
-exports.ClientRoleOptions = ClientRoleOptions;
+exports.AudioRecordingConfiguration = AudioRecordingConfiguration;
 //# sourceMappingURL=Classes.js.map

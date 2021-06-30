@@ -13,12 +13,12 @@ public class AgoraRtcSurfaceView : WXComponent {
     override init() {
         super.init()
     }
-    
+
     @objc
     override init(ref: String, type: String, styles: [AnyHashable : Any]?, attributes: [AnyHashable : Any]? = nil, events: [Any]?, weexInstance: WXSDKInstance) {
         super.init(ref: ref, type: type, styles: styles, attributes: attributes, events: events, weexInstance: weexInstance)
     }
-    
+
     @objc
     public override func loadView() -> UIView {
         let view = RtcView()
@@ -26,16 +26,16 @@ public class AgoraRtcSurfaceView : WXComponent {
         view.setChannel(channel(_:))
         return view
     }
-    
+
     @objc
     public override func viewDidLoad() {
         if let view = self.view as? RtcView {
             view.setData(attributes["data"] as! NSDictionary)
-            view.setRenderMode(WXConvert.nsInteger(attributes["renderMode"]))
-            view.setMirrorMode(WXConvert.nsInteger(attributes["mirrorMode"]))
+            view.setRenderMode(NSNumber(value: WXConvert.nsuInteger(attributes["renderMode"])))
+            view.setMirrorMode(NSNumber(value: WXConvert.nsuInteger(attributes["mirrorMode"])))
         }
     }
-    
+
     @objc
     public override func updateAttributes(_ attributes: [AnyHashable : Any] = [:]) {
         if let view = self.view as? RtcView {
@@ -43,14 +43,14 @@ public class AgoraRtcSurfaceView : WXComponent {
                 view.setData(data)
             }
             if let renderMode = attributes["renderMode"] {
-                view.setRenderMode(WXConvert.nsInteger(renderMode))
+                view.setRenderMode(NSNumber(value: WXConvert.nsuInteger(renderMode)))
             }
             if let mirrorMode = attributes["mirrorMode"] {
-                view.setMirrorMode(WXConvert.nsInteger(mirrorMode))
+                view.setMirrorMode(NSNumber(value: WXConvert.nsuInteger(mirrorMode)))
             }
         }
     }
-    
+
     private func engine() -> AgoraRtcEngineKit? {
         return (weexInstance?.module(for: AgoraRtcEngineModule.classForCoder()) as? AgoraRtcEngineModule)?.engine
     }
@@ -73,9 +73,9 @@ class RtcView: RtcSurfaceView {
         self.getChannel = getChannel
     }
 
-    @objc func setRenderMode(_ renderMode: Int) {
+    @objc func setRenderMode(_ renderMode: NSNumber) {
         if let engine = getEngine?() {
-            setRenderMode(engine, renderMode)
+            setRenderMode(engine, renderMode.uintValue)
         }
     }
 
@@ -85,13 +85,13 @@ class RtcView: RtcSurfaceView {
             channel = getChannel?(channelId)
         }
         if let engine = getEngine?() {
-            setData(engine, channel, WXConvert.nsInteger(data["uid"]))
+            setData(engine, channel, WXConvert.nsuInteger(data["uid"]))
         }
     }
 
-    @objc func setMirrorMode(_ mirrorMode: Int) {
+    @objc func setMirrorMode(_ mirrorMode: NSNumber) {
         if let engine = getEngine?() {
-            setMirrorMode(engine, mirrorMode)
+            setMirrorMode(engine, mirrorMode.uintValue)
         }
     }
 }

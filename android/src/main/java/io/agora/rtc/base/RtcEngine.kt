@@ -42,15 +42,28 @@ class IRtcEngine {
 
     fun complain(params: Map<String, *>, callback: Callback)
 
+    @Deprecated("")
     fun setLogFile(params: Map<String, *>, callback: Callback)
 
+    @Deprecated("")
     fun setLogFilter(params: Map<String, *>, callback: Callback)
 
+    @Deprecated("")
     fun setLogFileSize(params: Map<String, *>, callback: Callback)
 
     fun setParameters(params: Map<String, *>, callback: Callback)
 
+    fun getSdkVersion(callback: Callback)
+
+    fun getErrorDescription(params: Map<String, *>, callback: Callback)
+
     fun getNativeHandle(callback: Callback)
+
+    fun enableDeepLearningDenoise(params: Map<String, *>, callback: Callback)
+
+    fun setCloudProxy(params: Map<String, *>, callback: Callback)
+
+    fun uploadLogFile(callback: Callback)
   }
 
   interface RtcUserInfoInterface {
@@ -84,9 +97,16 @@ class IRtcEngine {
 
     fun muteAllRemoteAudioStreams(params: Map<String, *>, callback: Callback)
 
+    @Deprecated("")
     fun setDefaultMuteAllRemoteAudioStreams(params: Map<String, *>, callback: Callback)
 
     fun enableAudioVolumeIndication(params: Map<String, *>, callback: Callback)
+
+    fun startRhythmPlayer(params: Map<String, *>, callback: Callback)
+
+    fun stopRhythmPlayer(callback: Callback)
+
+    fun configRhythmPlayer(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcVideoInterface {
@@ -108,9 +128,12 @@ class IRtcEngine {
 
     fun muteAllRemoteVideoStreams(params: Map<String, *>, callback: Callback)
 
+    @Deprecated("")
     fun setDefaultMuteAllRemoteVideoStreams(params: Map<String, *>, callback: Callback)
 
     fun setBeautyEffectOptions(params: Map<String, *>, callback: Callback)
+
+    fun enableRemoteSuperResolution(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcAudioMixingInterface {
@@ -132,7 +155,7 @@ class IRtcEngine {
 
     fun getAudioMixingPublishVolume(callback: Callback)
 
-    fun getAudioMixingDuration(callback: Callback)
+    fun getAudioMixingDuration(params: Map<String, *>, callback: Callback)
 
     fun getAudioMixingCurrentPosition(callback: Callback)
 
@@ -149,6 +172,12 @@ class IRtcEngine {
     fun setVolumeOfEffect(params: Map<String, *>, callback: Callback)
 
     fun playEffect(params: Map<String, *>, callback: Callback)
+
+    fun setEffectPosition(params: Map<String, *>, callback: Callback)
+
+    fun getEffectDuration(params: Map<String, *>, callback: Callback)
+
+    fun getEffectCurrentPosition(params: Map<String, *>, callback: Callback)
 
     fun stopEffect(params: Map<String, *>, callback: Callback)
 
@@ -186,7 +215,11 @@ class IRtcEngine {
 
     fun setVoiceBeautifierPreset(params: Map<String, *>, callback: Callback)
 
+    fun setVoiceConversionPreset(params: Map<String, *>, callback: Callback)
+
     fun setAudioEffectParameters(params: Map<String, *>, callback: Callback)
+
+    fun setVoiceBeautifierParameters(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcVoicePositionInterface {
@@ -344,10 +377,8 @@ class RtcEngineManager(
   }
 
   override fun create(params: Map<String, *>, callback: Callback) {
-    engine = RtcEngineEx.create(RtcEngineConfig().apply {
+    engine = RtcEngineEx.create(mapToRtcEngineConfig(params["config"] as Map<*, *>).apply {
       mContext = params["context"] as Context
-      mAppId = params["appId"] as String
-      mAreaCode = (params["areaCode"] as Number).toInt()
       mEventHandler = RtcEngineEventHandler { methodName, data ->
         emit(methodName, data)
       }
@@ -373,11 +404,33 @@ class RtcEngineManager(
   }
 
   override fun joinChannel(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.joinChannel(params["token"] as? String, params["channelName"] as String, params["optionalInfo"] as? String, (params["optionalUid"] as Number).toInt()))
+    val token = params["token"] as? String
+    val channelName = params["channelName"] as String
+    val optionalInfo = params["optionalInfo"] as? String
+    val optionalUid = (params["optionalUid"] as Number).toNativeUInt()
+    (params["options"] as? Map<*, *>)?.let {
+      callback.code(
+        engine?.joinChannel(
+          token,
+          channelName,
+          optionalInfo,
+          optionalUid,
+          mapToChannelMediaOptions(it)
+        )
+      )
+      return@joinChannel
+    }
+    callback.code(engine?.joinChannel(token, channelName, optionalInfo, optionalUid))
   }
 
   override fun switchChannel(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.switchChannel(params["token"] as? String, params["channelName"] as String))
+    val token = params["token"] as? String
+    val channelName = params["channelName"] as String
+    (params["options"] as? Map<*, *>)?.let {
+      callback.code(engine?.switchChannel(token, channelName, mapToChannelMediaOptions(it)))
+      return@switchChannel
+    }
+    callback.code(engine?.switchChannel(token, channelName))
   }
 
   override fun leaveChannel(callback: Callback) {
@@ -397,7 +450,15 @@ class RtcEngineManager(
   }
 
   override fun sendCustomReportMessage(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.sendCustomReportMessage(params["id"] as String, params["category"] as String, params["event"] as String, params["label"] as String, (params["value"] as Number).toInt()))
+    callback.code(
+      engine?.sendCustomReportMessage(
+        params["id"] as String,
+        params["category"] as String,
+        params["event"] as String,
+        params["label"] as String,
+        (params["value"] as Number).toInt()
+      )
+    )
   }
 
   override fun getCallId(callback: Callback) {
@@ -405,7 +466,13 @@ class RtcEngineManager(
   }
 
   override fun rate(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.rate(params["callId"] as String, (params["rating"] as Number).toInt(), params["description"] as? String))
+    callback.code(
+      engine?.rate(
+        params["callId"] as String,
+        (params["rating"] as Number).toInt(),
+        params["description"] as? String
+      )
+    )
   }
 
   override fun complain(params: Map<String, *>, callback: Callback) {
@@ -428,16 +495,55 @@ class RtcEngineManager(
     callback.code(engine?.setParameters(params["parameters"] as String))
   }
 
+  override fun getSdkVersion(callback: Callback) {
+    callback.success(RtcEngine.getSdkVersion())
+  }
+
+  override fun getErrorDescription(params: Map<String, *>, callback: Callback) {
+    callback.success(RtcEngine.getErrorDescription((params["error"] as Number).toInt()))
+  }
+
   override fun getNativeHandle(callback: Callback) {
     callback.resolve(engine) { it.nativeHandle }
   }
 
+  override fun enableDeepLearningDenoise(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.enableDeepLearningDenoise(params["enabled"] as Boolean))
+  }
+
+  override fun setCloudProxy(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.setCloudProxy((params["proxyType"] as Number).toInt()))
+  }
+
+  override fun uploadLogFile(callback: Callback) {
+    callback.resolve(engine) { it.uploadLogFile() }
+  }
+
   override fun registerLocalUserAccount(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.registerLocalUserAccount(params["appId"] as String, params["userAccount"] as String))
+    callback.code(
+      engine?.registerLocalUserAccount(
+        params["appId"] as String,
+        params["userAccount"] as String
+      )
+    )
   }
 
   override fun joinChannelWithUserAccount(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.joinChannelWithUserAccount(params["token"] as? String, params["channelName"] as String, params["userAccount"] as String))
+    val token = params["token"] as? String
+    val channelName = params["channelName"] as String
+    val userAccount = params["userAccount"] as String
+    (params["options"] as? Map<*, *>)?.let {
+      callback.code(
+        engine?.joinChannelWithUserAccount(
+          token,
+          channelName,
+          userAccount,
+          mapToChannelMediaOptions(it)
+        )
+      )
+      return@joinChannelWithUserAccount
+    }
+    callback.code(engine?.joinChannelWithUserAccount(token, channelName, userAccount))
   }
 
   override fun getUserInfoByUserAccount(params: Map<String, *>, callback: Callback) {
@@ -451,7 +557,7 @@ class RtcEngineManager(
   override fun getUserInfoByUid(params: Map<String, *>, callback: Callback) {
     callback.resolve(engine) {
       val userInfo = UserInfo()
-      it.getUserInfoByUid((params["uid"] as Number).toInt(), userInfo)
+      it.getUserInfoByUid((params["uid"] as Number).toNativeUInt(), userInfo)
       userInfo.toMap()
     }
   }
@@ -465,7 +571,12 @@ class RtcEngineManager(
   }
 
   override fun setAudioProfile(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setAudioProfile((params["profile"] as Number).toInt(), (params["scenario"] as Number).toInt()))
+    callback.code(
+      engine?.setAudioProfile(
+        (params["profile"] as Number).toInt(),
+        (params["scenario"] as Number).toInt()
+      )
+    )
   }
 
   override fun adjustRecordingSignalVolume(params: Map<String, *>, callback: Callback) {
@@ -473,7 +584,12 @@ class RtcEngineManager(
   }
 
   override fun adjustUserPlaybackSignalVolume(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.adjustUserPlaybackSignalVolume((params["uid"] as Number).toInt(), (params["volume"] as Number).toInt()))
+    callback.code(
+      engine?.adjustUserPlaybackSignalVolume(
+        (params["uid"] as Number).toNativeUInt(),
+        (params["volume"] as Number).toInt()
+      )
+    )
   }
 
   override fun adjustPlaybackSignalVolume(params: Map<String, *>, callback: Callback) {
@@ -489,7 +605,12 @@ class RtcEngineManager(
   }
 
   override fun muteRemoteAudioStream(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.muteRemoteAudioStream((params["uid"] as Number).toInt(), params["muted"] as Boolean))
+    callback.code(
+      engine?.muteRemoteAudioStream(
+        (params["uid"] as Number).toNativeUInt(),
+        params["muted"] as Boolean
+      )
+    )
   }
 
   override fun muteAllRemoteAudioStreams(params: Map<String, *>, callback: Callback) {
@@ -501,7 +622,31 @@ class RtcEngineManager(
   }
 
   override fun enableAudioVolumeIndication(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.enableAudioVolumeIndication((params["interval"] as Number).toInt(), (params["smooth"] as Number).toInt(), params["report_vad"] as Boolean))
+    callback.code(
+      engine?.enableAudioVolumeIndication(
+        (params["interval"] as Number).toInt(),
+        (params["smooth"] as Number).toInt(),
+        params["report_vad"] as Boolean
+      )
+    )
+  }
+
+  override fun startRhythmPlayer(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.audioEffectManager?.startRhythmPlayer(
+        params["sound1"] as String,
+        params["sound2"] as String,
+        mapToRhythmPlayerConfig(params["config"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun stopRhythmPlayer(callback: Callback) {
+    callback.code(engine?.audioEffectManager?.stopRhythmPlayer())
+  }
+
+  override fun configRhythmPlayer(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.audioEffectManager?.configRhythmPlayer(mapToRhythmPlayerConfig(params as Map<*, *>)))
   }
 
   override fun enableVideo(callback: Callback) {
@@ -533,7 +678,12 @@ class RtcEngineManager(
   }
 
   override fun muteRemoteVideoStream(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.muteRemoteVideoStream((params["uid"] as Number).toInt(), params["muted"] as Boolean))
+    callback.code(
+      engine?.muteRemoteVideoStream(
+        (params["uid"] as Number).toNativeUInt(),
+        params["muted"] as Boolean
+      )
+    )
   }
 
   override fun muteAllRemoteVideoStreams(params: Map<String, *>, callback: Callback) {
@@ -545,11 +695,44 @@ class RtcEngineManager(
   }
 
   override fun setBeautyEffectOptions(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setBeautyEffectOptions(params["enabled"] as Boolean, mapToBeautyOptions(params["options"] as Map<*, *>)))
+    callback.code(
+      engine?.setBeautyEffectOptions(
+        params["enabled"] as Boolean,
+        mapToBeautyOptions(params["options"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun enableRemoteSuperResolution(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.enableRemoteSuperResolution(
+        (params["uid"] as Number).toNativeUInt(),
+        params["enable"] as Boolean
+      )
+    )
   }
 
   override fun startAudioMixing(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.startAudioMixing(params["filePath"] as String, params["loopback"] as Boolean, params["replace"] as Boolean, (params["cycle"] as Number).toInt()))
+    (params["startPos"] as? Number)?.let { startPos ->
+      callback.code(
+        engine?.startAudioMixing(
+          params["filePath"] as String,
+          params["loopback"] as Boolean,
+          params["replace"] as Boolean,
+          (params["cycle"] as Number).toInt(),
+          startPos.toInt()
+        )
+      )
+      return@startAudioMixing
+    }
+    callback.code(
+      engine?.startAudioMixing(
+        params["filePath"] as String,
+        params["loopback"] as Boolean,
+        params["replace"] as Boolean,
+        (params["cycle"] as Number).toInt()
+      )
+    )
   }
 
   override fun stopAudioMixing(callback: Callback) {
@@ -584,7 +767,11 @@ class RtcEngineManager(
     callback.code(engine?.audioMixingPublishVolume) { it }
   }
 
-  override fun getAudioMixingDuration(callback: Callback) {
+  override fun getAudioMixingDuration(params: Map<String, *>, callback: Callback) {
+    (params["filePath"] as? String)?.let { file ->
+      callback.code(engine?.getAudioMixingDuration(file)) { it }
+      return@getAudioMixingDuration
+    }
     callback.code(engine?.audioMixingDuration) { it }
   }
 
@@ -609,11 +796,60 @@ class RtcEngineManager(
   }
 
   override fun setVolumeOfEffect(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.audioEffectManager?.setVolumeOfEffect((params["soundId"] as Number).toInt(), (params["volume"] as Number).toDouble()))
+    callback.code(
+      engine?.audioEffectManager?.setVolumeOfEffect(
+        (params["soundId"] as Number).toInt(),
+        (params["volume"] as Number).toDouble()
+      )
+    )
   }
 
   override fun playEffect(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.audioEffectManager?.playEffect((params["soundId"] as Number).toInt(), params["filePath"] as String, (params["loopCount"] as Number).toInt(), (params["pitch"] as Number).toDouble(), (params["pan"] as Number).toDouble(), (params["gain"] as Number).toDouble(), params["publish"] as Boolean))
+    (params["startPos"] as? Number)?.let { startPos ->
+      callback.code(
+        engine?.audioEffectManager?.playEffect(
+          (params["soundId"] as Number).toInt(),
+          params["filePath"] as String,
+          (params["loopCount"] as Number).toInt(),
+          (params["pitch"] as Number).toDouble(),
+          (params["pan"] as Number).toDouble(),
+          (params["gain"] as Number).toDouble(),
+          params["publish"] as Boolean,
+          startPos.toInt()
+        )
+      )
+      return@playEffect
+    }
+    callback.code(
+      engine?.audioEffectManager?.playEffect(
+        (params["soundId"] as Number).toInt(),
+        params["filePath"] as String,
+        (params["loopCount"] as Number).toInt(),
+        (params["pitch"] as Number).toDouble(),
+        (params["pan"] as Number).toDouble(),
+        (params["gain"] as Number).toDouble(),
+        params["publish"] as Boolean
+      )
+    )
+  }
+
+  override fun setEffectPosition(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.audioEffectManager?.setEffectPosition(
+        (params["soundId"] as Number).toInt(),
+        (params["pos"] as Number).toInt()
+      )
+    )
+  }
+
+  override fun getEffectDuration(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.audioEffectManager?.getEffectDuration(params["filePath"] as String)) {
+      it
+    }
+  }
+
+  override fun getEffectCurrentPosition(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.audioEffectManager?.getEffectCurrentPosition((params["soundId"] as Number).toInt())) { it }
   }
 
   override fun stopEffect(params: Map<String, *>, callback: Callback) {
@@ -625,7 +861,12 @@ class RtcEngineManager(
   }
 
   override fun preloadEffect(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.audioEffectManager?.preloadEffect((params["soundId"] as Number).toInt(), params["filePath"] as String))
+    callback.code(
+      engine?.audioEffectManager?.preloadEffect(
+        (params["soundId"] as Number).toInt(),
+        params["filePath"] as String
+      )
+    )
   }
 
   override fun unloadEffect(params: Map<String, *>, callback: Callback) {
@@ -665,11 +906,21 @@ class RtcEngineManager(
   }
 
   override fun setLocalVoiceEqualization(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setLocalVoiceEqualization((params["bandFrequency"] as Number).toInt(), (params["bandGain"] as Number).toInt()))
+    callback.code(
+      engine?.setLocalVoiceEqualization(
+        (params["bandFrequency"] as Number).toInt(),
+        (params["bandGain"] as Number).toInt()
+      )
+    )
   }
 
   override fun setLocalVoiceReverb(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setLocalVoiceReverb((params["reverbKey"] as Number).toInt(), (params["value"] as Number).toInt()))
+    callback.code(
+      engine?.setLocalVoiceReverb(
+        (params["reverbKey"] as Number).toInt(),
+        (params["value"] as Number).toInt()
+      )
+    )
   }
 
   override fun setAudioEffectPreset(params: Map<String, *>, callback: Callback) {
@@ -680,8 +931,28 @@ class RtcEngineManager(
     callback.code(engine?.setVoiceBeautifierPreset((params["preset"] as Number).toInt()))
   }
 
+  override fun setVoiceConversionPreset(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.setVoiceConversionPreset((params["preset"] as Number).toInt()))
+  }
+
   override fun setAudioEffectParameters(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setAudioEffectParameters((params["preset"] as Number).toInt(), (params["param1"] as Number).toInt(), (params["param2"] as Number).toInt()))
+    callback.code(
+      engine?.setAudioEffectParameters(
+        (params["preset"] as Number).toInt(),
+        (params["param1"] as Number).toInt(),
+        (params["param2"] as Number).toInt()
+      )
+    )
+  }
+
+  override fun setVoiceBeautifierParameters(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.setVoiceBeautifierParameters(
+        (params["preset"] as Number).toInt(),
+        (params["param1"] as Number).toInt(),
+        (params["param2"] as Number).toInt()
+      )
+    )
   }
 
   override fun enableSoundPositionIndication(params: Map<String, *>, callback: Callback) {
@@ -689,7 +960,13 @@ class RtcEngineManager(
   }
 
   override fun setRemoteVoicePosition(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setRemoteVoicePosition((params["uid"] as Number).toInt(), (params["pan"] as Number).toDouble(), (params["gain"] as Number).toDouble()))
+    callback.code(
+      engine?.setRemoteVoicePosition(
+        (params["uid"] as Number).toNativeUInt(),
+        (params["pan"] as Number).toDouble(),
+        (params["gain"] as Number).toDouble()
+      )
+    )
   }
 
   override fun setLiveTranscoding(params: Map<String, *>, callback: Callback) {
@@ -697,7 +974,12 @@ class RtcEngineManager(
   }
 
   override fun addPublishStreamUrl(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.addPublishStreamUrl(params["url"] as String, params["transcodingEnabled"] as Boolean))
+    callback.code(
+      engine?.addPublishStreamUrl(
+        params["url"] as String,
+        params["transcodingEnabled"] as Boolean
+      )
+    )
   }
 
   override fun removePublishStreamUrl(params: Map<String, *>, callback: Callback) {
@@ -741,7 +1023,12 @@ class RtcEngineManager(
   }
 
   override fun setRemoteVideoStreamType(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setRemoteVideoStreamType((params["uid"] as Number).toInt(), (params["streamType"] as Number).toInt()))
+    callback.code(
+      engine?.setRemoteVideoStreamType(
+        (params["uid"] as Number).toNativeUInt(),
+        (params["streamType"] as Number).toInt()
+      )
+    )
   }
 
   override fun setRemoteDefaultVideoStreamType(params: Map<String, *>, callback: Callback) {
@@ -757,7 +1044,12 @@ class RtcEngineManager(
   }
 
   override fun setRemoteUserPriority(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setRemoteUserPriority((params["uid"] as Number).toInt(), (params["userPriority"] as Number).toInt()))
+    callback.code(
+      engine?.setRemoteUserPriority(
+        (params["uid"] as Number).toNativeUInt(),
+        (params["userPriority"] as Number).toInt()
+      )
+    )
   }
 
   override fun startEchoTest(params: Map<String, *>, callback: Callback) {
@@ -785,24 +1077,25 @@ class RtcEngineManager(
   }
 
   override fun registerMediaMetadataObserver(callback: Callback) {
-    var code = -Constants.ERR_NOT_INITIALIZED
-    engine?.let {
-      val mediaObserver = MediaObserver { data ->
-        emit(RtcEngineEvents.MetadataReceived, data)
-      }
-      code = it.registerMediaMetadataObserver(mediaObserver, IMetadataObserver.VIDEO_METADATA)
-      if (code == 0) this.mediaObserver = mediaObserver
+    val mediaObserver = MediaObserver { data ->
+      emit(RtcEngineEvents.MetadataReceived, data)
     }
-    callback.code(code)
+    callback.code(
+      engine?.registerMediaMetadataObserver(
+        mediaObserver,
+        IMetadataObserver.VIDEO_METADATA
+      )
+    ) {
+      this.mediaObserver = mediaObserver
+      Unit
+    }
   }
 
   override fun unregisterMediaMetadataObserver(callback: Callback) {
-    var code = -Constants.ERR_NOT_INITIALIZED
-    engine?.let {
-      code = it.registerMediaMetadataObserver(null, IMetadataObserver.VIDEO_METADATA)
-      if (code == 0) mediaObserver = null
+    callback.code(engine?.registerMediaMetadataObserver(null, IMetadataObserver.VIDEO_METADATA)) {
+      mediaObserver = null
+      Unit
     }
-    callback.code(code)
   }
 
   override fun setMaxMetadataSize(params: Map<String, *>, callback: Callback) {
@@ -819,7 +1112,12 @@ class RtcEngineManager(
   }
 
   override fun addVideoWatermark(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.addVideoWatermark(params["watermarkUrl"] as String, mapToWatermarkOptions(params["options"] as Map<*, *>)))
+    callback.code(
+      engine?.addVideoWatermark(
+        params["watermarkUrl"] as String,
+        mapToWatermarkOptions(params["options"] as Map<*, *>)
+      )
+    )
   }
 
   override fun clearVideoWatermarks(callback: Callback) {
@@ -831,20 +1129,39 @@ class RtcEngineManager(
   }
 
   override fun setEncryptionMode(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setEncryptionMode(when ((params["encryptionMode"] as Number).toInt()) {
-      EncryptionConfig.EncryptionMode.AES_128_XTS.value -> "aes-128-xts"
-      EncryptionConfig.EncryptionMode.AES_128_ECB.value -> "aes-128-ecb"
-      EncryptionConfig.EncryptionMode.AES_256_XTS.value -> "aes-256-xts"
-      else -> ""
-    }))
+    callback.code(
+      engine?.setEncryptionMode(
+        when ((params["encryptionMode"] as Number).toInt()) {
+          EncryptionConfig.EncryptionMode.AES_128_XTS.value -> "aes-128-xts"
+          EncryptionConfig.EncryptionMode.AES_128_ECB.value -> "aes-128-ecb"
+          EncryptionConfig.EncryptionMode.AES_256_XTS.value -> "aes-256-xts"
+          else -> ""
+        }
+      )
+    )
   }
 
   override fun enableEncryption(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.enableEncryption(params["enabled"] as Boolean, mapToEncryptionConfig(params["config"] as Map<*, *>)))
+    callback.code(
+      engine?.enableEncryption(
+        params["enabled"] as Boolean,
+        mapToEncryptionConfig(params["config"] as Map<*, *>)
+      )
+    )
   }
 
   override fun startAudioRecording(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.startAudioRecording(params["filePath"] as String, (params["sampleRate"] as Number).toInt(), (params["quality"] as Number).toInt()))
+    (params["config"] as? Map<*, *>)?.let {
+      callback.code(engine?.startAudioRecording(mapToAudioRecordingConfiguration(it)))
+      return@startAudioRecording
+    }
+    callback.code(
+      engine?.startAudioRecording(
+        params["filePath"] as String,
+        (params["sampleRate"] as Number).toInt(),
+        (params["quality"] as Number).toInt()
+      )
+    )
   }
 
   override fun stopAudioRecording(callback: Callback) {
@@ -852,7 +1169,12 @@ class RtcEngineManager(
   }
 
   override fun addInjectStreamUrl(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.addInjectStreamUrl(params["url"] as String, mapToLiveInjectStreamConfig(params["config"] as Map<*, *>)))
+    callback.code(
+      engine?.addInjectStreamUrl(
+        params["url"] as String,
+        mapToLiveInjectStreamConfig(params["config"] as Map<*, *>)
+      )
+    )
   }
 
   override fun removeInjectStreamUrl(params: Map<String, *>, callback: Callback) {
@@ -892,11 +1214,21 @@ class RtcEngineManager(
   }
 
   override fun setCameraFocusPositionInPreview(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setCameraFocusPositionInPreview((params["positionX"] as Number).toFloat(), (params["positionY"] as Number).toFloat()))
+    callback.code(
+      engine?.setCameraFocusPositionInPreview(
+        (params["positionX"] as Number).toFloat(),
+        (params["positionY"] as Number).toFloat()
+      )
+    )
   }
 
   override fun setCameraExposurePosition(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.setCameraExposurePosition((params["positionXinView"] as Number).toFloat(), (params["positionYinView"] as Number).toFloat()))
+    callback.code(
+      engine?.setCameraExposurePosition(
+        (params["positionXinView"] as Number).toFloat(),
+        (params["positionYinView"] as Number).toFloat()
+      )
+    )
   }
 
   override fun enableFaceDetection(params: Map<String, *>, callback: Callback) {
@@ -916,18 +1248,24 @@ class RtcEngineManager(
   }
 
   override fun createDataStream(params: Map<String, *>, callback: Callback) {
-    var code = -Constants.ERR_NOT_INITIALIZED
-    engine?.let {
-      code = it.createDataStream(params["reliable"] as Boolean, params["ordered"] as Boolean)
+    (params["config"] as? Map<*, *>)?.let { config ->
+      callback.code(engine?.createDataStream(mapToDataStreamConfig(config))) { it }
+      return@createDataStream
     }
-    callback.code(code) { it }
+    callback.code(
+      engine?.createDataStream(
+        params["reliable"] as Boolean,
+        params["ordered"] as Boolean
+      )
+    ) { it }
   }
 
   override fun sendStreamMessage(params: Map<String, *>, callback: Callback) {
-    var code = -Constants.ERR_NOT_INITIALIZED
-    engine?.let {
-      code = it.sendStreamMessage((params["streamId"] as Number).toInt(), (params["message"] as String).toByteArray())
-    }
-    callback.code(code)
+    callback.code(
+      engine?.sendStreamMessage(
+        (params["streamId"] as Number).toInt(),
+        (params["message"] as String).toByteArray()
+      )
+    )
   }
 }

@@ -120,6 +120,10 @@ export enum AudioLocalError {
    * 5: The local audio encoding fails.
    */
   EncodeFailure = 5,
+  /**
+   * TODO(doc)
+   */
+  Interrupted = 8,
 }
 
 /**
@@ -145,21 +149,50 @@ export enum AudioLocalState {
 }
 
 /**
- * The error code of the audio mixing file.
+ * The reason for the change of the music file playback state.
  */
-export enum AudioMixingErrorCode {
+export enum AudioMixingReason {
   /**
-   * 701: The SDK cannot open the audio mixing file.
+   * 701: The SDK cannot open the music file.
+   * Possible causes include the local music file does not exist, the SDK does not support the file format, or the SDK cannot access the music file URL.
    */
   CanNotOpen = 701,
   /**
-   * 702: The SDK opens the audio mixing file too frequently.
+   * 702: The SDK opens the music file too frequently. If you need to call `startAudioMixing` multiple times, ensure that the call interval is longer than 500 ms.
    */
   TooFrequentCall = 702,
   /**
-   * 703: The opening of the audio mixing file is interrupted.
+   * 703: The music file playback is interrupted.
    */
   InterruptedEOF = 703,
+  /**
+   * 720: Successfully calls `startAudioMixing` to play a music file.
+   */
+  StartedByUser = 720,
+  /**
+   * 721: The music file completes a loop playback.
+   */
+  OneLoopCompleted = 721,
+  /**
+   * 722: The music file starts a new loop playback.
+   */
+  StartNewLoop = 722,
+  /**
+   * 723: The music file completes all loop playback.
+   */
+  AllLoopsCompleted = 723,
+  /**
+   * 724: Successfully calls [`stopAudioMixing`]{@link stopAudioMixing} to stop playing the music file.
+   */
+  StoppedByUser = 724,
+  /**
+   * 725: Successfully calls [`pauseAudioMixing`]{@link pauseAudioMixing} to pause playing the music file.
+   */
+  PausedByUser = 725,
+  /**
+   * 726: Successfully calls [`resumeAudioMixing`]{@link resumeAudioMixing} to resume playing the music file.
+   */
+  ResumedByUser = 726,
   /**
    * 0: No error.
    */
@@ -171,19 +204,34 @@ export enum AudioMixingErrorCode {
  */
 export enum AudioMixingStateCode {
   /**
-   * 710: The audio mixing file is playing.
+   * 710: The audio mixing file is playing. This state comes with one of the following associated reasons:
+   * - [`StartedByUser(720)`]{@link StartedByUser}: Successfully calls [`startAudioMixing`]{@link startAudioMixing} to play a music file.
+   * - [`OneLoopCompleted(721)`]{@link OneLoopCompleted}: The music file completes a loop playback.
+   * - [`StartNewLoop(722)`]{@link StartNewLoop}: The music file starts a new loop playback.
+   * - [`ResumedByUser(726)`]{@link ResumedByUser}: Successfully calls [`resumeAudioMixing`]{@link resumeAudioMixing} to resume playing the music file.
    */
   Playing = 710,
   /**
-   * 711: The audio mixing file pauses playing.
+   * 711: The audio mixing file pauses playing. This state comes with [`PausedByUser(725)`]{@link PausedByUser}.
    */
   Paused = 711,
   /**
-   * 713: The audio mixing file stops playing.
+   * @ignore
+   */
+  Restart = 712,
+  /**
+   * 713: The audio mixing file stops playing. This state comes with one of the following associated reasons:
+   * - [`AllLoopsCompleted(723)`]{@link AllLoopsCompleted}: The music file completes all loop playback.
+   * - [`StoppedByUser(724)`]{@link StoppedByUser}: Successfully calls [`stopAudioMixing`]{@link stopAudioMixing} to stop playing the music file.
    */
   Stopped = 713,
   /**
-   * 714: An exception occurs when playing the audio mixing file.
+   * 714: An exception occurs when playing the audio mixing file. This state comes with one of the following associated reasons:
+   * - [`CanNotOpen(701)`]{@link CanNotOpen}: The SDK cannot open the music file. Possible causes include the
+   * local music file does not exist, the SDK does not support the file format, or the SDK cannot access the music file URL.
+   * - [`TooFrequentCall(702)`]{@link TooFrequentCall}: The SDK opens the music file too frequently.
+   * If you need to call [`startAudioMixing`]{@link startAudioMixing} multiple times, ensure that the call interval is longer than 500 ms.
+   * - [`InterruptedEOF(703)`]{@link InterruptedEOF}: The music file playback is interrupted.
    */
   Failed = 714,
 }
@@ -259,17 +307,35 @@ export enum AudioProfile {
  */
 export enum AudioRecordingQuality {
   /**
-   * 0: The sample rate is 32 KHz, and the file size is around 1.2 MB after 10 minutes of recording.
+   * 0: Low quality. For example, the size of an AAC file with a sample rate of 32,000 Hz and a 10-minute recording is approximately 1.2 MB.
    */
   Low = 0,
   /**
-   * 1: The sample rate is 32 KHz, and the file size is around 2 MB after 10 minutes of recording.
+   * 1: (Default) Medium quality. For example, the size of an AAC file with a sample rate of 32,000 Hz and a 10-minute recording is approximately 2 MB.
    */
   Medium = 1,
   /**
-   * 2: The sample rate is 32 KHz, and the file size is around 3.75 MB after 10 minutes of recording.
+   * 2: High quality. For example, the size of an AAC file with a sample rate of 32,000 Hz and a 10-minute recording is approximately 3.75 MB.
    */
   High = 2,
+}
+
+/**
+ * Recording content.
+ */
+export enum AudioRecordingPosition {
+  /**
+   * 0: (Default) Records the mixed audio of the local user and all remote users.
+   */
+  PositionMixedRecordingAndPlayback = 0,
+  /**
+   * 1: Records the audio of the local user only.
+   */
+  PositionRecording = 1,
+  /**
+   * 2: Records the audio of all remote users only.
+   */
+  PositionMixedPlayback = 2,
 }
 
 /**
@@ -452,15 +518,15 @@ export enum AudioReverbType {
  */
 export enum AudioSampleRateType {
   /**
-   * 32000: 32 kHz.
+   * 32000: (Default) 32000.
    */
   Type32000 = 32000,
   /**
-   * 44100: 44.1 kHz.
+   * 44100: 44100.
    */
   Type44100 = 44100,
   /**
-   * 48000: 48 kHz.
+   * 48000: 48000.
    */
   Type48000 = 48000,
 }
@@ -590,7 +656,7 @@ export enum AudioVoiceChanger {
 }
 
 /**
- * The camera capturer configuration.
+ * The camera capture preference.
  */
 export enum CameraCaptureOutputPreference {
   /**
@@ -606,9 +672,11 @@ export enum CameraCaptureOutputPreference {
    */
   Preview = 2,
   /**
-   * 3: Internal use only
+   * 3: Allows you to customize the width and height of the video image captured by the local camera.
+   *
+   * @since v3.3.1
    */
-  Unkown = 3,
+  Manual = 3,
 }
 
 /**
@@ -858,6 +926,10 @@ export enum ConnectionChangedReason {
    * [`Reconnecting`]{@link ConnectionStateType.Reconnecting}
    */
   KeepAliveTimeout = 14,
+  /**
+   * 15: In cloud proxy mode, the proxy server connection is interrupted.
+   */
+  ProxyServerInterrupted = 15,
 }
 
 /**
@@ -905,17 +977,29 @@ export enum ConnectionStateType {
  */
 export enum DegradationPreference {
   /**
-   * 0: (Default) Degrades the frame rate to guarantee the video quality.
+   * 0: (Default) Prefers to reduce the video frame rate while maintaining video quality during video encoding under limited bandwidth.
+   * This degradation preference is suitable for scenarios where video quality is prioritized.
+   *
+   * @note In the `Communication` channel profile, the resolution of the video sent may change, so remote users need to handle this issue.
+   * See [`VideoSizeChanged`]{@link VideoSizeChanged}.
    */
   MaintainQuality = 0,
   /**
-   * 1: Degrades the video quality to guarantee the frame rate.
+   * 1: Prefers to reduce the video quality while maintaining the video frame rate during video encoding under limited bandwidth.
+   * This degradation preference is suitable for scenarios where smoothness is prioritized and video quality is allowed to be reduced.
    */
   MaintainFramerate = 1,
+
   /**
-   * 2: Reserved for future use.
+   * 2: Reduces the video frame rate and video quality simultaneously during video encoding under limited bandwidth.
+   * `MaintainBalanced` has a lower reduction than `MaintainQuality` and `MaintainFramerate`, and this preference is suitable for scenarios where
+   * both smoothness and video quality are a priority.
+   *
+   * @since v3.4.2
+   *
+   * @note The resolution of the video sent may change, so remote users need to handle this issue. See [`VideoSizeChanged`]{@link VideoSizeChanged}.
    */
-  Balanced = 2,
+  MaintainBalanced = 2,
 }
 
 /**
@@ -945,6 +1029,26 @@ export enum EncryptionMode {
    * @since v3.1.2.
    */
   SM4128ECB = 4,
+  /**
+   * 5: 128-bit AES encryption, GCM mode.
+   *
+   * @since v3.3.1
+   */
+  AES128GCM = 5,
+  /**
+   * 6: 256-bit AES encryption, GCM mode.
+   *
+   * @since v3.3.1
+   */
+  AES256GCM = 6,
+  /**
+   * TODO(doc)
+   */
+  AES128GCM2 = 7,
+  /**
+   * TODO(doc)
+   */
+  AES256GCM2 = 8,
 }
 
 /**
@@ -1034,6 +1138,7 @@ export enum ErrorCode {
    */
   AlreadyInUse = 19,
   /**
+   * @ignore
    * 20: The SDK gave up the request due to too many requests.
    */
   Abort = 20,
@@ -1042,6 +1147,7 @@ export enum ErrorCode {
    */
   InitNetEngine = 21,
   /**
+   * @ignore
    * 22: The app uses too much of the system resources and the SDK fails to allocate the resources.
    */
   ResourceLimited = 22,
@@ -1165,6 +1271,16 @@ export enum ErrorCode {
    * 156: The format of the RTMP or RTMPS stream URL is not supported. Check whether the URL format is correct.
    */
   PublishStreamFormatNotSuppported = 156,
+  /**
+   * 157: The extension library is not integrated, such as the library for enabling deep-learning noise reduction.
+   *
+   * @since v3.3.1
+   */
+  ModuleNotFound = 157,
+  /**
+   * 160: The client is already recording audio. To start a new recording, call [`stopAudioRecording`]{@link stopAudioRecording} to stop the current recording first, and then call [`startAudioRecordingWithConfig`]{@link startAudioRecordingWithConfig}.
+   */
+  AlreadyInRecording = 160,
   /**
    * 1001: Fails to load the media engine.
    */
@@ -1402,6 +1518,24 @@ export enum LocalVideoStreamError {
    * 5: The local video encoding fails.
    */
   EncodeFailure = 5,
+  /**
+   * 6: (iOS only) The application is in the background.
+   *
+   * @since v3.3.1
+   */
+  CaptureInBackground = 6,
+  /**
+   * 7: (iOS only) The application is running in Slide Over, Split View, or Picture in Picture mode.
+   *
+   * @since v3.3.1
+   */
+  CaptureMultipleForegroundApps = 7,
+  /**
+   * 8: The SDK cannot find the local video capture device.
+   *
+   * @since v3.4.2
+   */
+  DeviceNotFound = 8,
 }
 
 /**
@@ -1582,6 +1716,10 @@ export enum RtmpStreamingErrorCode {
    * 10: The format of the RTMP or RTMPS streaming URL is not supported. Check whether the URL format is correct.
    */
   FormatNotSupported = 10,
+  /**
+   * TODO(doc)
+   */
+  UnPublishOK = 100,
 }
 
 /**
@@ -2362,6 +2500,10 @@ export enum RtmpStreamingEvent {
    * 1: An error occurs when you add a background image or a watermark image to the RTMP or RTMPS stream.
    */
   FailedLoadImage = 1,
+  /**
+   * TODO(doc)
+   */
+  UrlAlreadyInUse = 2,
 }
 
 /**
@@ -2624,6 +2766,16 @@ export enum VoiceBeautifierPreset {
   ChatBeautifierVitality = 0x01010300,
 
   /**
+   * Singing beautifier effect.
+   *
+   * - If you call [`setVoiceBeautifierPreset(SingingBeautifier)`]{@link setVoiceBeautifierPreset}, you can beautify a male-sounding voice and add a reverberation effect that sounds like singing in a small room. Agora recommends not using `setVoiceBeautifierPreset(SingingBeautifier)` to process a female-sounding voice; otherwise, you may experience vocal distortion.
+   * - If you call [`setVoiceBeautifierParameters(SINGING_BEAUTIFIER, param1, param2)`]{@link setVoiceBeautifierParameters}, you can beautify a male- or female-sounding voice and add a reverberation effect.
+   *
+   * @since v3.3.1
+   */
+  SingingBeautifier = 0x01020100,
+
+  /**
    * A more vigorous voice.
    */
   TimbreTransformationVigorous = 0x01030100,
@@ -2681,4 +2833,183 @@ export enum AudienceLatencyLevelType {
    * 2: (Default) Ultra low latency.
    */
   UltraLowLatency = 2,
+}
+
+/**
+ * Log Level.
+ *
+ * @since v3.3.1.
+ */
+export enum LogLevel {
+  /**
+   * 0: Do not output any log.
+   */
+  None = 0x0000,
+  /**
+   * 0x0001: (Default) Output logs of the FATAL, ERROR, WARN and INFO level. We recommend setting your log filter as this level.
+   */
+  Info = 0x0001,
+  /**
+   * 0x0002: Output logs of the FATAL, ERROR and WARN level.
+   */
+  Warn = 0x0002,
+  /**
+   * 0x0004: Output logs of the FATAL and ERROR level.
+   */
+  Error = 0x0004,
+  /**
+   * 0x0008: Output logs of the FATAL level.
+   */
+  Fatal = 0x0008,
+}
+
+/**
+ * Capture brightness level.
+ *
+ * @since v3.1.1.
+ */
+export enum CaptureBrightnessLevelType {
+  /** -1: The SDK does not detect the brightness level of the video image. Wait a few seconds to get the brightness level from `CaptureBrightnessLevelType` in the next callback. */
+  Invalid = -1,
+  /** 0: The brightness level of the video image is normal. */
+  Normal = 0,
+  /** 1: The brightness level of the video image is too bright. */
+  Bright = 1,
+  /** 2: The brightness level of the video image is too dark. */
+  Dark = 2,
+}
+
+/**
+ * The reason why the super-resolution algorithm is not successfully enabled.
+ */
+export enum SuperResolutionStateReason {
+  /**
+   * 0: The super-resolution algorithm is successfully enabled.
+   */
+  Success = 0,
+  /**
+   * 1: The origin resolution of the remote video is beyond the range where the super-resolution algorithm can be applied.
+   */
+  StreamOverLimitation = 1,
+  /**
+   * 2: Another user is already using the super-resolution algorithm.
+   */
+  UserCountOverLimitation = 2,
+  /**
+   * 3: The device does not support the super-resolution algorithm.
+   */
+  DeviceNotSupported = 3,
+}
+
+/**
+ * The reason for the upload failure.
+ *
+ * @since v3.3.1.
+ */
+export enum UploadErrorReason {
+  /**
+   * 0: The log file is successfully uploaded.
+   */
+  Success = 0,
+  /**
+   * 1: Network error. Check the network connection and call [`uploadLogFile`]{@link uploadLogFile} again to upload the log file.
+   */
+  NetError = 1,
+  /**
+   * 0: Agora 服务器错误，请稍后尝试。
+   */
+  ServerError = 2,
+}
+
+/**
+ * The cloud proxy type.
+ *
+ * @since v3.3.1.
+ */
+export enum CloudProxyType {
+  /**
+   * 0: Do not use the cloud proxy.
+   */
+  None = 0,
+  /**
+   * 1: The cloud proxy for the UDP protocol.
+   */
+  UDP = 1,
+  /**
+   * @ignore
+   * 2: The cloud proxy for the TCP (encryption) protocol.
+   */
+  TCP = 2,
+}
+
+/**
+ * Quality of experience (QoE) of the local user when receiving a remote audio stream.
+ *
+ * @since v3.3.1.
+ */
+export enum ExperienceQualityType {
+  /**
+   * 0: QoE of the local user is good.
+   */
+  Good = 0,
+  /**
+   * 1: QoE of the local user is poor.
+   */
+  Bad = 1,
+}
+
+/**
+ * The reason for poor QoE of the local user when receiving a remote audio stream.
+ *
+ * @since v3.3.1.
+ */
+export enum ExperiencePoorReason {
+  /**
+   * 0: No reason, indicating good QoE of the local user.
+   */
+  None = 0,
+  /**
+   * 1: The remote user's network quality is poor.
+   */
+  RemoteNetworkQualityPoor = 1,
+  /**
+   * 2: The local user's network quality is poor.
+   */
+  LocalNetworkQualityPoor = 2,
+  /**
+   * 4: The local user's Wi-Fi or mobile network signal is weak.
+   */
+  WirelessSignalPoor = 4,
+  /**
+   * 8: The local user enables both Wi-Fi and bluetooth, and their signals interfere with each other. As a result, audio transmission quality is undermined.
+   */
+  WifiBluetoothCoexist = 8,
+}
+
+/**
+ * The options for SDK preset voice conversion effects.
+ *
+ * @since v3.3.1.
+ */
+export enum VoiceConversionPreset {
+  /**
+   * 0: Turn off voice conversion effects and use the original voice.
+   */
+  Off = 0,
+  /**
+   * 50397440: A gender-neutral voice. To avoid audio distortion, ensure that you use this enumerator to process a female-sounding voice.
+   */
+  Neutral = 50397440,
+  /**
+   * 50397696: A sweet voice. To avoid audio distortion, ensure that you use this enumerator to process a female-sounding voice.
+   */
+  Sweet = 50397696,
+  /**
+   * 50397952: A steady voice. To avoid audio distortion, ensure that you use this enumerator to process a male-sounding voice.
+   */
+  Solid = 50397952,
+  /**
+   * 50397952: A deep voice. To avoid audio distortion, ensure that you use this enumerator to process a male-sounding voice.
+   */
+  Bass = 50397952,
 }

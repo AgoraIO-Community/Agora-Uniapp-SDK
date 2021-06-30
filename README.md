@@ -65,7 +65,94 @@ project(':uniplugin_agora_rtc').projectDir = new File(rootProject.projectDir, 'a
 
 * 在 **Dependencies** 中添加 **AgoraRtcUniPlugin**
 * 在 **Link Binary With Libraries** 中添加 **AgoraRtcUniPlugin.framework**
-* 在 **Embed Frameworks** 中添加 **AgoraRtcKit.framework** **Agorafdkaac.framework** **Agoraffmpeg.framework** **AgoraSoundTouch.framework** （需要通过 **Add Other...** 选择 **ios/libs** 目录中的 **.framework** 文件添加）
+* 在 **Embed Frameworks** 中添加 **AgoraCore.framework** **AgoraRtcKit.framework** **Agorafdkaac.framework** **Agoraffmpeg.framework** **AgoraSoundTouch.framework** （需要通过 **Add Other...** 选择 **ios/libs** 目录中的 **.framework** 文件添加）
+
+### 配置插件信息
+
+#### Android
+
+* 在 **app/src/main/assets/dcloud_uniplugins.json** 中添加
+```
+{
+  "nativePlugins": [
+...
+    {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "Agora-RTC-EngineModule",
+          "class": "io.agora.rtc.uni.AgoraRtcEngineModule"
+        },
+        {
+          "type": "module",
+          "name": "Agora-RTC-ChannelModule",
+          "class": "io.agora.rtc.uni.AgoraRtcChannelModule"
+        },
+        {
+          "type": "component",
+          "name": "Agora-RTC-SurfaceView",
+          "class": "io.agora.rtc.uni.AgoraRtcSurfaceView"
+        },
+        {
+          "type": "component",
+          "name": "Agora-RTC-TextureView",
+          "class": "io.agora.rtc.uni.AgoraRtcTextureView"
+        }
+      ]
+    },
+...
+  ]
+}    
+```
+
+#### iOS
+
+* 在 **HBuilder-Hello/HBuilder-uniPlugin-Info.plist** 中添加
+```
+...
+	<key>dcloud_uniplugins</key>
+	<array>	
+        <dict>
+            <key>plugins</key>
+            <array>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcEngineModule</string>
+                    <key>name</key>
+                    <string>Agora-RTC-EngineModule</string>
+                    <key>type</key>
+                    <string>module</string>
+                </dict>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcChannelModule</string>
+                    <key>name</key>
+                    <string>Agora-RTC-ChannelModule</string>
+                    <key>type</key>
+                    <string>module</string>
+                </dict>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcSurfaceView</string>
+                    <key>name</key>
+                    <string>Agora-RTC-SurfaceView</string>
+                    <key>type</key>
+                    <string>component</string>
+                </dict>
+                <dict>
+                    <key>class</key>
+                    <string>AgoraRtcTextureView</string>
+                    <key>name</key>
+                    <string>Agora-RTC-TextureView</string>
+                    <key>type</key>
+                    <string>component</string>
+                </dict>
+            </array>
+        </dict>
+...
+	</array>
+...
+```
 
 ## 如何使用
 
@@ -80,6 +167,14 @@ RtcEngine.create('你的AppID').then((engine) => {
 **插件绝大部分 API 都使用 Promise 包装，为保证调用时序，请使用 await 关键字**
 
 ## 常见错误
+
+### building for ios simulator, but the embedded framework 'xxx.framework' was built for ios + ios simulator.
+
+在 Xcode 的 **Build Settings** 中搜索 **Validate Workspace** 并设置为 No
+
+### AppKey问题
+
+请参考 [官网文档](https://nativesupport.dcloud.net.cn/AppDocs/README?id=appkey)
 
 ## API文档
 
