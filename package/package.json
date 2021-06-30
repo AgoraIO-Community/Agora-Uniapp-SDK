@@ -64,18 +64,18 @@
       ],
       "integrateType": "framework",
       "frameworks": [
-        "AgoraCore.xcframework",
-        "Agorafdkaac.xcframework",
-        "Agoraffmpeg.xcframework",
-        "AgoraRtcKit.xcframework",
-        "AgoraSoundTouch.xcframework"
+        "AgoraCore.framework",
+        "Agorafdkaac.framework",
+        "Agoraffmpeg.framework",
+        "AgoraRtcKit.framework",
+        "AgoraSoundTouch.framework"
       ],
       "embedFrameworks": [
-        "AgoraCore.xcframework",
-        "Agorafdkaac.xcframework",
-        "Agoraffmpeg.xcframework",
-        "AgoraRtcKit.xcframework",
-        "AgoraSoundTouch.xcframework"
+        "AgoraCore.framework",
+        "Agorafdkaac.framework",
+        "Agoraffmpeg.framework",
+        "AgoraRtcKit.framework",
+        "AgoraSoundTouch.framework"
       ],
       "privacies": [
         "NSCameraUsageDescription",

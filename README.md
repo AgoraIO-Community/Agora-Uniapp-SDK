@@ -38,7 +38,7 @@ yarn
 sh ./install.sh
 ```
 
-并确认 **ios/libs** 目录中包含 **.xcframework** 文件
+并确认 **ios/libs** 目录中包含 **.framework** 文件
 
 ### 将 Android 和 iOS 工程分别放到 uni-app 离线 SDK 对应的目录中
 
@@ -65,7 +65,7 @@ project(':uniplugin_agora_rtc').projectDir = new File(rootProject.projectDir, 'a
 
 * 在 **Dependencies** 中添加 **AgoraRtcUniPlugin**
 * 在 **Link Binary With Libraries** 中添加 **AgoraRtcUniPlugin.framework**
-* 在 **Embed Frameworks** 中添加 **AgoraCore.xcframework** **AgoraRtcKit.xcframework** **Agorafdkaac.xcframework** **Agoraffmpeg.xcframework** **AgoraSoundTouch.xcframework** （需要通过 **Add Other...** 选择 **ios/libs** 目录中的 **.xcframework** 文件添加）
+* 在 **Embed Frameworks** 中添加 **AgoraCore.framework** **AgoraRtcKit.framework** **Agorafdkaac.framework** **Agoraffmpeg.framework** **AgoraSoundTouch.framework** （需要通过 **Add Other...** 选择 **ios/libs** 目录中的 **.framework** 文件添加）
 
 ### 配置插件信息
 
@@ -167,6 +167,14 @@ RtcEngine.create('你的AppID').then((engine) => {
 **插件绝大部分 API 都使用 Promise 包装，为保证调用时序，请使用 await 关键字**
 
 ## 常见错误
+
+### building for ios simulator, but the embedded framework 'xxx.framework' was built for ios + ios simulator.
+
+在 Xcode 的 **Build Settings** 中搜索 **Validate Workspace** 并设置为 No
+
+### AppKey问题
+
+请参考 [官网文档](https://nativesupport.dcloud.net.cn/AppDocs/README?id=appkey)
 
 ## API文档
 
