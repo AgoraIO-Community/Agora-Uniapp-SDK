@@ -1,7 +1,7 @@
 {
   "name": "Agora音视频插件",
   "id": "Agora-RTC",
-  "version": "3.2.0",
+  "version": "3.4.5",
   "description": "Agora官方维护的音视频插件，并且在GitHub上开源，欢迎大家积极参与问题反馈和代码贡献",
   "_dp_type": "nativeplugin",
   "_dp_nativeplugin": {
