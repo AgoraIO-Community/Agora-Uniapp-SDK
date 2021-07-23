@@ -1,3 +1,10 @@
+## [3.4.6](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.4.5...v3.4.6) (2021-07-23)
+
+
+### Features
+
+* support 3.4.6 ([3ddf83f](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/3ddf83f2102a21f93cca4373070d90151af6733c))
+
 ## [3.4.5](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.2.0...v3.4.5) (2021-06-30)
 
 
