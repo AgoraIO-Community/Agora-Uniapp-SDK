@@ -66,5 +66,5 @@ dependencies {
     compileOnly 'com.alibaba:fastjson:1.1.46.android'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    api 'com.github.agorabuilder:native-full-sdk:3.4.5'
+    api 'com.github.agorabuilder:native-full-sdk:3.4.6'
 }
