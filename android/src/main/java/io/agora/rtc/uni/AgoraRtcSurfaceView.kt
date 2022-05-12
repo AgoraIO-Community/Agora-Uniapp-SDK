@@ -2,8 +2,8 @@ package io.agora.rtc.uni
 
 import android.content.Context
 import com.alibaba.fastjson.JSONObject
-import io.agora.rtc.RtcChannel
-import io.agora.rtc.RtcEngine
+import io.agora.rtc.base.RtcChannelManager
+import io.agora.rtc.base.RtcEngineManager
 import io.agora.rtc.base.RtcSurfaceView
 import io.dcloud.feature.uniapp.UniSDKInstance
 import io.dcloud.feature.uniapp.ui.action.AbsComponentData
@@ -33,26 +33,18 @@ class AgoraRtcSurfaceView(
     @UniComponentProp(name = "data")
     fun setData(data: JSONObject) {
         data.toMap().let { map ->
-            val channel = (map["channelId"] as? String)?.let { getChannel(it) }
-            getEngine()?.let { hostView.setData(it, channel, (map["uid"] as Number).toInt()) }
+            val channel = (map["channelId"] as? String)?.let { RtcChannelManager[it] }
+            RtcEngineManager.engine?.let { hostView.setData(it, channel, (map["uid"] as Number).toInt()) }
         }
     }
 
     @UniComponentProp(name = "renderMode")
     fun setRenderMode(renderMode: Int) {
-        getEngine()?.let { hostView.setRenderMode(it, renderMode) }
+        RtcEngineManager.engine?.let { hostView.setRenderMode(it, renderMode) }
     }
 
     @UniComponentProp(name = "mirrorMode")
     fun setMirrorMode(mirrorMode: Int) {
-        getEngine()?.let { hostView.setMirrorMode(it, mirrorMode) }
-    }
-
-    private fun getEngine(): RtcEngine? {
-        return AgoraRtcEngineModule.manager?.engine
-    }
-
-    private fun getChannel(channelId: String): RtcChannel? {
-        return AgoraRtcChannelModule.manager?.get(channelId)
+        RtcEngineManager.engine?.let { hostView.setMirrorMode(it, mirrorMode) }
     }
 }

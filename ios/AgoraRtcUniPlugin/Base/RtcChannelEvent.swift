@@ -46,6 +46,9 @@ class RtcChannelEvents {
     static let VideoSubscribeStateChanged = "VideoSubscribeStateChanged"
     static let RtmpStreamingEvent = "RtmpStreamingEvent"
     static let UserSuperResolutionEnabled = "UserSuperResolutionEnabled"
+    static let ProxyConnected = "ProxyConnected"
+    static let ClientRoleChangeFailed = "ClientRoleChangeFailed"
+    static let FirstRemoteVideoFrame = "FirstRemoteVideoFrame"
 
     static func toMap() -> [String: String] {
         return [
@@ -85,6 +88,9 @@ class RtcChannelEvents {
             "VideoSubscribeStateChanged": VideoSubscribeStateChanged,
             "RtmpStreamingEvent": RtmpStreamingEvent,
             "UserSuperResolutionEnabled": UserSuperResolutionEnabled,
+            "ProxyConnected": ProxyConnected,
+            "ClientRoleChangeFailed": ClientRoleChangeFailed,
+            "FirstRemoteVideoFrame": FirstRemoteVideoFrame,
         ]
     }
 }
@@ -223,27 +229,39 @@ extension RtcChannelEventHandler: AgoraRtcChannelDelegate {
         callback(RtcChannelEvents.ChannelMediaRelayEvent, rtcChannel, event.rawValue)
     }
 
-    func rtcChannel(_ rtcChannel: AgoraRtcChannel, didAudioPublishStateChange oldState: AgoraStreamPublishState, newState: AgoraStreamPublishState, elapseSinceLastState: Int) {
+    public func rtcChannel(_ rtcChannel: AgoraRtcChannel, didAudioPublishStateChange oldState: AgoraStreamPublishState, newState: AgoraStreamPublishState, elapseSinceLastState: Int) {
         callback(RtcChannelEvents.AudioPublishStateChanged, rtcChannel, rtcChannel.getId(), oldState.rawValue, newState.rawValue, elapseSinceLastState)
     }
 
-    func rtcChannel(_ rtcChannel: AgoraRtcChannel, didVideoPublishStateChange oldState: AgoraStreamPublishState, newState: AgoraStreamPublishState, elapseSinceLastState: Int) {
+    public func rtcChannel(_ rtcChannel: AgoraRtcChannel, didVideoPublishStateChange oldState: AgoraStreamPublishState, newState: AgoraStreamPublishState, elapseSinceLastState: Int) {
         callback(RtcChannelEvents.VideoPublishStateChanged, rtcChannel, rtcChannel.getId(), oldState.rawValue, newState.rawValue, elapseSinceLastState)
     }
 
-    func rtcChannel(_ rtcChannel: AgoraRtcChannel, didAudioSubscribeStateChange uid: UInt, oldState: AgoraStreamSubscribeState, newState: AgoraStreamSubscribeState, elapseSinceLastState: Int) {
+    public func rtcChannel(_ rtcChannel: AgoraRtcChannel, didAudioSubscribeStateChange uid: UInt, oldState: AgoraStreamSubscribeState, newState: AgoraStreamSubscribeState, elapseSinceLastState: Int) {
         callback(RtcChannelEvents.AudioSubscribeStateChanged, rtcChannel, rtcChannel.getId(), uid, oldState.rawValue, newState.rawValue, elapseSinceLastState)
     }
 
-    func rtcChannel(_ rtcChannel: AgoraRtcChannel, didVideoSubscribeStateChange uid: UInt, oldState: AgoraStreamSubscribeState, newState: AgoraStreamSubscribeState, elapseSinceLastState: Int) {
+    public func rtcChannel(_ rtcChannel: AgoraRtcChannel, didVideoSubscribeStateChange uid: UInt, oldState: AgoraStreamSubscribeState, newState: AgoraStreamSubscribeState, elapseSinceLastState: Int) {
         callback(RtcChannelEvents.VideoSubscribeStateChanged, rtcChannel, rtcChannel.getId(), uid, oldState.rawValue, newState.rawValue, elapseSinceLastState)
     }
 
-    func rtcChannel(_ rtcChannel: AgoraRtcChannel, rtmpStreamingEventWithUrl url: String, eventCode: AgoraRtmpStreamingEvent) {
+    public func rtcChannel(_ rtcChannel: AgoraRtcChannel, rtmpStreamingEventWithUrl url: String, eventCode: AgoraRtmpStreamingEvent) {
         callback(RtcChannelEvents.RtmpStreamingEvent, rtcChannel, url, eventCode.rawValue)
     }
 
-    func rtcChannel(_ rtcChannel: AgoraRtcChannel, superResolutionEnabledOfUid uid: UInt, enabled: Bool, reason: AgoraSuperResolutionStateReason) {
+    public func rtcChannel(_ rtcChannel: AgoraRtcChannel, superResolutionEnabledOfUid uid: UInt, enabled: Bool, reason: AgoraSuperResolutionStateReason) {
         callback(RtcChannelEvents.UserSuperResolutionEnabled, rtcChannel, uid, enabled, reason.rawValue)
+    }
+
+    func rtcChannel(_ rtcChannel: AgoraRtcChannel, didProxyConnected uid: UInt, proxyType: AgoraProxyType, localProxyIp: String, elapsed: Int) {
+        callback(RtcChannelEvents.ProxyConnected, rtcChannel, rtcChannel.getId(), uid, proxyType.rawValue, localProxyIp, elapsed)
+    }
+
+    func rtcChannel(_ rtcChannel: AgoraRtcChannel, didClientRoleChangeFailed reason: AgoraClientRoleChangeFailedReason, currentRole: AgoraClientRole) {
+        callback(RtcChannelEvents.ClientRoleChangeFailed, rtcChannel, reason.rawValue, currentRole.rawValue)
+    }
+    
+    func rtcChannel(_ rtcChannel: AgoraRtcChannel, firstRemoteVideoFrameOfUid uid: UInt, size: CGSize, elapsed: Int) {
+        callback(RtcChannelEvents.FirstRemoteVideoFrame, rtcChannel, uid, Int(size.width), Int(size.height), elapsed)
     }
 }

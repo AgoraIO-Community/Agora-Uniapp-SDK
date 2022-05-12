@@ -3,6 +3,7 @@ package io.agora.rtc.base
 import android.content.Context
 import io.agora.rtc.*
 import io.agora.rtc.internal.EncryptionConfig
+import io.agora.rtc.mediaio.AgoraDefaultSource
 import io.agora.rtc.models.UserInfo
 
 class IRtcEngine {
@@ -12,7 +13,8 @@ class IRtcEngine {
     RtcAudioRouteInterface, RtcEarMonitoringInterface, RtcDualStreamInterface,
     RtcFallbackInterface, RtcTestInterface, RtcMediaMetadataInterface,
     RtcWatermarkInterface, RtcEncryptionInterface, RtcAudioRecorderInterface,
-    RtcInjectStreamInterface, RtcCameraInterface, RtcStreamMessageInterface {
+    RtcInjectStreamInterface, RtcCameraInterface, RtcStreamMessageInterface,
+    RtcMediaRecorderInterface {
     fun create(params: Map<String, *>, callback: Callback)
 
     fun destroy(callback: Callback)
@@ -64,6 +66,20 @@ class IRtcEngine {
     fun setCloudProxy(params: Map<String, *>, callback: Callback)
 
     fun uploadLogFile(callback: Callback)
+
+    fun setLocalAccessPoint(params: Map<String, *>, callback: Callback)
+
+    fun enableVirtualBackground(params: Map<String, *>, callback: Callback)
+
+    fun takeSnapshot(params: Map<String, *>, callback: Callback)
+
+    fun enableWirelessAccelerate(params: Map<String, *>, callback: Callback)
+
+    fun enableContentInspect(params: Map<String, *>, callback: Callback)
+
+    fun setAgoraLibPath(params: Map<String, *>, callback: Callback)
+
+    fun setAVSyncSource(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcUserInfoInterface {
@@ -134,6 +150,18 @@ class IRtcEngine {
     fun setBeautyEffectOptions(params: Map<String, *>, callback: Callback)
 
     fun enableRemoteSuperResolution(params: Map<String, *>, callback: Callback)
+
+    fun setVideoDenoiserOptions(params: Map<String, *>, callback: Callback)
+
+    fun setLowLightEnhanceOptions(params: Map<String, *>, callback: Callback)
+
+    fun setColorEnhanceOptions(params: Map<String, *>, callback: Callback)
+
+    fun startScreenCapture(params: Map<String, *>, callback: Callback)
+
+    fun stopScreenCapture(callback: Callback)
+
+    fun updateScreenCaptureParameters(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcAudioMixingInterface {
@@ -157,11 +185,21 @@ class IRtcEngine {
 
     fun getAudioMixingDuration(params: Map<String, *>, callback: Callback)
 
+    fun getAudioFileInfo(params: Map<String, *>, callback: Callback)
+
     fun getAudioMixingCurrentPosition(callback: Callback)
 
     fun setAudioMixingPosition(params: Map<String, *>, callback: Callback)
 
     fun setAudioMixingPitch(params: Map<String, *>, callback: Callback)
+
+    fun setAudioMixingPlaybackSpeed(params: Map<String, *>, callback: Callback)
+
+    fun getAudioTrackCount(callback: Callback)
+
+    fun selectAudioTrack(params: Map<String, *>, callback: Callback)
+
+    fun setAudioMixingDualMonoMode(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcAudioEffectInterface {
@@ -220,12 +258,18 @@ class IRtcEngine {
     fun setAudioEffectParameters(params: Map<String, *>, callback: Callback)
 
     fun setVoiceBeautifierParameters(params: Map<String, *>, callback: Callback)
+
+    fun enableLocalVoicePitchCallback(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcVoicePositionInterface {
     fun enableSoundPositionIndication(params: Map<String, *>, callback: Callback)
 
     fun setRemoteVoicePosition(params: Map<String, *>, callback: Callback)
+
+    fun enableSpatialAudio(params: Map<String, *>, callback: Callback)
+
+    fun setRemoteUserSpatialAudioParams(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcPublishStreamInterface {
@@ -234,6 +278,14 @@ class IRtcEngine {
     fun addPublishStreamUrl(params: Map<String, *>, callback: Callback)
 
     fun removePublishStreamUrl(params: Map<String, *>, callback: Callback)
+
+    fun startRtmpStreamWithoutTranscoding(params: Map<String, *>, callback: Callback)
+
+    fun startRtmpStreamWithTranscoding(params: Map<String, *>, callback: Callback)
+
+    fun updateRtmpTranscoding(params: Map<String, *>, callback: Callback)
+
+    fun stopRtmpStream(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcMediaRelayInterface {
@@ -242,6 +294,10 @@ class IRtcEngine {
     fun updateChannelMediaRelay(params: Map<String, *>, callback: Callback)
 
     fun stopChannelMediaRelay(callback: Callback)
+
+    fun pauseAllChannelMediaRelay(callback: Callback)
+
+    fun resumeAllChannelMediaRelay(callback: Callback)
   }
 
   interface RtcAudioRouteInterface {
@@ -361,33 +417,68 @@ class IRtcEngine {
 
     fun sendStreamMessage(params: Map<String, *>, callback: Callback)
   }
+
+  interface RtcMediaRecorderInterface {
+    fun startRecording(params: Map<String, *>, callback: Callback)
+
+    fun stopRecording(callback: Callback)
+  }
 }
 
-class RtcEngineManager(
-  private val emit: (methodName: String, data: Map<String, Any?>?) -> Unit
+open class RtcEngineFactory {
+  open fun create(
+    params: Map<String, *>,
+    rtcEngineEventHandler: RtcEngineEventHandler
+  ): RtcEngine? {
+    val engine = RtcEngineEx.create(mapToRtcEngineConfig(params["config"] as Map<*, *>).apply {
+      mContext = params["context"] as Context
+      mEventHandler = rtcEngineEventHandler
+    })
+
+    return engine
+  }
+}
+
+open class RtcEngineManager(
+  private val emit: (methodName: String, data: Map<String, Any?>?) -> Unit,
+  private val rtcEngineFactory: RtcEngineFactory = RtcEngineFactory()
 ) : IRtcEngine.RtcEngineInterface {
-  var engine: RtcEngine? = null
-    private set
+  companion object {
+    var engine: RtcEngine? = null
+      private set
+  }
+
+  private var eventHandler: RtcEngineEventHandler = RtcEngineEventHandler { methodName, data ->
+    emit(methodName, data)
+  }
   private var mediaObserver: MediaObserver? = null
+  private var mediaRecorder: AgoraMediaRecorder? = null
 
   fun release() {
-    RtcEngine.destroy()
-    engine = null
+    if (mediaRecorder != null) {
+      mediaRecorder?.release()
+      mediaRecorder = null
+    }
+    if (engine != null) {
+      RtcEngine.destroy()
+      engine = null
+    }
     mediaObserver = null
   }
 
   override fun create(params: Map<String, *>, callback: Callback) {
-    engine = RtcEngineEx.create(mapToRtcEngineConfig(params["config"] as Map<*, *>).apply {
-      mContext = params["context"] as Context
-      mEventHandler = RtcEngineEventHandler { methodName, data ->
-        emit(methodName, data)
-      }
-    })
-    callback.code((engine as RtcEngineEx).setAppType((params["appType"] as Number).toInt()))
+    engine = rtcEngineFactory.create(params, eventHandler)
+    callback.code((engine as RtcEngineEx).setAppType((params["appType"] as Number).toInt())) {
+      RtcEngineRegistry.instance.onRtcEngineCreated(engine)
+      it
+    }
   }
 
   override fun destroy(callback: Callback) {
-    callback.resolve(engine) { release() }
+    callback.resolve(engine) {
+      release()
+      RtcEngineRegistry.instance.onRtcEngineDestroyed()
+    }
   }
 
   override fun setChannelProfile(params: Map<String, *>, callback: Callback) {
@@ -517,6 +608,78 @@ class RtcEngineManager(
 
   override fun uploadLogFile(callback: Callback) {
     callback.resolve(engine) { it.uploadLogFile() }
+  }
+
+  override fun setLocalAccessPoint(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.setLocalAccessPoint(mapToLocalAccessPointConfiguration(params["config"] as Map<*, *>))
+    )
+  }
+
+  override fun enableVirtualBackground(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.enableVirtualBackground(
+        params["enabled"] as Boolean,
+        mapToVirtualBackgroundSource(params["backgroundSource"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun takeSnapshot(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.takeSnapshot(
+        params["channel"] as String,
+        (params["uid"] as Number).toNativeUInt(),
+        params["filePath"] as String
+      )
+    )
+  }
+
+  override fun enableWirelessAccelerate(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.enableWirelessAccelerate(params["enabled"] as Boolean))
+  }
+
+  override fun enableContentInspect(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.enableContentInspect(
+        params["enabled"] as Boolean,
+        mapToContentInspectConfig(params["config"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun setAgoraLibPath(params: Map<String, *>, callback: Callback) {
+    callback.success(RtcEngine.setAgoraLibPath(params["path"] as String))
+  }
+
+  override fun setAVSyncSource(params: Map<String, *>, callback: Callback) {
+    callback.success(
+      engine?.setAVSyncSource(
+        params["channelId"] as String,
+        (params["uid"] as Number).toNativeUInt()
+      )
+    )
+  }
+
+  override fun startScreenCapture(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.startScreenCapture(mapToScreenCaptureParameters(params["parameters"] as Map<*, *>)))
+  }
+
+  override fun stopScreenCapture(callback: Callback) {
+    engine?.setVideoSource(AgoraDefaultSource())
+    callback.code(engine?.stopScreenCapture())
+  }
+
+  override fun updateScreenCaptureParameters(params: Map<String, *>, callback: Callback) {
+    val screenCaptureParameters =
+      mapToScreenCaptureParameters(params["parameters"] as Map<*, *>)
+    callback.code(
+      engine?.updateScreenCaptureParameters(
+        screenCaptureParameters.captureVideo,
+        screenCaptureParameters.captureAudio,
+        screenCaptureParameters.videoCaptureParameters
+      )
+    )
   }
 
   override fun registerLocalUserAccount(params: Map<String, *>, callback: Callback) {
@@ -707,7 +870,34 @@ class RtcEngineManager(
     callback.code(
       engine?.enableRemoteSuperResolution(
         (params["uid"] as Number).toNativeUInt(),
-        params["enable"] as Boolean
+        params["enabled"] as Boolean
+      )
+    )
+  }
+
+  override fun setVideoDenoiserOptions(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.setVideoDenoiserOptions(
+        params["enabled"] as Boolean,
+        mapToVideoDenoiserOptions(params["options"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun setLowLightEnhanceOptions(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.setLowlightEnhanceOptions(
+        params["enabled"] as Boolean,
+        mapToLowLightEnhanceOptions(params["options"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun setColorEnhanceOptions(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.setColorEnhanceOptions(
+        params["enabled"] as Boolean,
+        mapToColorEnhanceOptions(params["options"] as Map<*, *>)
       )
     )
   }
@@ -768,11 +958,11 @@ class RtcEngineManager(
   }
 
   override fun getAudioMixingDuration(params: Map<String, *>, callback: Callback) {
-    (params["filePath"] as? String)?.let { file ->
-      callback.code(engine?.getAudioMixingDuration(file)) { it }
-      return@getAudioMixingDuration
-    }
     callback.code(engine?.audioMixingDuration) { it }
+  }
+
+  override fun getAudioFileInfo(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.getAudioFileInfo(params["filePath"] as String))
   }
 
   override fun getAudioMixingCurrentPosition(callback: Callback) {
@@ -785,6 +975,22 @@ class RtcEngineManager(
 
   override fun setAudioMixingPitch(params: Map<String, *>, callback: Callback) {
     callback.code(engine?.setAudioMixingPitch((params["pitch"] as Number).toInt()))
+  }
+
+  override fun setAudioMixingPlaybackSpeed(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.setAudioMixingPlaybackSpeed((params["speed"] as Number).toInt()))
+  }
+
+  override fun getAudioTrackCount(callback: Callback) {
+    callback.code(engine?.audioTrackCount) { it }
+  }
+
+  override fun selectAudioTrack(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.selectAudioTrack((params["index"] as Number).toInt()))
+  }
+
+  override fun setAudioMixingDualMonoMode(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.setAudioMixingDualMonoMode((params["mode"] as Number).toInt()))
   }
 
   override fun getEffectsVolume(callback: Callback) {
@@ -893,6 +1099,19 @@ class RtcEngineManager(
     callback.code(-Constants.ERR_NOT_SUPPORTED)
   }
 
+  override fun enableSpatialAudio(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.enableSpatialAudio(params["enabled"] as Boolean))
+  }
+
+  override fun setRemoteUserSpatialAudioParams(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.setRemoteUserSpatialAudioParams(
+        (params["uid"] as Number).toNativeUInt(),
+        mapToSpatialAudioParams(params["params"] as Map<*, *>)
+      )
+    )
+  }
+
   override fun setLocalVoiceChanger(params: Map<String, *>, callback: Callback) {
     callback.code(engine?.setLocalVoiceChanger((params["voiceChanger"] as Number).toInt()))
   }
@@ -955,6 +1174,10 @@ class RtcEngineManager(
     )
   }
 
+  override fun enableLocalVoicePitchCallback(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.enableLocalVoicePitchCallback((params["interval"] as Number).toInt()))
+  }
+
   override fun enableSoundPositionIndication(params: Map<String, *>, callback: Callback) {
     callback.code(engine?.enableSoundPositionIndication(params["enabled"] as Boolean))
   }
@@ -986,6 +1209,29 @@ class RtcEngineManager(
     callback.code(engine?.removePublishStreamUrl(params["url"] as String))
   }
 
+  override fun startRtmpStreamWithoutTranscoding(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.startRtmpStreamWithoutTranscoding(params["url"] as String))
+  }
+
+  override fun startRtmpStreamWithTranscoding(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.startRtmpStreamWithTranscoding(
+        params["url"] as String,
+        mapToLiveTranscoding(params["transcoding"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun updateRtmpTranscoding(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      engine?.updateRtmpTranscoding(mapToLiveTranscoding(params["transcoding"] as Map<*, *>))
+    )
+  }
+
+  override fun stopRtmpStream(params: Map<String, *>, callback: Callback) {
+    callback.code(engine?.stopRtmpStream(params["url"] as String))
+  }
+
   override fun startChannelMediaRelay(params: Map<String, *>, callback: Callback) {
     callback.code(engine?.startChannelMediaRelay(mapToChannelMediaRelayConfiguration(params["channelMediaRelayConfiguration"] as Map<*, *>)))
   }
@@ -996,6 +1242,14 @@ class RtcEngineManager(
 
   override fun stopChannelMediaRelay(callback: Callback) {
     callback.code(engine?.stopChannelMediaRelay())
+  }
+
+  override fun pauseAllChannelMediaRelay(callback: Callback) {
+    callback.code(engine?.pauseAllChannelMediaRelay())
+  }
+
+  override fun resumeAllChannelMediaRelay(callback: Callback) {
+    callback.code(engine?.resumeAllChannelMediaRelay())
   }
 
   override fun setDefaultAudioRoutetoSpeakerphone(params: Map<String, *>, callback: Callback) {
@@ -1053,7 +1307,15 @@ class RtcEngineManager(
   }
 
   override fun startEchoTest(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.startEchoTest((params["intervalInSeconds"] as Number).toInt()))
+    (params["intervalInSeconds"] as? Number)?.let { intervalInSeconds ->
+      callback.code(engine?.startEchoTest(intervalInSeconds.toInt()))
+      return@startEchoTest
+    }
+    (params["config"] as? Map<*, *>)?.let { config ->
+      callback.code(engine?.startEchoTest(mapToEchoTestConfiguration(config)))
+      return@startEchoTest
+    }
+    callback.code(engine?.startEchoTest())
   }
 
   override fun stopEchoTest(callback: Callback) {
@@ -1232,7 +1494,7 @@ class RtcEngineManager(
   }
 
   override fun enableFaceDetection(params: Map<String, *>, callback: Callback) {
-    callback.code(engine?.enableFaceDetection(params["enable"] as Boolean))
+    callback.code(engine?.enableFaceDetection(params["enabled"] as Boolean))
   }
 
   override fun setCameraTorchOn(params: Map<String, *>, callback: Callback) {
@@ -1267,5 +1529,16 @@ class RtcEngineManager(
         (params["message"] as String).toByteArray()
       )
     )
+  }
+
+  override fun startRecording(params: Map<String, *>, callback: Callback) {
+    if (mediaRecorder == null) {
+      mediaRecorder = AgoraMediaRecorder.getMediaRecorder(engine, eventHandler)
+    }
+    callback.code(mediaRecorder?.startRecording(mapToMediaRecorderConfiguration(params["config"] as Map<*, *>)))
+  }
+
+  override fun stopRecording(callback: Callback) {
+    callback.code(mediaRecorder?.stopRecording())
   }
 }

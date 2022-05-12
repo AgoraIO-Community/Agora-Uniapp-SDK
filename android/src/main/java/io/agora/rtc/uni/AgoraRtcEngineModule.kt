@@ -13,7 +13,7 @@ class AgoraRtcEngineModule : UniModule() {
             private set
     }
 
-    private val manager = RtcEngineManager { methodName, data -> emit(methodName, data) }
+    private val manager = RtcEngineManager(emit = { methodName, data -> emit(methodName, data) })
 
     init {
         AgoraRtcEngineModule.manager = manager

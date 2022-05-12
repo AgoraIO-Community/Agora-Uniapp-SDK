@@ -43,6 +43,9 @@ class RtcChannelEvents {
     const val VideoSubscribeStateChanged = "VideoSubscribeStateChanged"
     const val RtmpStreamingEvent = "RtmpStreamingEvent"
     const val UserSuperResolutionEnabled = "UserSuperResolutionEnabled"
+    const val ProxyConnected = "ProxyConnected"
+    const val ClientRoleChangeFailed = "ClientRoleChangeFailed"
+    const val FirstRemoteVideoFrame = "FirstRemoteVideoFrame"
 
     fun toMap(): Map<String, String> {
       return hashMapOf(
@@ -81,7 +84,10 @@ class RtcChannelEvents {
         "AudioSubscribeStateChanged" to AudioSubscribeStateChanged,
         "VideoSubscribeStateChanged" to VideoSubscribeStateChanged,
         "RtmpStreamingEvent" to RtmpStreamingEvent,
-        "UserSuperResolutionEnabled" to UserSuperResolutionEnabled
+        "UserSuperResolutionEnabled" to UserSuperResolutionEnabled,
+        "ProxyConnected" to ProxyConnected,
+        "ClientRoleChangeFailed" to ClientRoleChangeFailed,
+        "FirstRemoteVideoFrame" to FirstRemoteVideoFrame
       )
     }
   }
@@ -438,6 +444,45 @@ class RtcChannelEventHandler(
       uid.toUInt().toLong(),
       enabled,
       reason
+    )
+  }
+
+  override fun onProxyConnected(
+    rtcChannel: RtcChannel?,
+    uid: Int,
+    proxyType: Int,
+    localProxyIp: String?,
+    elapsed: Int
+  ) {
+    callback(
+      RtcChannelEvents.ProxyConnected,
+      rtcChannel,
+      rtcChannel?.channelId(),
+      uid.toUInt().toLong(),
+      proxyType,
+      localProxyIp,
+      elapsed
+    )
+  }
+
+  override fun onClientRoleChangeFailed(rtcChannel: RtcChannel?, reason: Int, currentRole: Int) {
+    callback(RtcChannelEvents.ClientRoleChangeFailed, rtcChannel, reason, currentRole)
+  }
+
+  override fun onFirstRemoteVideoFrame(
+    rtcChannel: RtcChannel?,
+    uid: Int,
+    width: Int,
+    height: Int,
+    elapsed: Int
+  ) {
+    callback(
+      RtcChannelEvents.FirstRemoteVideoFrame,
+      rtcChannel,
+      uid.toUInt().toLong(),
+      width,
+      height,
+      elapsed
     )
   }
 }

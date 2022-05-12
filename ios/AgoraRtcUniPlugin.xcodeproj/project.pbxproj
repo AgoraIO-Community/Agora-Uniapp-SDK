@@ -25,6 +25,9 @@
 		F53F026C25879ACA0085D67B /* AgoraRtcChannelModule.m in Sources */ = {isa = PBXBuildFile; fileRef = F53F026A25879ACA0085D67B /* AgoraRtcChannelModule.m */; };
 		F53F026E25879B140085D67B /* AgoraRtcChannelModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53F026D25879B140085D67B /* AgoraRtcChannelModule.swift */; };
 		F53F02702587B2B80085D67B /* AgoraRtcSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53F026F2587B2B70085D67B /* AgoraRtcSurfaceView.swift */; };
+		F5A40D45282D62F000052DB8 /* RtcEnginePlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A40D42282D62F000052DB8 /* RtcEnginePlugin.h */; };
+		F5A40D46282D62F000052DB8 /* RtcEnginePluginRegistrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A40D43282D62F000052DB8 /* RtcEnginePluginRegistrant.swift */; };
+		F5A40D47282D62F000052DB8 /* RtcEngineRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A40D44282D62F000052DB8 /* RtcEngineRegistry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +52,9 @@
 		F53F026A25879ACA0085D67B /* AgoraRtcChannelModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AgoraRtcChannelModule.m; sourceTree = "<group>"; };
 		F53F026D25879B140085D67B /* AgoraRtcChannelModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraRtcChannelModule.swift; sourceTree = "<group>"; };
 		F53F026F2587B2B70085D67B /* AgoraRtcSurfaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgoraRtcSurfaceView.swift; sourceTree = "<group>"; };
+		F5A40D42282D62F000052DB8 /* RtcEnginePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtcEnginePlugin.h; sourceTree = "<group>"; };
+		F5A40D43282D62F000052DB8 /* RtcEnginePluginRegistrant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtcEnginePluginRegistrant.swift; sourceTree = "<group>"; };
+		F5A40D44282D62F000052DB8 /* RtcEngineRegistry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RtcEngineRegistry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +97,9 @@
 		F53F01CB258718670085D67B /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				F5A40D42282D62F000052DB8 /* RtcEnginePlugin.h */,
+				F5A40D43282D62F000052DB8 /* RtcEnginePluginRegistrant.swift */,
+				F5A40D44282D62F000052DB8 /* RtcEngineRegistry.swift */,
 				F53F026325878A5C0085D67B /* AgoraRtcEngineKit.h */,
 				F53F01CC258718670085D67B /* RtcEngineEvent.swift */,
 				F53F01CD258718670085D67B /* RtcSurfaceView.swift */,
@@ -129,6 +138,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F53F026425878A5C0085D67B /* AgoraRtcEngineKit.h in Headers */,
+				F5A40D45282D62F000052DB8 /* RtcEnginePlugin.h in Headers */,
 				F53F026B25879ACA0085D67B /* AgoraRtcChannelModule.h in Headers */,
 				F53F024F2587398E0085D67B /* AgoraRtcEngineModule.h in Headers */,
 			);
@@ -204,6 +214,7 @@
 			files = (
 				F53F01D8258718670085D67B /* MediaObserver.swift in Sources */,
 				F53F01D7258718670085D67B /* RtcSurfaceView.swift in Sources */,
+				F5A40D47282D62F000052DB8 /* RtcEngineRegistry.swift in Sources */,
 				F53F026C25879ACA0085D67B /* AgoraRtcChannelModule.m in Sources */,
 				F53F01D6258718670085D67B /* RtcEngineEvent.swift in Sources */,
 				F53F01D9258718670085D67B /* Extensions.swift in Sources */,
@@ -213,6 +224,7 @@
 				F53F025325873B190085D67B /* AgoraRtcEngineModule.swift in Sources */,
 				F53F01DF258718670085D67B /* RtcChannelEvent.swift in Sources */,
 				F53F02702587B2B80085D67B /* AgoraRtcSurfaceView.swift in Sources */,
+				F5A40D46282D62F000052DB8 /* RtcEnginePluginRegistrant.swift in Sources */,
 				F53F0255258741C70085D67B /* UniCallback.swift in Sources */,
 				F53F01DE258718670085D67B /* Callback.swift in Sources */,
 				F53F026E25879B140085D67B /* AgoraRtcChannelModule.swift in Sources */,

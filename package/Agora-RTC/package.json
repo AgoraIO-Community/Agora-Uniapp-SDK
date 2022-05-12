@@ -1,7 +1,7 @@
 {
   "name": "Agora音视频插件",
   "id": "Agora-RTC",
-  "version": "3.4.6",
+  "version": "3.7.0",
   "description": "Agora官方维护的音视频插件，并且在GitHub上开源，欢迎大家积极参与问题反馈和代码贡献",
   "_dp_type": "nativeplugin",
   "_dp_nativeplugin": {
@@ -30,7 +30,8 @@
       ],
       "integrateType": "aar",
       "dependencies": [
-        "com.github.agorabuilder:native-full-sdk:3.4.6",
+        "io.agora.rtc:full-sdk:3.7.0",
+        "io.agora.rtc:full-screen-sharing:3.7.0",
         "org.jetbrains.kotlin:kotlin-stdlib:1.3.50"
       ],
       "compileOptions": {
@@ -40,7 +41,8 @@
       "abis": [
         "armeabi-v7a",
         "arm64-v8a",
-        "x86"
+        "x86",
+        "x86_64"
       ],
       "minSdkVersion": "19"
     },
