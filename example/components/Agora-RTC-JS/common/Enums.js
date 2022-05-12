@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.VoiceConversionPreset = exports.ExperiencePoorReason = exports.ExperienceQualityType = exports.CloudProxyType = exports.UploadErrorReason = exports.SuperResolutionStateReason = exports.CaptureBrightnessLevelType = exports.LogLevel = exports.AudienceLatencyLevelType = exports.VoiceBeautifierPreset = exports.AudioEffectPreset = exports.AudioSessionOperationRestriction = exports.RtmpStreamingEvent = exports.StreamSubscribeState = exports.StreamPublishState = exports.VideoCodecType = exports.AudioChannel = exports.WarningCode = exports.VideoStreamType = exports.VideoRenderMode = exports.VideoRemoteStateReason = exports.VideoRemoteState = exports.VideoQualityAdaptIndication = exports.VideoOutputOrientationMode = exports.VideoMirrorMode = exports.BitRate = exports.VideoFrameRate = exports.VideoCodecProfileType = exports.UserPriority = exports.UserOfflineReason = exports.StreamFallbackOptions = exports.RtmpStreamingState = exports.RtmpStreamingErrorCode = exports.NetworkType = exports.NetworkQuality = exports.LogFilter = exports.LocalVideoStreamState = exports.LocalVideoStreamError = exports.LighteningContrastLevel = exports.LastmileProbeResultState = exports.InjectStreamStatus = exports.ErrorCode = exports.EncryptionMode = exports.DegradationPreference = exports.ConnectionStateType = exports.ConnectionChangedReason = exports.ClientRole = exports.ChannelProfile = exports.ChannelMediaRelayState = exports.ChannelMediaRelayEvent = exports.ChannelMediaRelayError = exports.CameraDirection = exports.CameraCaptureOutputPreference = exports.AudioVoiceChanger = exports.AudioScenario = exports.AudioSampleRateType = exports.AudioReverbType = exports.AudioReverbPreset = exports.AudioRemoteStateReason = exports.AudioRemoteState = exports.AudioRecordingPosition = exports.AudioRecordingQuality = exports.AudioProfile = exports.AudioOutputRouting = exports.AudioMixingStateCode = exports.AudioMixingReason = exports.AudioLocalState = exports.AudioLocalError = exports.AudioEqualizationBandFrequency = exports.AudioCodecProfileType = exports.AreaCode = void 0;
+exports.VideoContentHint = exports.ClientRoleChangeFailedReason = exports.WlAccAction = exports.WlAccReason = exports.ContentInspectResult = exports.ProxyType = exports.VideoCodecTypeForStream = exports.VirtualBackgroundBlurDegree = exports.AudioMixingDualMonoMode = exports.AudioFileInfoError = exports.VirtualBackgroundSourceStateReason = exports.VirtualBackgroundSourceType = exports.VoiceConversionPreset = exports.ExperiencePoorReason = exports.ExperienceQualityType = exports.CloudProxyType = exports.UploadErrorReason = exports.SuperResolutionStateReason = exports.CaptureBrightnessLevelType = exports.LogLevel = exports.AudienceLatencyLevelType = exports.VoiceBeautifierPreset = exports.AudioEffectPreset = exports.AudioSessionOperationRestriction = exports.RtmpStreamingEvent = exports.StreamSubscribeState = exports.StreamPublishState = exports.VideoCodecType = exports.AudioChannel = exports.WarningCode = exports.VideoStreamType = exports.VideoRenderMode = exports.VideoRemoteStateReason = exports.VideoRemoteState = exports.VideoQualityAdaptIndication = exports.VideoOutputOrientationMode = exports.VideoMirrorMode = exports.BitRate = exports.VideoFrameRate = exports.VideoCodecProfileType = exports.UserPriority = exports.UserOfflineReason = exports.StreamFallbackOptions = exports.RtmpStreamingState = exports.RtmpStreamingErrorCode = exports.NetworkType = exports.NetworkQuality = exports.LogFilter = exports.LocalVideoStreamState = exports.LocalVideoStreamError = exports.LighteningContrastLevel = exports.LastmileProbeResultState = exports.InjectStreamStatus = exports.ErrorCode = exports.EncryptionMode = exports.DegradationPreference = exports.ConnectionStateType = exports.ConnectionChangedReason = exports.ClientRole = exports.ChannelProfile = exports.ChannelMediaRelayState = exports.ChannelMediaRelayEvent = exports.ChannelMediaRelayError = exports.CameraDirection = exports.CameraCaptureOutputPreference = exports.AudioVoiceChanger = exports.AudioScenario = exports.AudioSampleRateType = exports.AudioReverbType = exports.AudioReverbPreset = exports.AudioRemoteStateReason = exports.AudioRemoteState = exports.AudioRecordingPosition = exports.AudioRecordingQuality = exports.AudioProfile = exports.AudioOutputRouting = exports.AudioMixingStateCode = exports.AudioMixingReason = exports.AudioLocalState = exports.AudioLocalError = exports.AudioEqualizationBandFrequency = exports.AudioCodecProfileType = exports.AreaCode = void 0;
 
 /**
  * Regions for connection.
@@ -35,6 +35,7 @@ exports.AudioCodecProfileType = AudioCodecProfileType;
 (function (AudioCodecProfileType) {
   AudioCodecProfileType[AudioCodecProfileType["LCAAC"] = 0] = "LCAAC";
   AudioCodecProfileType[AudioCodecProfileType["HEAAC"] = 1] = "HEAAC";
+  AudioCodecProfileType[AudioCodecProfileType["HE_AAC_V2"] = 2] = "HE_AAC_V2";
 })(AudioCodecProfileType || (exports.AudioCodecProfileType = AudioCodecProfileType = {}));
 
 let AudioEqualizationBandFrequency;
@@ -139,6 +140,7 @@ exports.AudioOutputRouting = AudioOutputRouting;
   AudioOutputRouting[AudioOutputRouting["Speakerphone"] = 3] = "Speakerphone";
   AudioOutputRouting[AudioOutputRouting["Loudspeaker"] = 4] = "Loudspeaker";
   AudioOutputRouting[AudioOutputRouting["HeadsetBluetooth"] = 5] = "HeadsetBluetooth";
+  AudioOutputRouting[AudioOutputRouting["AirPlay"] = 9] = "AirPlay";
 })(AudioOutputRouting || (exports.AudioOutputRouting = AudioOutputRouting = {}));
 
 let AudioProfile;
@@ -168,6 +170,7 @@ exports.AudioRecordingQuality = AudioRecordingQuality;
   AudioRecordingQuality[AudioRecordingQuality["Low"] = 0] = "Low";
   AudioRecordingQuality[AudioRecordingQuality["Medium"] = 1] = "Medium";
   AudioRecordingQuality[AudioRecordingQuality["High"] = 2] = "High";
+  AudioRecordingQuality[AudioRecordingQuality["UltraHigh"] = 3] = "UltraHigh";
 })(AudioRecordingQuality || (exports.AudioRecordingQuality = AudioRecordingQuality = {}));
 
 let AudioRecordingPosition;
@@ -386,6 +389,10 @@ exports.ChannelMediaRelayEvent = ChannelMediaRelayEvent;
   ChannelMediaRelayEvent[ChannelMediaRelayEvent["UpdateDestinationChannelNotChange"] = 9] = "UpdateDestinationChannelNotChange";
   ChannelMediaRelayEvent[ChannelMediaRelayEvent["UpdateDestinationChannelIsNil"] = 10] = "UpdateDestinationChannelIsNil";
   ChannelMediaRelayEvent[ChannelMediaRelayEvent["VideoProfileUpdate"] = 11] = "VideoProfileUpdate";
+  ChannelMediaRelayEvent[ChannelMediaRelayEvent["PauseSendPacketToDestChannelSuccess"] = 12] = "PauseSendPacketToDestChannelSuccess";
+  ChannelMediaRelayEvent[ChannelMediaRelayEvent["PauseSendPacketToDestChannelFailed"] = 13] = "PauseSendPacketToDestChannelFailed";
+  ChannelMediaRelayEvent[ChannelMediaRelayEvent["ResumeSendPacketToDestChannelSuccess"] = 14] = "ResumeSendPacketToDestChannelSuccess";
+  ChannelMediaRelayEvent[ChannelMediaRelayEvent["ResumeSendPacketToDestChannelFailed"] = 15] = "ResumeSendPacketToDestChannelFailed";
 })(ChannelMediaRelayEvent || (exports.ChannelMediaRelayEvent = ChannelMediaRelayEvent = {}));
 
 let ChannelMediaRelayState;
@@ -451,6 +458,8 @@ exports.ConnectionChangedReason = ConnectionChangedReason;
   ConnectionChangedReason[ConnectionChangedReason["ClientIpAddressChanged"] = 13] = "ClientIpAddressChanged";
   ConnectionChangedReason[ConnectionChangedReason["KeepAliveTimeout"] = 14] = "KeepAliveTimeout";
   ConnectionChangedReason[ConnectionChangedReason["ProxyServerInterrupted"] = 15] = "ProxyServerInterrupted";
+  ConnectionChangedReason[ConnectionChangedReason["SameUidLogin"] = 19] = "SameUidLogin";
+  ConnectionChangedReason[ConnectionChangedReason["TooManyBroadcasters"] = 20] = "TooManyBroadcasters";
 })(ConnectionChangedReason || (exports.ConnectionChangedReason = ConnectionChangedReason = {}));
 
 let ConnectionStateType;
@@ -471,6 +480,9 @@ exports.ConnectionStateType = ConnectionStateType;
 let DegradationPreference;
 /**
  * Encryption mode.
+ *
+ * Agora recommends using either the `AES128GCM2` or `AES256GCM2` encryption mode,
+ * both of which support adding a salt and are more secure.
  */
 
 exports.DegradationPreference = DegradationPreference;
@@ -587,6 +599,7 @@ exports.ErrorCode = ErrorCode;
   ErrorCode[ErrorCode["VcmEncoderInitError"] = 1601] = "VcmEncoderInitError";
   ErrorCode[ErrorCode["VcmEncoderEncodeError"] = 1602] = "VcmEncoderEncodeError";
   ErrorCode[ErrorCode["VcmEncoderSetError"] = 1603] = "VcmEncoderSetError";
+  ErrorCode[ErrorCode["AudioBtNoRoute"] = 1800] = "AudioBtNoRoute";
 })(ErrorCode || (exports.ErrorCode = ErrorCode = {}));
 
 let InjectStreamStatus;
@@ -653,6 +666,10 @@ exports.LocalVideoStreamError = LocalVideoStreamError;
   LocalVideoStreamError[LocalVideoStreamError["CaptureInBackground"] = 6] = "CaptureInBackground";
   LocalVideoStreamError[LocalVideoStreamError["CaptureMultipleForegroundApps"] = 7] = "CaptureMultipleForegroundApps";
   LocalVideoStreamError[LocalVideoStreamError["DeviceNotFound"] = 8] = "DeviceNotFound";
+  LocalVideoStreamError[LocalVideoStreamError["ExtensionCaptureStarted"] = 13] = "ExtensionCaptureStarted";
+  LocalVideoStreamError[LocalVideoStreamError["ExtensionCaptureStoped"] = 14] = "ExtensionCaptureStoped";
+  LocalVideoStreamError[LocalVideoStreamError["ExtensionCaptureDisconnected"] = 15] = "ExtensionCaptureDisconnected";
+  LocalVideoStreamError[LocalVideoStreamError["ScreenCapturePermissionDenied"] = 16] = "ScreenCapturePermissionDenied";
 })(LocalVideoStreamError || (exports.LocalVideoStreamError = LocalVideoStreamError = {}));
 
 let LocalVideoStreamState;
@@ -719,6 +736,7 @@ exports.NetworkType = NetworkType;
   NetworkType[NetworkType["Mobile2G"] = 3] = "Mobile2G";
   NetworkType[NetworkType["Mobile3G"] = 4] = "Mobile3G";
   NetworkType[NetworkType["Mobile4G"] = 5] = "Mobile4G";
+  NetworkType[NetworkType["Mobile5G"] = 6] = "Mobile5G";
 })(NetworkType || (exports.NetworkType = NetworkType = {}));
 
 let RtmpStreamingErrorCode;
@@ -740,6 +758,10 @@ exports.RtmpStreamingErrorCode = RtmpStreamingErrorCode;
   RtmpStreamingErrorCode[RtmpStreamingErrorCode["NotAuthorized"] = 8] = "NotAuthorized";
   RtmpStreamingErrorCode[RtmpStreamingErrorCode["StreamNotFound"] = 9] = "StreamNotFound";
   RtmpStreamingErrorCode[RtmpStreamingErrorCode["FormatNotSupported"] = 10] = "FormatNotSupported";
+  RtmpStreamingErrorCode[RtmpStreamingErrorCode["NotBroadcaster"] = 11] = "NotBroadcaster";
+  RtmpStreamingErrorCode[RtmpStreamingErrorCode["TranscodingNoMixStream"] = 13] = "TranscodingNoMixStream";
+  RtmpStreamingErrorCode[RtmpStreamingErrorCode["NetDown"] = 14] = "NetDown";
+  RtmpStreamingErrorCode[RtmpStreamingErrorCode["InvalidAppid"] = 15] = "InvalidAppid";
   RtmpStreamingErrorCode[RtmpStreamingErrorCode["UnPublishOK"] = 100] = "UnPublishOK";
 })(RtmpStreamingErrorCode || (exports.RtmpStreamingErrorCode = RtmpStreamingErrorCode = {}));
 
@@ -756,6 +778,7 @@ exports.RtmpStreamingState = RtmpStreamingState;
   RtmpStreamingState[RtmpStreamingState["Running"] = 2] = "Running";
   RtmpStreamingState[RtmpStreamingState["Recovering"] = 3] = "Recovering";
   RtmpStreamingState[RtmpStreamingState["Failure"] = 4] = "Failure";
+  RtmpStreamingState[RtmpStreamingState["Disconnecting"] = 5] = "Disconnecting";
 })(RtmpStreamingState || (exports.RtmpStreamingState = RtmpStreamingState = {}));
 
 let StreamFallbackOptions;
@@ -1220,6 +1243,8 @@ exports.RtmpStreamingEvent = RtmpStreamingEvent;
 (function (RtmpStreamingEvent) {
   RtmpStreamingEvent[RtmpStreamingEvent["FailedLoadImage"] = 1] = "FailedLoadImage";
   RtmpStreamingEvent[RtmpStreamingEvent["UrlAlreadyInUse"] = 2] = "UrlAlreadyInUse";
+  RtmpStreamingEvent[RtmpStreamingEvent["AdvancedFeatureNotSupport"] = 3] = "AdvancedFeatureNotSupport";
+  RtmpStreamingEvent[RtmpStreamingEvent["RequestTooOften"] = 4] = "RequestTooOften";
 })(RtmpStreamingEvent || (exports.RtmpStreamingEvent = RtmpStreamingEvent = {}));
 
 let AudioSessionOperationRestriction;
@@ -1326,6 +1351,7 @@ exports.LogLevel = LogLevel;
 
 let CaptureBrightnessLevelType;
 /**
+ * @ignore
  * The reason why the super-resolution algorithm is not successfully enabled.
  */
 
@@ -1340,6 +1366,8 @@ exports.CaptureBrightnessLevelType = CaptureBrightnessLevelType;
 
 let SuperResolutionStateReason;
 /**
+ * @ignore
+ *
  * The reason for the upload failure.
  *
  * @since v3.3.1.
@@ -1358,7 +1386,7 @@ let UploadErrorReason;
 /**
  * The cloud proxy type.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 
 exports.UploadErrorReason = UploadErrorReason;
@@ -1373,7 +1401,7 @@ let CloudProxyType;
 /**
  * Quality of experience (QoE) of the local user when receiving a remote audio stream.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 
 exports.CloudProxyType = CloudProxyType;
@@ -1388,7 +1416,7 @@ let ExperienceQualityType;
 /**
  * The reason for poor QoE of the local user when receiving a remote audio stream.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 
 exports.ExperienceQualityType = ExperienceQualityType;
@@ -1402,7 +1430,7 @@ let ExperiencePoorReason;
 /**
  * The options for SDK preset voice conversion effects.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 
 exports.ExperiencePoorReason = ExperiencePoorReason;
@@ -1416,6 +1444,10 @@ exports.ExperiencePoorReason = ExperiencePoorReason;
 })(ExperiencePoorReason || (exports.ExperiencePoorReason = ExperiencePoorReason = {}));
 
 let VoiceConversionPreset;
+/**
+ * The type of the custom background image.
+ */
+
 exports.VoiceConversionPreset = VoiceConversionPreset;
 
 (function (VoiceConversionPreset) {
@@ -1425,4 +1457,166 @@ exports.VoiceConversionPreset = VoiceConversionPreset;
   VoiceConversionPreset[VoiceConversionPreset["Solid"] = 50397952] = "Solid";
   VoiceConversionPreset[VoiceConversionPreset["Bass"] = 50397952] = "Bass";
 })(VoiceConversionPreset || (exports.VoiceConversionPreset = VoiceConversionPreset = {}));
+
+let VirtualBackgroundSourceType;
+/**
+ * The reason why the virtual background is not successfully enabled or the message that confirms success.
+ */
+
+exports.VirtualBackgroundSourceType = VirtualBackgroundSourceType;
+
+(function (VirtualBackgroundSourceType) {
+  VirtualBackgroundSourceType[VirtualBackgroundSourceType["Color"] = 1] = "Color";
+  VirtualBackgroundSourceType[VirtualBackgroundSourceType["Img"] = 2] = "Img";
+  VirtualBackgroundSourceType[VirtualBackgroundSourceType["Blur"] = 3] = "Blur";
+})(VirtualBackgroundSourceType || (exports.VirtualBackgroundSourceType = VirtualBackgroundSourceType = {}));
+
+let VirtualBackgroundSourceStateReason;
+/**
+ * The information acquisition state, which is reported
+ * in [`RequestAudioFileInfo`]{@link RequestAudioFileInfo}.
+ *
+ * @since v3.5.2
+ */
+
+exports.VirtualBackgroundSourceStateReason = VirtualBackgroundSourceStateReason;
+
+(function (VirtualBackgroundSourceStateReason) {
+  VirtualBackgroundSourceStateReason[VirtualBackgroundSourceStateReason["Success"] = 0] = "Success";
+  VirtualBackgroundSourceStateReason[VirtualBackgroundSourceStateReason["ImageNotExist"] = 1] = "ImageNotExist";
+  VirtualBackgroundSourceStateReason[VirtualBackgroundSourceStateReason["ColorFormatNotSupported"] = 2] = "ColorFormatNotSupported";
+  VirtualBackgroundSourceStateReason[VirtualBackgroundSourceStateReason["DeviceNotSupported"] = 3] = "DeviceNotSupported";
+})(VirtualBackgroundSourceStateReason || (exports.VirtualBackgroundSourceStateReason = VirtualBackgroundSourceStateReason = {}));
+
+let AudioFileInfoError;
+/**
+ * The channel mode, which is set in [`setAudioMixingDualMonoMode`]{@link setAudioMixingDualMonoMode}.
+ *
+ * @since v3.5.2
+ */
+
+exports.AudioFileInfoError = AudioFileInfoError;
+
+(function (AudioFileInfoError) {
+  AudioFileInfoError[AudioFileInfoError["Ok"] = 0] = "Ok";
+  AudioFileInfoError[AudioFileInfoError["Failure"] = 1] = "Failure";
+})(AudioFileInfoError || (exports.AudioFileInfoError = AudioFileInfoError = {}));
+
+let AudioMixingDualMonoMode;
+/**
+ * The degree of blurring applied to the custom background image. See
+ *
+ * @since v3.5.2
+ */
+
+exports.AudioMixingDualMonoMode = AudioMixingDualMonoMode;
+
+(function (AudioMixingDualMonoMode) {
+  AudioMixingDualMonoMode[AudioMixingDualMonoMode["AUTO"] = 0] = "AUTO";
+  AudioMixingDualMonoMode[AudioMixingDualMonoMode["L"] = 1] = "L";
+  AudioMixingDualMonoMode[AudioMixingDualMonoMode["R"] = 2] = "R";
+  AudioMixingDualMonoMode[AudioMixingDualMonoMode["MIX"] = 3] = "MIX";
+})(AudioMixingDualMonoMode || (exports.AudioMixingDualMonoMode = AudioMixingDualMonoMode = {}));
+
+let VirtualBackgroundBlurDegree;
+/** The video codec type of the output video stream.
+
+ @since v3.2.0
+ */
+
+exports.VirtualBackgroundBlurDegree = VirtualBackgroundBlurDegree;
+
+(function (VirtualBackgroundBlurDegree) {
+  VirtualBackgroundBlurDegree[VirtualBackgroundBlurDegree["Low"] = 1] = "Low";
+  VirtualBackgroundBlurDegree[VirtualBackgroundBlurDegree["Medium"] = 2] = "Medium";
+  VirtualBackgroundBlurDegree[VirtualBackgroundBlurDegree["High"] = 3] = "High";
+})(VirtualBackgroundBlurDegree || (exports.VirtualBackgroundBlurDegree = VirtualBackgroundBlurDegree = {}));
+
+let VideoCodecTypeForStream;
+/** The proxy type.
+ *
+ * @since v3.6.2
+ */
+
+exports.VideoCodecTypeForStream = VideoCodecTypeForStream;
+
+(function (VideoCodecTypeForStream) {
+  VideoCodecTypeForStream[VideoCodecTypeForStream["H264"] = 1] = "H264";
+  VideoCodecTypeForStream[VideoCodecTypeForStream["H265"] = 2] = "H265";
+})(VideoCodecTypeForStream || (exports.VideoCodecTypeForStream = VideoCodecTypeForStream = {}));
+
+let ProxyType;
+/** API for future use.
+ * @ignore
+ */
+
+exports.ProxyType = ProxyType;
+
+(function (ProxyType) {
+  ProxyType[ProxyType["None"] = 0] = "None";
+  ProxyType[ProxyType["Udp"] = 1] = "Udp";
+  ProxyType[ProxyType["Tcp"] = 2] = "Tcp";
+  ProxyType[ProxyType["Local"] = 3] = "Local";
+  ProxyType[ProxyType["TcpAutoFallback"] = 4] = "TcpAutoFallback";
+})(ProxyType || (exports.ProxyType = ProxyType = {}));
+
+let ContentInspectResult;
+/** API for future use.
+ * @ignore
+ */
+
+exports.ContentInspectResult = ContentInspectResult;
+
+(function (ContentInspectResult) {
+  ContentInspectResult[ContentInspectResult["Neutral"] = 1] = "Neutral";
+  ContentInspectResult[ContentInspectResult["Sexy"] = 2] = "Sexy";
+  ContentInspectResult[ContentInspectResult["Porn"] = 3] = "Porn";
+})(ContentInspectResult || (exports.ContentInspectResult = ContentInspectResult = {}));
+
+let WlAccReason;
+/** API for future use.
+ * @ignore
+ */
+
+exports.WlAccReason = WlAccReason;
+
+(function (WlAccReason) {
+  WlAccReason[WlAccReason["WeakSignal"] = 0] = "WeakSignal";
+  WlAccReason[WlAccReason["ChannelCongestion"] = 1] = "ChannelCongestion";
+})(WlAccReason || (exports.WlAccReason = WlAccReason = {}));
+
+let WlAccAction;
+/**
+ * @ignore
+ *
+ * For future use
+ */
+
+exports.WlAccAction = WlAccAction;
+
+(function (WlAccAction) {
+  WlAccAction[WlAccAction["CloseToWIFI"] = 0] = "CloseToWIFI";
+  WlAccAction[WlAccAction["ConnectSSID"] = 1] = "ConnectSSID";
+  WlAccAction[WlAccAction["Check5G"] = 2] = "Check5G";
+  WlAccAction[WlAccAction["ModifySSID"] = 3] = "ModifySSID";
+})(WlAccAction || (exports.WlAccAction = WlAccAction = {}));
+
+let ClientRoleChangeFailedReason;
+exports.ClientRoleChangeFailedReason = ClientRoleChangeFailedReason;
+
+(function (ClientRoleChangeFailedReason) {
+  ClientRoleChangeFailedReason[ClientRoleChangeFailedReason["TooManyBroadcasters"] = 1] = "TooManyBroadcasters";
+  ClientRoleChangeFailedReason[ClientRoleChangeFailedReason["NotAuthorized"] = 2] = "NotAuthorized";
+  ClientRoleChangeFailedReason[ClientRoleChangeFailedReason["RequestTimeOut"] = 3] = "RequestTimeOut";
+  ClientRoleChangeFailedReason[ClientRoleChangeFailedReason["ConnectionFailed"] = 4] = "ConnectionFailed";
+})(ClientRoleChangeFailedReason || (exports.ClientRoleChangeFailedReason = ClientRoleChangeFailedReason = {}));
+
+let VideoContentHint;
+exports.VideoContentHint = VideoContentHint;
+
+(function (VideoContentHint) {
+  VideoContentHint[VideoContentHint["None"] = 0] = "None";
+  VideoContentHint[VideoContentHint["Motion"] = 1] = "Motion";
+  VideoContentHint[VideoContentHint["Details"] = 2] = "Details";
+})(VideoContentHint || (exports.VideoContentHint = VideoContentHint = {}));
 //# sourceMappingURL=Enums.js.map
