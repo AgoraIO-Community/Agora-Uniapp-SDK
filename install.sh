@@ -5,11 +5,12 @@ libs="ios/libs"
 mkdir -p $temp
 
 version=$(grep "version" package.json | grep -o '\d.\d.\d' | sed 's/\./_/g')
+url="$1"
 echo $zipName "$version"
 
 if [ ! -f $temp/$zipName"$version".zip ]; then
   echo "the zip file not exists, start downloading..."
-  curl -o $temp/$zipName"$version".zip "https://download.agora.io/sdk/release/Agora_Native_SDK_for_iOS_v${version}_FULL.zip"
+  curl -o $temp/$zipName"$version".zip "${url:=https://download.agora.io/sdk/release/Agora_Native_SDK_for_iOS_v${version}_FULL.zip}"
 fi
 
 echo "start unzip SDK..."
