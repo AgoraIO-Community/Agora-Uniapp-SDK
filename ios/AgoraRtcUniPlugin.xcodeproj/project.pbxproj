@@ -388,6 +388,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
+				OTHER_CFLAGS = "-fno-objc-msgsend-selector-stubs";
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.AgoraRtcUniPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -427,6 +428,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACH_O_TYPE = staticlib;
+				OTHER_CFLAGS = "-fno-objc-msgsend-selector-stubs";
 				PRODUCT_BUNDLE_IDENTIFIER = io.agora.AgoraRtcUniPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
