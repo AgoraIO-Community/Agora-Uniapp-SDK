@@ -133,7 +133,7 @@ Pod::Spec.new do |spec|
   spec.static_framework = true
   spec.module_map = false
 
-  spec.xcconfig = { "HEADER_SEARCH_PATHS" => "\"$(SRCROOT)/../../SDK/inc\"/**", "SWIFT_OBJC_BRIDGING_HEADER" => "${PODS_TARGET_SRCROOT}/AgoraRtcUniPlugin/Uni/AgoraRtcUniPlugin-bridging-header.h", 'PRODUCT_BUNDLE_IDENTIFIER': 'io.agora.AgoraRtcUniPlugin' }
+  spec.xcconfig = { "HEADER_SEARCH_PATHS" => "\"$(SRCROOT)/../../SDK/inc\"/**", "SWIFT_OBJC_BRIDGING_HEADER" => "${PODS_TARGET_SRCROOT}/AgoraRtcUniPlugin/Uni/AgoraRtcUniPlugin-bridging-header.h", 'PRODUCT_BUNDLE_IDENTIFIER' => 'io.agora.AgoraRtcUniPlugin', "OTHER_CFLAGS" => "-fno-objc-msgsend-selector-stubs" }
   spec.dependency "AgoraRtcEngine_iOS", "3.7.0.3"
 
 end
