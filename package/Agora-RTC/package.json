@@ -84,7 +84,10 @@
         "NSMicrophoneUsageDescription"
       ],
       "embedSwift": true,
-      "deploymentTarget": "9.0"
+      "deploymentTarget": "11.0",
+      "validArchitectures": [
+        "arm64"
+      ]
     }
   }
 }
