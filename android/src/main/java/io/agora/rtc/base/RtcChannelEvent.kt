@@ -1,6 +1,6 @@
 package io.agora.rtc.base
 
-import android.support.annotation.IntRange
+import androidx.annotation.IntRange
 import io.agora.rtc.IRtcChannelEventHandler
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcChannel
