@@ -33,11 +33,16 @@ jobs:
           sh gradlew :uniplugin_agora_rtc:assembleRelease
         working-directory: ${{ env.SDK_ROOT }}/UniPlugin-Hello-AS
         
+      - name: Archive
+        run: |
+          cp -rp android/build/outputs/aar/*.aar package/Agora-RTC/andorid/
+        working-directory: Agora-Uniapp-SDK
+        
       - uses: actions/upload-artifact@v3
         with:
           name: AgoraRtcUniPlugin
           path: |
-            Agora-Uniapp-SDK/build/outputs/aar/*.aar
+            Agora-Uniapp-SDK/package/Agora-RTC/andorid/*
   build-ios:
     runs-on: macos-latest
     env:
@@ -64,10 +69,15 @@ jobs:
           pod install
           xcodebuild -workspace ./HBuilder-uniPlugin.xcworkspace -scheme AgoraRtcUniPlugin -sdk iphoneos -configuration "Release" build
         working-directory: ${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo
+        
+      - name: Archive
+        run: |
+          cp -rp ${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/Pods/AgoraRtcEngine_iOS/*.xcframework package/Agora-RTC/ios/
+          cp -rp ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Release-iphoneos/AgoraRtcUniPlugin/AgoraRtcUniPlugin.framework package/Agora-RTC/ios/
+        working-directory: Agora-Uniapp-SDK
       
       - uses: actions/upload-artifact@v3
         with:
           name: AgoraRtcUniPlugin
           path: |
-            ${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/Pods/AgoraRtcEngine_iOS/*.xcframework
-            Agora-Uniapp-SDK/**/*.framework
+            Agora-Uniapp-SDK/package/Agora-RTC/ios/*
