@@ -82,6 +82,7 @@ jobs:
           path: |
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.framework
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.xcframework
+            !Agora-Uniapp-SDK/package/Agora-RTC/*/*Extension.xcframework
   build-ts:
     runs-on: ubuntu-latest
     steps:
