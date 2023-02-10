@@ -42,7 +42,7 @@ jobs:
         with:
           name: AgoraRtcUniPlugin
           path: |
-            Agora-Uniapp-SDK/package/Agora-RTC/android/*
+            Agora-Uniapp-SDK/package/Agora-RTC/android
   build-ios:
     runs-on: macos-latest
     env:
@@ -80,4 +80,4 @@ jobs:
         with:
           name: AgoraRtcUniPlugin
           path: |
-            Agora-Uniapp-SDK/package/Agora-RTC/ios/*
+            Agora-Uniapp-SDK/package/Agora-RTC/ios
