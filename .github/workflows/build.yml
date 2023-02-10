@@ -6,6 +6,10 @@ jobs:
   build-android:
     runs-on: ubuntu-latest
     steps:
+      - uses: schmiddim/action-wget-unzip@v2
+        with:
+          url: 'https://download.agora.io/sdk/release/uni-app-sdk-android.zip'
+
       - uses: actions/checkout@v3
       
       - uses: actions/setup-java@v3
@@ -15,36 +19,41 @@ jobs:
           
       - name: Modify gradle
         run: |
-          sed "s/appId: '\(.*\)'/appId: '${{ secrets.APP_ID }}'/g" agora.config.ts > tmp
-          mv tmp agora.config.ts
-        working-directory: example/src/config
+          echo "project(':uniplugin_agora_rtc').projectDir = new File('../Agora-Uniapp-SDK', 'android')" >> settings.gradle
+        working-directory: UniPlugin-Hello-AS
           
       - name: Gradle build
         run: |
           ./gradlew :uniplugin_agora_rtc:assembleRelease
-        working-directory: example/android
+        working-directory: UniPlugin-Hello-AS
         
       - uses: actions/upload-artifact@v3
         with:
-          name: AgoraRtcNgExample
-          path: "example/android/**/*.aar"
+          name: AgoraRtcUniPlugin
+          path: "UniPlugin-Hello-AS/**/*.aar"
   build-ios:
     runs-on: macos-latest
     steps:
+      - uses: schmiddim/action-wget-unzip@v2
+        with:
+          url: 'https://download.agora.io/sdk/release/uni-app-sdk-ios.zip'
+          
       - uses: actions/checkout@v3
           
       - name: Modify Podfile
         run: |
-          sed "s/appId: '\(.*\)'/appId: '${{ secrets.APP_ID }}'/g" agora.config.ts > tmp
-          mv tmp agora.config.ts
-        working-directory: example/src/config
+          pod init
+          sed "s/# Pods for .*/pod 'AgoraRtcUniPlugin', :path => '\.\.\/Agora-Uniapp-SDK\/ios'/g" Podfile > tmp
+          mv tmp Podfile
+        working-directory: HBuilder-uniPluginDemo
           
       - name: Xcodebuild build
         run: |
+          pod install
           xcodebuild -workspace ./HBuilder-uniPlugin.xcworkspace -scheme AgoraRtcUniPlugin -sdk iphoneos -configuration "Release" build
-        working-directory: example/ios
+        working-directory: HBuilder-uniPluginDemo
       
       - uses: actions/upload-artifact@v3
         with:
-          name: AgoraRtcNgExample
-          path: "example/ios/*.framework"
+          name: AgoraRtcUniPlugin
+          path: "HBuilder-uniPluginDemo/*.framework"
