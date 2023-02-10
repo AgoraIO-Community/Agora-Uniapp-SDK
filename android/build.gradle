@@ -68,6 +68,6 @@ dependencies {
   compileOnly 'com.alibaba:fastjson:1.1.46.android'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  api 'io.agora.rtc:full-sdk:3.7.0.3'
-  api 'io.agora.rtc:full-screen-sharing:3.7.0.3'
+  api 'io.agora.rtc:full-sdk:3.7.1'
+  api 'io.agora.rtc:full-screen-sharing:3.7.1'
 }
