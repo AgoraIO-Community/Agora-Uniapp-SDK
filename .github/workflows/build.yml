@@ -12,8 +12,8 @@ jobs:
           unzip uni-app-sdk-android.zip
 
       - uses: actions/checkout@v3
-        with:
-          path: Agora-Uniapp-SDK
+          
+      - run: ls
       
       - uses: actions/setup-java@v3
         with:
@@ -43,8 +43,8 @@ jobs:
           unzip uni-app-sdk-ios.zip
           
       - uses: actions/checkout@v3
-        with:
-          path: Agora-Uniapp-SDK
+      
+      - run: ls
           
       - name: Modify Podfile
         run: |
