@@ -27,7 +27,7 @@ jobs:
           
       - name: Gradle build
         run: |
-          ./gradlew :uniplugin_agora_rtc:assembleRelease
+          sh gradlew :uniplugin_agora_rtc:assembleRelease
         working-directory: Android-SDK@3.6.18.81676_20230117/UniPlugin-Hello-AS
         
       - uses: actions/upload-artifact@v3
