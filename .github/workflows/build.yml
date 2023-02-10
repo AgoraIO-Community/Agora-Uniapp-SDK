@@ -5,6 +5,8 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    env:
+      SDK_ROOT: Android-SDK@3.6.18.81676_20230117
     steps:
       - name: Download unzip
         run: |
@@ -26,19 +28,21 @@ jobs:
         run: |
           echo "include ':uniplugin_agora_rtc'" >> settings.gradle
           echo "project(':uniplugin_agora_rtc').projectDir = new File('../../Agora-Uniapp-SDK', 'android')" >> settings.gradle
-        working-directory: Android-SDK@3.6.18.81676_20230117/UniPlugin-Hello-AS
+        working-directory: ${{ env.SDK_ROOT }}/UniPlugin-Hello-AS
           
       - name: Gradle build
         run: |
           sh gradlew :uniplugin_agora_rtc:assembleRelease
-        working-directory: Android-SDK@3.6.18.81676_20230117/UniPlugin-Hello-AS
+        working-directory: ${{ env.SDK_ROOT }}/UniPlugin-Hello-AS
         
       - uses: actions/upload-artifact@v3
         with:
           name: AgoraRtcUniPlugin
-          path: "Android-SDK@3.6.18.81676_20230117/UniPlugin-Hello-AS/**/*.aar"
+          path: "${{ env.SDK_ROOT }}/UniPlugin-Hello-AS/**/*.aar"
   build-ios:
     runs-on: macos-latest
+    env:
+      SDK_ROOT: SDK
     steps:
       - name: Download unzip
         run: |
@@ -56,15 +60,15 @@ jobs:
           pod init
           sed "s/# Pods for .*/pod 'AgoraRtcUniPlugin', :path => '\.\.\/\.\.\/Agora-Uniapp-SDK\/ios'/g" Podfile > tmp
           mv tmp Podfile
-        working-directory: SDK/HBuilder-uniPluginDemo
+        working-directory: ${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo
           
       - name: Xcodebuild build
         run: |
           pod install
           xcodebuild -workspace ./HBuilder-uniPlugin.xcworkspace -scheme AgoraRtcUniPlugin -sdk iphoneos -configuration "Release" build
-        working-directory: SDK/HBuilder-uniPluginDemo
+        working-directory: ${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo
       
       - uses: actions/upload-artifact@v3
         with:
           name: AgoraRtcUniPlugin
-          path: "SDK/HBuilder-uniPluginDemo/*.framework"
+          path: "${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/*.framework"
