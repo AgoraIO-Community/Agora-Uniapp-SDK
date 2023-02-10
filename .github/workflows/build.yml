@@ -35,14 +35,14 @@ jobs:
         
       - name: Archive
         run: |
-          cp -rp android/build/outputs/aar/*.aar package/Agora-RTC/andorid/
+          cp -rp android/build/outputs/aar/*.aar package/Agora-RTC/android/
         working-directory: Agora-Uniapp-SDK
         
       - uses: actions/upload-artifact@v3
         with:
           name: AgoraRtcUniPlugin
           path: |
-            Agora-Uniapp-SDK/package/Agora-RTC/andorid/*
+            Agora-Uniapp-SDK/package/Agora-RTC/android/*
   build-ios:
     runs-on: macos-latest
     env:
@@ -72,7 +72,7 @@ jobs:
         
       - name: Archive
         run: |
-          cp -rp ${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/Pods/AgoraRtcEngine_iOS/*.xcframework package/Agora-RTC/ios/
+          cp -rp ../${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/Pods/AgoraRtcEngine_iOS/*.xcframework package/Agora-RTC/ios/
           cp -rp ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Release-iphoneos/AgoraRtcUniPlugin/AgoraRtcUniPlugin.framework package/Agora-RTC/ios/
         working-directory: Agora-Uniapp-SDK
       
