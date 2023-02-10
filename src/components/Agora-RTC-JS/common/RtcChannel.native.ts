@@ -75,7 +75,7 @@ export default class RtcChannel implements RtcChannelInterface {
           } else {
             resolve(res);
           }
-        },
+        }
       );
     });
   }
@@ -116,7 +116,7 @@ export default class RtcChannel implements RtcChannelInterface {
           } else {
             resolve(res);
           }
-        },
+        }
       );
     });
     channels.set(channelId, new RtcChannel(channelId));

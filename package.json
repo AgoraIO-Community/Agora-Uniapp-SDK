@@ -42,16 +42,18 @@
   },
   "homepage": "https://github.com/AgoraIO-Community/Agora-Uniapp-SDK#readme",
   "devDependencies": {
-    "@dcloudio/types": "*",
     "@commitlint/config-conventional": "^8.3.4",
+    "@dcloudio/types": "*",
     "@react-native-community/bob": "^0.16.2",
+    "@react-native-community/eslint-config": "^3.0.2",
     "@release-it/conventional-changelog": "^1.1.4",
     "@types/jest": "^26.0.0",
     "commitlint": "^8.3.5",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.2.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-ft-flow": "^2.0.3",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "prettier": "^2.0.5",
@@ -94,7 +96,9 @@
     }
   },
   "eslintConfig": {
+    "root": true,
     "extends": [
+      "@react-native-community",
       "prettier"
     ],
     "rules": {
@@ -111,6 +115,7 @@
     }
   },
   "eslintIgnore": [
+    "example/",
     "node_modules/",
     "lib/"
   ],
