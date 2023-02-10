@@ -22,8 +22,9 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
           
-      - name: Modify gradle
+      - name: Modify settings.gradle
         run: |
+          echo "include ':uniplugin_agora_rtc'" >> settings.gradle
           echo "project(':uniplugin_agora_rtc').projectDir = new File('../../Agora-Uniapp-SDK', 'android')" >> settings.gradle
         working-directory: Android-SDK@3.6.18.81676_20230117/UniPlugin-Hello-AS
           
