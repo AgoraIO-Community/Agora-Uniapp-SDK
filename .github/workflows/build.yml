@@ -40,7 +40,7 @@ jobs:
         
       - uses: actions/upload-artifact@v3
         with:
-          name: AgoraRtcUniPlugin
+          name: Agora-RTC
           path: |
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.aar
   build-ios:
@@ -78,7 +78,29 @@ jobs:
       
       - uses: actions/upload-artifact@v3
         with:
-          name: AgoraRtcUniPlugin
+          name: Agora-RTC
           path: |
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.framework
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.xcframework
+  build-ts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+          
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Agora-RTC
+          path: |
+            package/Agora-RTC/package.json
+            
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Agora-RTC-JS
+          path: |
+            lib/commonjs/
