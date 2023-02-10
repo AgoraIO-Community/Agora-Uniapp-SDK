@@ -1,0 +1,50 @@
+name: Build Plugin
+run-name: ${{ github.actor }} triggered this job
+on:
+  workflow_dispatch:
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          
+      - name: Modify gradle
+        run: |
+          sed "s/appId: '\(.*\)'/appId: '${{ secrets.APP_ID }}'/g" agora.config.ts > tmp
+          mv tmp agora.config.ts
+        working-directory: example/src/config
+          
+      - name: Gradle build
+        run: |
+          ./gradlew :uniplugin_agora_rtc:assembleRelease
+        working-directory: example/android
+        
+      - uses: actions/upload-artifact@v3
+        with:
+          name: AgoraRtcNgExample
+          path: "example/android/**/*.aar"
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+          
+      - name: Modify Podfile
+        run: |
+          sed "s/appId: '\(.*\)'/appId: '${{ secrets.APP_ID }}'/g" agora.config.ts > tmp
+          mv tmp agora.config.ts
+        working-directory: example/src/config
+          
+      - name: Xcodebuild build
+        run: |
+          xcodebuild -workspace ./HBuilder-uniPlugin.xcworkspace -scheme AgoraRtcUniPlugin -sdk iphoneos -configuration "Release" build
+        working-directory: example/ios
+      
+      - uses: actions/upload-artifact@v3
+        with:
+          name: AgoraRtcNgExample
+          path: "example/ios/*.framework"
