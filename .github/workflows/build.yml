@@ -36,7 +36,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: AgoraRtcUniPlugin
-          path: "Agora-Uniapp-SDK/**/*.aar"
+          path: |
+            Agora-Uniapp-SDK/build/outputs/aar/*.aar
   build-ios:
     runs-on: macos-latest
     env:
@@ -67,4 +68,6 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: AgoraRtcUniPlugin
-          path: "Agora-Uniapp-SDK/**/*.framework"
+          path: |
+            ${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/Pods/AgoraRtcEngine_iOS/*.xcframework
+            Agora-Uniapp-SDK/**/*.framework
