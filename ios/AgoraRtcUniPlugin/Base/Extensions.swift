@@ -188,6 +188,35 @@ extension AgoraFacePositionInfo {
     }
 }
 
+extension AgoraRtcAudioFileInfo {
+    func toMap() -> [String: Any?] {
+        return [
+            "filePath": filePath,
+            "durationMs": durationMs,
+        ]
+    }
+}
+
+extension AgoraMediaRecorderInfo {
+    func toMap() -> [String: Any?] {
+      return [
+        "fileName": recorderFileName,
+        "durationMs": durationMs,
+        "fileSize": fileSize
+      ]
+    }
+}
+
+extension AgoraWlAccStats {
+    func toMap() -> [String: Any?] {
+      return [
+        "e2eDelayPercent": e2eDelayPercent,
+        "frozenRatioPercent": frozenRatioPercent,
+        "lossRatePercent": lossRatePercent
+      ]
+    }
+}
+
 extension Array where Element: AgoraFacePositionInfo {
     func toMapList() -> [[String: Any?]] {
         var list = [[String: Any?]]()

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.AudioRecordingConfiguration = exports.RtcEngineConfig = exports.RtcEngineContext = exports.DataStreamConfig = exports.LogConfig = exports.ClientRoleOptions = exports.EncryptionConfig = exports.ChannelMediaOptions = exports.CameraCapturerConfiguration = exports.RhythmPlayerConfig = exports.LiveInjectStreamConfig = exports.WatermarkOptions = exports.Rectangle = exports.LastmileProbeConfig = exports.ChannelMediaRelayConfiguration = exports.ChannelMediaInfo = exports.LiveTranscoding = exports.Color = exports.TranscodingUser = exports.AgoraImage = exports.BeautyOptions = exports.VideoEncoderConfiguration = exports.VideoDimensions = void 0;
+exports.SpatialAudioParams = exports.ScreenAudioParameters = exports.ScreenVideoParameters = exports.ScreenCaptureParameters = exports.ColorEnhanceOptions = exports.LowLightEnhanceOptions = exports.VideoDenoiserOptions = exports.LocalAccessPointConfiguration = exports.ContentInspectConfig = exports.ContentInspectModule = exports.MediaRecorderConfiguration = exports.EchoTestConfiguration = exports.VirtualBackgroundSource = exports.AudioRecordingConfiguration = exports.RtcEngineConfig = exports.RtcEngineContext = exports.DataStreamConfig = exports.LogConfig = exports.ClientRoleOptions = exports.EncryptionConfig = exports.ChannelMediaOptions = exports.CameraCapturerConfiguration = exports.RhythmPlayerConfig = exports.LiveInjectStreamConfig = exports.WatermarkOptions = exports.Rectangle = exports.LastmileProbeConfig = exports.ChannelMediaRelayConfiguration = exports.ChannelMediaInfo = exports.LiveTranscoding = exports.Color = exports.TranscodingUser = exports.AgoraImage = exports.BeautyOptions = exports.VideoEncoderConfiguration = exports.VideoDimensions = void 0;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -314,21 +314,29 @@ exports.VideoEncoderConfiguration = VideoEncoderConfiguration;
 
 class BeautyOptions {
   /**
-   * The lightening contrast level.
+   * The contrast level, often used in conjunction with `lighteningLevel`.
+   * The higher the value, the greater the contrast level. See [`LighteningContrastLevel`]{@link LighteningContrastLevel}.
    */
 
   /**
-   * The brightness level. The value ranges between 0.0 (original) and 1.0. The default value is 0.7.
+   * The brightening level, in the range [0.0,1.0], where 0.0 means the original brightening. The default value is 0.6. The higher the value, the greater the brightening level.
    */
 
   /**
-   * The sharpness level. The value ranges between 0.0 (original) and 1.0.
-   * The default value is 0.5. This parameter is usually used to remove blemishes.
+   * The smoothness level, in the range [0.0,1.0], where 0.0 means the original smoothness.
+   * The default value is 0.5. The higher the value, the greater the smoothness level.
    */
 
   /**
-   * The redness level. The value ranges between 0.0 (original) and 1.0.
-   * The default value is 0.1. This parameter adjusts the red saturation level.
+   * The redness level, in the range [0.0,1.0], where 0.0 means the original redness.
+   * The default value is 0.1. The higher the value, the greater the redness level.
+   */
+
+  /**
+   * The sharpness level, in the range [0.0,1.0], where 0.0 means the original sharpness.
+   * The default value is 0.3. The higher the value, the greater the sharpness level.
+   *
+   * @since v3.6.2
    */
   constructor(params) {
     _defineProperty(this, "lighteningContrastLevel", void 0);
@@ -339,11 +347,14 @@ class BeautyOptions {
 
     _defineProperty(this, "rednessLevel", void 0);
 
+    _defineProperty(this, "sharpnessLevel", void 0);
+
     if (params) {
       this.lighteningContrastLevel = params.lighteningContrastLevel;
       this.lighteningLevel = params.lighteningLevel;
       this.smoothnessLevel = params.smoothnessLevel;
       this.rednessLevel = params.rednessLevel;
+      this.sharpnessLevel = params.sharpnessLevel;
     }
   }
 
@@ -375,6 +386,24 @@ class AgoraImage {
   /**
    * Height of the image on the broadcasting video.
    */
+
+  /**
+   * The layer number of the watermark or background image.
+   *
+   * When you use the watermark array to add a watermark or multiple watermarks, you must pass a value to `zOrder` in the range [1,255];
+   * otherwise, the SDK reports an error. In other cases, `zOrder` can optionally be passed in the range [0,255],
+   * with 0 being the default value. `0` means the bottom layer and `255` means the top layer.
+   *
+   * @since v3.6.2
+   */
+
+  /**
+   * The transparency of the watermark or background image. The value range is [0.0,1.0]:
+   * - `0.0`: Completely transparent.
+   * - `1.0`: (Default) Opaque.
+   *
+   * @since v3.6.2
+   */
   constructor(url, params) {
     _defineProperty(this, "url", void 0);
 
@@ -386,6 +415,10 @@ class AgoraImage {
 
     _defineProperty(this, "height", void 0);
 
+    _defineProperty(this, "zOrder", void 0);
+
+    _defineProperty(this, "alpha", void 0);
+
     this.url = url;
 
     if (params) {
@@ -393,6 +426,8 @@ class AgoraImage {
       this.y = params.y;
       this.width = params.width;
       this.height = params.height;
+      this.zOrder = params.zOrder;
+      this.alpha = params.alpha;
     }
   }
 
@@ -479,7 +514,7 @@ class TranscodingUser {
 
 }
 /**
- * Color.
+ * Color for [`VirtualBackgroundSource`]{@link VirtualBackgroundSource}
  */
 
 
@@ -487,15 +522,22 @@ exports.TranscodingUser = TranscodingUser;
 
 class Color {
   /**
-   * Red.
+   * Red value (0 - 255)
    */
 
   /**
-   * Green.
+   * Green value (0 - 255)
    */
 
   /**
-   * Blue.
+   * Blue value (0 - 255)
+   */
+
+  /**
+   * Create a color for [`VirtualBackgroundSource`]{@link VirtualBackgroundSource}
+   * @param red Red value (0 - 255)
+   * @param green Green value (0 - 255)
+   * @param blue Blue value (0 - 255)
    */
   constructor(red, green, blue) {
     _defineProperty(this, "red", void 0);
@@ -519,13 +561,15 @@ exports.Color = Color;
 
 class LiveTranscoding {
   /**
-   * Width (pixel) of the video. The default value is 360. If you push video streams to the CDN, set the value of width × height to at least 64 × 64, or the SDK adjusts it to 64 x 64.
-   * If you push audio streams to the CDN, set the value of width × height to 0 × 0.
+   * Width (pixel) of the video. The default value is 360.
+   * - When pushing video streams to the CDN, the value range of `width` is [64,1920]. If the value is less than 64, Agora server automatically adjusts it to 64; if the value is greater than 1920, Agora server automatically adjusts it to 1920.
+   * - If you push audio streams to the CDN, set the value of width × height to 0 × 0.
    */
 
   /**
-   * Height (pixel) of the video. The default value is 640. If you push video streams to the CDN, set the value of width × height to at least 64 × 64, or the SDK adjusts it to 64 x 64.
-   * If you push audio streams to the CDN, set the value of width × height to 0 × 0.
+   * Height (pixel) of the video. The default value is 640.
+   * - When pushing video streams to the CDN, the value range of `height` is [64,1080]. If the value is less than 64, Agora server automatically adjusts it to 64; if the value is greater than 1080, Agora server automatically adjusts it to 1080.
+   * - If you push audio streams to the CDN, set the value of width × height to 0 × 0.
    */
 
   /**
@@ -549,13 +593,27 @@ class LiveTranscoding {
    */
 
   /**
-   * The watermark image added to the CDN live publishing stream. Ensure that the format of the image is PNG. Once a watermark image is added,
-   * the audience of the CDN live publishing stream can see it.
+   * The watermark on the live video. The image format must be PNG.
    */
 
   /**
-   * The background image added to the CDN live publishing stream. Once a background image is added,
-   * the audience of the CDN live publishing stream can see it.
+   * The array of watermarks on the live video. You can use `watermarkList` to add one or more watermarks.
+   * The image format must be PNG.
+   *
+   * The total number of watermarks and background images on the live video must be greater than or equal to 0 and less than or equal to 10.
+   *
+   * @since v3.6.2
+   */
+
+  /**
+   * The background image on the live video. The format must be in the PNG format.
+   */
+
+  /**
+   * The array of background images on the live video. You can use `backgroundImageList` to add one or more background images. The image format must be PNG.
+   * The total number of watermarks and background images on the live video must be greater than or equal to 0 and less than or equal to 10.
+   *
+   * @since v3.6.2
    */
 
   /**
@@ -586,6 +644,12 @@ class LiveTranscoding {
    */
 
   /**
+   * The video codec type of the output video stream.
+   *
+   * @since v3.2.0
+   */
+
+  /**
    * Sets the background color.
    */
 
@@ -594,7 +658,17 @@ class LiveTranscoding {
    */
 
   /**
+   * The metadata sent to the CDN live client.
+   *
+   * @deprecated This property is deprecated.
+   */
+
+  /**
    * An TranscodingUser object managing the user layout configuration in the CDN live stream. Agora supports a maximum of 17 transcoding users in a CDN live stream channel.
+   */
+
+  /**
+   * @ignore
    */
   constructor(transcodingUsers, params) {
     _defineProperty(this, "width", void 0);
@@ -611,7 +685,11 @@ class LiveTranscoding {
 
     _defineProperty(this, "watermark", void 0);
 
+    _defineProperty(this, "watermarkList", void 0);
+
     _defineProperty(this, "backgroundImage", void 0);
+
+    _defineProperty(this, "backgroundImageList", void 0);
 
     _defineProperty(this, "audioSampleRate", void 0);
 
@@ -623,11 +701,17 @@ class LiveTranscoding {
 
     _defineProperty(this, "videoCodecProfile", void 0);
 
+    _defineProperty(this, "videoCodecType", void 0);
+
     _defineProperty(this, "backgroundColor", void 0);
 
     _defineProperty(this, "userConfigExtraInfo", void 0);
 
+    _defineProperty(this, "metadata", void 0);
+
     _defineProperty(this, "transcodingUsers", void 0);
+
+    _defineProperty(this, "advancedFeatures", void 0);
 
     if (params) {
       this.width = params.width;
@@ -637,14 +721,19 @@ class LiveTranscoding {
       this.lowLatency = params.lowLatency;
       this.videoGop = params.videoGop;
       this.watermark = params.watermark;
+      this.watermarkList = params.watermarkList;
       this.backgroundImage = params.backgroundImage;
+      this.backgroundImageList = params.backgroundImageList;
       this.audioSampleRate = params.audioSampleRate;
       this.audioBitrate = params.audioBitrate;
       this.audioChannels = params.audioChannels;
       this.audioCodecProfile = params.audioCodecProfile;
       this.videoCodecProfile = params.videoCodecProfile;
+      this.videoCodecType = params.videoCodecType;
       this.backgroundColor = params.backgroundColor;
       this.userConfigExtraInfo = params.userConfigExtraInfo;
+      this.metadata = params.metadata;
+      this.advancedFeatures = params.advancedFeatures;
     }
 
     this.transcodingUsers = transcodingUsers;
@@ -1031,11 +1120,25 @@ class ChannelMediaOptions {
    */
 
   /**
-   * TODO(doc)
+   * Determines whether to publish the local audio stream when the user joins a channel:
+   * - `true`: (Default) Publish.
+   * - `false`: Do not publish.
+   *
+   * This member serves a similar function to the [`muteLocalAudioStream`]{@link RtcEngine.muteLocalAudioStream} method.
+   * After the user joins the channel, you can call the `muteLocalAudioStream` method to set whether to publish the local audio stream in the channel.
+   *
+   * @since v3.4.5
    */
 
   /**
-   * TODO(doc)
+   * Determines whether to publish the local video stream when the user joins a channel:
+   * - `true`: (Default) Publish.
+   * - `false`: Do not publish.
+   *
+   * This member serves a similar function to the [`muteLocalVideoStream`]{@link RtcEngine.muteLocalVideoStream} method.
+   * After the user joins the channel, you can call the `muteLocalVideoStream` method to set whether to publish the local video stream in the channel.
+   *
+   * @since v3.4.5
    */
   constructor(params) {
     _defineProperty(this, "autoSubscribeAudio", void 0);
@@ -1066,11 +1169,12 @@ exports.ChannelMediaOptions = ChannelMediaOptions;
 
 class EncryptionConfig {
   /**
-   * Encryption mode. The default encryption mode is `AES128XTS`. See [`EncryptionMode`]{@link EncryptionMode}.
+   * Encryption mode. The default encryption mode is `AES128GCM2`.
+   * See [`EncryptionMode`]{@link EncryptionMode}.
    */
 
   /**
-   * Encryption key in string type.
+   * Encryption key in string type with unlimited length. Agora recommends using a 32-byte key.
    *
    * **Note**
    *
@@ -1078,7 +1182,15 @@ class EncryptionConfig {
    */
 
   /**
-   * TODO(doc)
+   * The salt with the length of 32 bytes. Agora recommends using OpenSSL to generate the salt on your server.
+   * For details, see *Media Stream Encryption*.
+   *
+   * @since v3.4.5
+   *
+   * Note: This parameter is only valid when you set the encryption mode as `AES128GCM2` or `AES256GCM2`.
+   * Ensure that this parameter meets the following requirements:
+   * - Android: This parameter is not 0.
+   * - iOS: This parameter is not nil or 0, and the data length is 32 bytes.
    */
   constructor(params) {
     _defineProperty(this, "encryptionMode", void 0);
@@ -1208,7 +1320,7 @@ class DataStreamConfig {
 /**
  * Configurations for the [`RtcEngine`]{@link RtcEngine}.
  *
- * @since v3.3.1
+ * @since v3.4.5
  */
 
 
@@ -1255,9 +1367,10 @@ class RtcEngineContext {
 
 }
 /**
- * @deprecated
  *
  * Configurations for the [`RtcEngine`]{@link RtcEngine}.
+ *
+ * @deprecated As of v3.4.5, this class is deprecated. Use [`RtcEngineContext`]{@link RtcEngineContext} instead.
  *
  * @since v3.3.1
  */
@@ -1280,14 +1393,14 @@ class AudioRecordingConfiguration {
    * - On Android: `/sdcard/emulated/0/audio.aac`.
    * - On iOS: `/var/mobile/Containers/Data/audio.aac`.
    *
-   * @note
+   * **Note**
    * Ensure that the path you specify exists and is writable.
    */
 
   /**
    * Audio recording quality. See [`AudioRecordingQuality`]{@link AudioRecordingQuality}.
    *
-   * @note This parameter applies to AAC files only.
+   * **Note** This parameter applies to AAC files only.
    */
 
   /**
@@ -1301,9 +1414,17 @@ class AudioRecordingConfiguration {
    * - 44100
    * - 48000
    *
-   * @note
+   * **Note**
    * If this parameter is set to `44100` or `48000`, for better recording effects, Agora recommends recording WAV files or AAC files whose `recordingQuality` is `Medium` or `High`.
    *
+   */
+
+  /**
+   * The recorded audio channel. The following values are supported:
+   * - `1`: (Default) Mono channel.
+   * - `2`: Dual channel.
+   *
+   * @since v3.6.2
    */
   constructor(filePath, params) {
     _defineProperty(this, "filePath", void 0);
@@ -1314,16 +1435,360 @@ class AudioRecordingConfiguration {
 
     _defineProperty(this, "recordingSampleRate", void 0);
 
+    _defineProperty(this, "recordingChannel", void 0);
+
     this.filePath = filePath;
 
     if (params) {
       this.recordingQuality = params.recordingQuality;
       this.recordingPosition = params.recordingPosition;
       this.recordingSampleRate = params.recordingSampleRate;
+      this.recordingChannel = params.recordingChannel;
     }
   }
 
 }
+/**
+ * The custom background image.
+ *
+ * @since v3.5.0.3
+ */
+
 
 exports.AudioRecordingConfiguration = AudioRecordingConfiguration;
+
+class VirtualBackgroundSource {
+  /**
+   * The type of the custom background image. See [`VirtualBackgroundSourceType`]{@link VirtualBackgroundSourceType}.
+   */
+
+  /**
+   * The color of the custom background image.
+   * The format is a hexadecimal integer defined by RGB, without the # sign, such as 0xFFB6C1 for light pink.
+   * The default value is 0xFFFFFF, which signifies white. The value range is [0x000000,0xffffff]. If the value is invalid, the SDK replaces the original background image with a white background image.
+   *
+   * **Note**
+   * This parameter takes effect only when the type of the custom background image is `Color`.
+   */
+
+  /**
+   * The local absolute path of the custom background image. PNG and JPG formats are supported.
+   * If the path is invalid, the SDK replaces the original background image with a white background image.
+   *
+   * **Note**
+   * This parameter takes effect only when the type of the custom background image is `Img`.
+   */
+
+  /**
+   * The degree of blurring applied to the custom background image. See [`VirtualBackgroundBlurDegree`]{@link VirtualBackgroundBlurDegree}.
+   *
+   * **Since** v3.5.2
+   */
+  constructor(params) {
+    _defineProperty(this, "backgroundSourceType", void 0);
+
+    _defineProperty(this, "color", void 0);
+
+    _defineProperty(this, "source", void 0);
+
+    _defineProperty(this, "blur_degree", void 0);
+
+    if (params) {
+      this.backgroundSourceType = params.backgroundSourceType;
+      this.color = params.color;
+      this.source = params.source;
+      this.blur_degree = params.blur_degree;
+    }
+  }
+
+}
+/**
+ * The information of an audio file, which is reported in [`RequestAudioFileInfo`]{@link RequestAudioFileInfo}.
+ *
+ * @since v3.5.2
+ */
+
+
+exports.VirtualBackgroundSource = VirtualBackgroundSource;
+
+/**
+ * The configuration of the audio call loop test.
+ *
+ * @since v3.5.2
+ */
+class EchoTestConfiguration {
+  /**
+   * Whether to enable the audio device for the call loop test:
+   * - true: (Default) Enables the audio device. To test the audio device, set this parameter as `true`.
+   * - false: Disables the audio device.
+   */
+
+  /**
+   * Reversed for future use.
+   */
+
+  /**
+   * The token used to secure the audio call loop test. If you do not enable App Certificate in Agora
+   * Console, you do not need to pass a value in this parameter; if you have enabled App Certificate in Agora Console,
+   * you must pass a token in this parameter, the `uid` used when you generate the token must be 0xFFFFFFFF, and the
+   * channel name used must be the channel name that identifies each audio loop tested. For server-side
+   * token generation, see [Authenticate Your Users with Tokens](https://docs.agora.io/en/Interactive%20Broadcast/token_server?platform=All%20Platforms).
+   */
+
+  /**
+   * The channel name that identifies each audio call loop. To ensure proper loop test functionality, the
+   * channel name passed in to identify each loop test cannot be the same when users of the same project (App ID)
+   * perform audio call loop tests on different devices.
+   */
+  constructor(params) {
+    _defineProperty(this, "enableAudio", void 0);
+
+    _defineProperty(this, "enableVideo", void 0);
+
+    _defineProperty(this, "token", void 0);
+
+    _defineProperty(this, "channelId", void 0);
+
+    if (params) {
+      this.enableAudio = params.enableAudio;
+      this.enableVideo = params.enableVideo;
+      this.token = params.token;
+      this.channelId = params.channelId;
+    }
+  }
+
+}
+/**
+ * Configurations for the local audio and video recording.
+ *
+ * @since v3.6.2
+ */
+
+
+exports.EchoTestConfiguration = EchoTestConfiguration;
+
+class MediaRecorderConfiguration {
+  /**
+   * The absolute path (including the filename extensions) for the recording file.
+   * For example:
+   * - Android: `/storage/emulated/0/Android/data/<package name>/files/example.mp4`
+   * - iOS: `/App Sandbox/Library/Caches/example.mp4`
+   *
+   * **Note**
+   * Ensure that the specified path exists and is writable.
+   */
+
+  /**
+   * The format of the recording file. The SDK currently supports only `1`, which is MP4 format.
+   */
+
+  /**
+   * The recording content:
+   * - `0x1`: Only audio.
+   * - `0x2`: Only video.
+   * - `0x3`: (Default) Audio and video.
+   */
+
+  /**
+   * The maximum recording duration, in milliseconds. The default value is `120000`.
+   */
+
+  /**
+   * The interval (ms) of updating the recording information.
+   * The value range is [1000,10000]. Based on the set value of `recorderInfoUpdateInterval`,
+   * the SDK triggers the [`RecorderInfoUpdated`]{@link RtcEngineEvents.RecorderInfoUpdated} callback to report the updated recording information.
+   */
+  constructor(storagePath, containerFormat, streamType, maxDurationMs, recorderInfoUpdateInterval) {
+    _defineProperty(this, "storagePath", void 0);
+
+    _defineProperty(this, "containerFormat", void 0);
+
+    _defineProperty(this, "streamType", void 0);
+
+    _defineProperty(this, "maxDurationMs", void 0);
+
+    _defineProperty(this, "recorderInfoUpdateInterval", void 0);
+
+    this.storagePath = storagePath;
+    this.containerFormat = containerFormat;
+    this.streamType = streamType;
+    this.maxDurationMs = maxDurationMs;
+    this.recorderInfoUpdateInterval = recorderInfoUpdateInterval;
+  }
+
+}
+/**
+ * @ignore For future use
+ */
+
+
+exports.MediaRecorderConfiguration = MediaRecorderConfiguration;
+
+class ContentInspectModule {
+  constructor() {
+    _defineProperty(this, "type", void 0);
+
+    _defineProperty(this, "interval", void 0);
+  }
+
+}
+/**
+ * @ignore For future use
+ */
+
+
+exports.ContentInspectModule = ContentInspectModule;
+
+class ContentInspectConfig {
+  constructor() {
+    _defineProperty(this, "extraInfo", void 0);
+
+    _defineProperty(this, "modules", void 0);
+
+    _defineProperty(this, "moduleCount", void 0);
+  }
+
+}
+/**
+ * @ignore For future use
+ */
+
+
+exports.ContentInspectConfig = ContentInspectConfig;
+
+class LocalAccessPointConfiguration {
+  constructor() {
+    _defineProperty(this, "ipList", void 0);
+
+    _defineProperty(this, "domainList", void 0);
+
+    _defineProperty(this, "verifyDomainName", void 0);
+
+    _defineProperty(this, "mode", void 0);
+  }
+
+}
+/**
+ * The video noise reduction options.
+ *
+ * @since v3.6.2
+ */
+
+
+exports.LocalAccessPointConfiguration = LocalAccessPointConfiguration;
+
+class VideoDenoiserOptions {
+  constructor() {
+    _defineProperty(this, "denoiserMode", void 0);
+
+    _defineProperty(this, "denoiserLevel", void 0);
+  }
+
+}
+/**
+ * The low-light enhancement options.
+ *
+ * @since v3.6.2
+ */
+
+
+exports.VideoDenoiserOptions = VideoDenoiserOptions;
+
+class LowLightEnhanceOptions {
+  constructor() {
+    _defineProperty(this, "lowlightEnhanceMode", void 0);
+
+    _defineProperty(this, "lowlightEnhanceLevel", void 0);
+  }
+
+}
+/**
+ * The color enhancement options.
+ *
+ * @since v3.6.2
+ */
+
+
+exports.LowLightEnhanceOptions = LowLightEnhanceOptions;
+
+class ColorEnhanceOptions {
+  constructor() {
+    _defineProperty(this, "strengthLevel", void 0);
+
+    _defineProperty(this, "skinProtectLevel", void 0);
+  }
+
+}
+/**
+ * Information for the recording file.
+ *
+ * @since v3.6.2
+ */
+
+
+exports.ColorEnhanceOptions = ColorEnhanceOptions;
+
+class ScreenCaptureParameters {
+  constructor() {
+    _defineProperty(this, "captureAudio", void 0);
+
+    _defineProperty(this, "audioParams", void 0);
+
+    _defineProperty(this, "captureVideo", void 0);
+
+    _defineProperty(this, "videoParams", void 0);
+  }
+
+}
+
+exports.ScreenCaptureParameters = ScreenCaptureParameters;
+
+class ScreenVideoParameters {
+  constructor() {
+    _defineProperty(this, "bitrate", void 0);
+
+    _defineProperty(this, "frameRate", void 0);
+
+    _defineProperty(this, "dimensions", void 0);
+
+    _defineProperty(this, "contentHint", void 0);
+  }
+
+}
+
+exports.ScreenVideoParameters = ScreenVideoParameters;
+
+class ScreenAudioParameters {
+  constructor() {
+    _defineProperty(this, "sampleRate", void 0);
+
+    _defineProperty(this, "channels", void 0);
+
+    _defineProperty(this, "captureSignalVolume", void 0);
+
+    _defineProperty(this, "allowCaptureCurrentApp", void 0);
+  }
+
+}
+
+exports.ScreenAudioParameters = ScreenAudioParameters;
+
+class SpatialAudioParams {
+  constructor() {
+    _defineProperty(this, "speaker_azimuth", void 0);
+
+    _defineProperty(this, "speaker_elevation", void 0);
+
+    _defineProperty(this, "speaker_distance", void 0);
+
+    _defineProperty(this, "speaker_orientation", void 0);
+
+    _defineProperty(this, "enable_blur", void 0);
+
+    _defineProperty(this, "enable_air_absorb", void 0);
+  }
+
+}
+
+exports.SpatialAudioParams = SpatialAudioParams;
 //# sourceMappingURL=Classes.js.map

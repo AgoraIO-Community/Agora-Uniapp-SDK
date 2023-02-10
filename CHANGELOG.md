@@ -1,3 +1,22 @@
+# [3.7.0-rc.3](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.7.0...v3.7.0-rc.3) (2022-11-08)
+
+
+### Bug Fixes
+
+* ios compile error ([fd9d6dd](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/fd9d6dd25961ea59550fcd9930370121ebe72412))
+
+
+### Features
+
+* support 3.7.0.3 ([b08a65e](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/b08a65e791cbe18fc62903378d8be3359803f6dd))
+
+# [3.7.0](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.4.6...v3.7.0) (2022-05-12)
+
+
+### Features
+
+* support 3.7.0 ([badaf9c](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/badaf9cb62b059a0c237cf93a5cb2f57d9ff314b))
+
 ## [3.4.6](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.4.5...v3.4.6) (2021-07-23)
 
 

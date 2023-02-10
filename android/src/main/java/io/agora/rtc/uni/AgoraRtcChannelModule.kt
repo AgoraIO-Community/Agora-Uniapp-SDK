@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.base.RtcChannelManager
 import io.agora.rtc.base.RtcEngineEventHandler
+import io.agora.rtc.base.RtcEngineManager
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.bridge.UniJSCallback
 import io.dcloud.feature.uniapp.common.UniModule
@@ -24,10 +25,6 @@ class AgoraRtcChannelModule : UniModule() {
         mUniSDKInstance.fireGlobalEventCallback("${RtcEngineEventHandler.PREFIX}$methodName", data)
     }
 
-    private fun engine(): RtcEngine? {
-        return AgoraRtcEngineModule.manager?.engine
-    }
-
     @UniJSMethod(uiThread = false)
     fun callMethod(params: JSONObject?, callback: UniJSCallback?) {
         params?.getString("method")?.let { methodName ->
@@ -37,7 +34,7 @@ class AgoraRtcChannelModule : UniModule() {
                         val parameters = mutableListOf<Any?>()
                         params.getJSONObject("args")?.toMap()?.toMutableMap()?.let {
                             if (methodName == "create") {
-                                it["engine"] = engine()
+                                it["engine"] = RtcEngineManager.engine
                             }
                             parameters.add(it)
                         }

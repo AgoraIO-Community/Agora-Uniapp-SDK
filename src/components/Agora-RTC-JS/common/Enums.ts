@@ -37,13 +37,19 @@ export enum AreaCode {
  */
 export enum AudioCodecProfileType {
   /**
-   * 0: (Default) LC-AAC, which is the low-complexity audio codec profile.
+   * 0: (Default) LC-AAC.
    */
   LCAAC = 0,
   /**
-   * 1: HE-AAC, which is the high-efficiency audio codec profile.
+   * 1: HE-AAC.
    */
   HEAAC = 1,
+  /**
+   * 2: HE-AAC v2.
+   *
+   * @since v3.6.2
+   */
+  HE_AAC_V2 = 2,
 }
 
 /**
@@ -121,7 +127,7 @@ export enum AudioLocalError {
    */
   EncodeFailure = 5,
   /**
-   * TODO(doc)
+   * 8: The local audio capturing is interrupted by the system call.
    */
   Interrupted = 8,
 }
@@ -268,6 +274,10 @@ export enum AudioOutputRouting {
    * 5: Bluetooth headset.
    */
   HeadsetBluetooth = 5,
+  /**
+   * 9: Apple AirPlay.
+   */
+  AirPlay = 9,
 }
 
 /**
@@ -318,6 +328,12 @@ export enum AudioRecordingQuality {
    * 2: High quality. For example, the size of an AAC file with a sample rate of 32,000 Hz and a 10-minute recording is approximately 3.75 MB.
    */
   High = 2,
+  /**
+   * 3： Ultra-high quality. For example, the size of an AAC file with a sample rate of 32,000 Hz and a 10-minute recording is approximately 7.5 MB.
+   *
+   * **since** v3.6.2
+   */
+  UltraHigh = 3,
 }
 
 /**
@@ -518,15 +534,15 @@ export enum AudioReverbType {
  */
 export enum AudioSampleRateType {
   /**
-   * 32000: (Default) 32000.
+   * 32000: (Default) 32000 Hz.
    */
   Type32000 = 32000,
   /**
-   * 44100: 44100.
+   * 44100: 44100 Hz.
    */
   Type44100 = 44100,
   /**
-   * 48000: 48000.
+   * 48000: 48000 Hz.
    */
   Type48000 = 48000,
 }
@@ -537,6 +553,10 @@ export enum AudioSampleRateType {
 export enum AudioScenario {
   /**
    * 0: Default audio scenario.
+   *
+   * **Note**
+   *  If you run the iOS app on an M1 Mac, due to the hardware differences between M1 Macs, iPhones, and iPads,
+   * the default audio scenario of the Agora iOS SDK is the same as that of the Agora macOS SDK.
    */
   Default = 0,
   /**
@@ -800,6 +820,30 @@ export enum ChannelMediaRelayEvent {
    * 11: The video profile is sent to the server.
    */
   VideoProfileUpdate = 11,
+  /**
+   * 12: The SDK successfully pauses relaying the media stream to destination channels.
+   *
+   * @since v3.5.2
+   */
+  PauseSendPacketToDestChannelSuccess = 12,
+  /**
+   * 13: The SDK fails to pause relaying the media stream to destination channels.
+   *
+   * @since v3.5.2
+   */
+  PauseSendPacketToDestChannelFailed = 13,
+  /**
+   * 14: The SDK successfully resumes relaying the media stream to destination channels.
+   *
+   * @since v3.5.2
+   */
+  ResumeSendPacketToDestChannelSuccess = 14,
+  /**
+   * 15: The SDK fails to resume relaying the media stream to destination channels.
+   *
+   * @since v3.5.2
+   */
+  ResumeSendPacketToDestChannelFailed = 15,
 }
 
 /**
@@ -829,7 +873,7 @@ export enum ChannelMediaRelayState {
  */
 export enum ChannelProfile {
   /**
-   * 0: (Default) The Communication profile.
+   * 0: The Communication profile.
    * Use this profile in one-on-one calls or group calls, where all users can talk freely.
    */
   Communication = 0,
@@ -850,11 +894,17 @@ export enum ChannelProfile {
  */
 export enum ClientRole {
   /**
-   * 1: A host can both send and receive streams.
+   * 1: Host.
+   *
+   * A host can both send and receive streams. If you set this user role in the channel, the SDK automatically
+   * calls [`muteLocalAudioStream(false)`]{@link muteLocalAudioStream} and [`muteLocalVideoStream(false)`]{@link muteLocalVideoStream}.
    */
   Broadcaster = 1,
   /**
-   * 2: The default role. An audience can only receive streams.
+   * 2: Audience.
+   *
+   * An audience member can only receive streams. If you set this user role in the channel, the SDK automatically
+   * calls [`muteLocalAudioStream(true)`]{@link muteLocalAudioStream} and [`muteLocalVideoStream(true)`]{@link muteLocalVideoStream}.
    */
   Audience = 2,
 }
@@ -927,9 +977,27 @@ export enum ConnectionChangedReason {
    */
   KeepAliveTimeout = 14,
   /**
+   * @ignore
    * 15: In cloud proxy mode, the proxy server connection is interrupted.
    */
   ProxyServerInterrupted = 15,
+  /**
+   * 19: Join the same channel from different devices using the same user ID.
+   *
+   * @since v3.7.0
+   */
+  SameUidLogin = 19,
+  /**
+   * 20: The number of hosts in the channel is already at the upper limit.
+   *
+   * @since v3.7.0
+   *
+   * **Note**
+   * This enumerator is reported only when the support for 128 users is enabled.
+   * The maximum number of hosts is based on the actual number of hosts configured when you
+   * enable the 128-user feature.
+   */
+  TooManyBroadcasters = 20,
 }
 
 /**
@@ -980,7 +1048,7 @@ export enum DegradationPreference {
    * 0: (Default) Prefers to reduce the video frame rate while maintaining video quality during video encoding under limited bandwidth.
    * This degradation preference is suitable for scenarios where video quality is prioritized.
    *
-   * @note In the `Communication` channel profile, the resolution of the video sent may change, so remote users need to handle this issue.
+   * **Note** In the `Communication` channel profile, the resolution of the video sent may change, so remote users need to handle this issue.
    * See [`VideoSizeChanged`]{@link VideoSizeChanged}.
    */
   MaintainQuality = 0,
@@ -997,13 +1065,16 @@ export enum DegradationPreference {
    *
    * @since v3.4.2
    *
-   * @note The resolution of the video sent may change, so remote users need to handle this issue. See [`VideoSizeChanged`]{@link VideoSizeChanged}.
+   * **Note** The resolution of the video sent may change, so remote users need to handle this issue. See [`VideoSizeChanged`]{@link VideoSizeChanged}.
    */
   MaintainBalanced = 2,
 }
 
 /**
  * Encryption mode.
+ *
+ * Agora recommends using either the `AES128GCM2` or `AES256GCM2` encryption mode,
+ * both of which support adding a salt and are more secure.
  */
 export enum EncryptionMode {
   /**
@@ -1012,7 +1083,7 @@ export enum EncryptionMode {
    */
   None = 0,
   /**
-   * 1: (Default) 128-bit AES encryption, XTS mode.
+   * 1: 128-bit AES encryption, XTS mode.
    */
   AES128XTS = 1,
   /**
@@ -1026,7 +1097,7 @@ export enum EncryptionMode {
   /**
    * 4: 128-bit SM4 encryption, ECB mode.
    *
-   * @since v3.1.2.
+   * @since v3.1.2
    */
   SM4128ECB = 4,
   /**
@@ -1042,11 +1113,21 @@ export enum EncryptionMode {
    */
   AES256GCM = 6,
   /**
-   * TODO(doc)
+   * 7: (Default) 128-bit GCM encryption, GCM mode.
+   *
+   * @since v3.4.5
+   *
+   * Compared to `AES128GCM` encryption mode, the `AES128GCM2` encryption mode is more secure and requires you to set the salt (`encryptionKdfSalt`).
+   *
    */
   AES128GCM2 = 7,
   /**
-   * TODO(doc)
+   * 8: 256-bit GCM encryption, GCM mode.
+   *
+   * @since v3.4.5
+   *
+   * Compared to `AES256GCM` encryption mode, `AES256GCM2` encryption mode is more secure and requires you
+   * to set the salt (`encryptionKdfSalt`).
    */
   AES256GCM2 = 8,
 }
@@ -1402,6 +1483,10 @@ export enum ErrorCode {
    * This error code is deprecated.
    */
   VcmEncoderSetError = 1603,
+  /**
+   * @ignore
+   */
+  AudioBtNoRoute = 1800,
 }
 
 /**
@@ -1536,6 +1621,30 @@ export enum LocalVideoStreamError {
    * @since v3.4.2
    */
   DeviceNotFound = 8,
+  /**
+   * 13: (iOS only) The screen sharing extension process starts.
+   *
+   * @since v3.7.0
+   */
+  ExtensionCaptureStarted = 13,
+  /**
+   * 14: (iOS only) The screen sharing extension process ends.
+   *
+   * @since v3.7.0
+   */
+  ExtensionCaptureStoped = 14,
+  /**
+   * 15: (iOS only) The screen sharing extension process quits unexpectedly.
+   *
+   * @since v3.7.0
+   */
+  ExtensionCaptureDisconnected = 15,
+  /**
+   * 16: (Android only) The user refuses to grant screen capture permission to the application.
+   *
+   * @since v3.7.0
+   */
+  ScreenCapturePermissionDenied = 16,
 }
 
 /**
@@ -1664,6 +1773,10 @@ export enum NetworkType {
    * 5: The network type is mobile 4G.
    */
   Mobile4G = 5,
+  /**
+   * 6: The network type is mobile 5G.
+   */
+  Mobile5G = 6,
 }
 
 /**
@@ -1717,7 +1830,36 @@ export enum RtmpStreamingErrorCode {
    */
   FormatNotSupported = 10,
   /**
-   * TODO(doc)
+   * 11: The user role is not host, so the user cannot use the CDN live streaming function.
+   * Check your application code logic.
+   *
+   * @since v3.6.2
+   */
+  NotBroadcaster = 11,
+  /**
+   * 13: The `updateRtmpTranscoding` or `setLiveTranscoding` method is called to update the transcoding
+   * configuration in a scenario where there is streaming without transcoding.
+   * Check your application code logic.
+   *
+   * @since v3.6.2
+   */
+  TranscodingNoMixStream = 13,
+  /**
+   * 14: Errors occurred in the host's network.
+   */
+  NetDown = 14,
+  /**
+   * 15: Your App ID does not have permission to use the CDN live streaming function.
+   * Refer to [Prerequisites in Media Push](https://docs.agora.io/en/Interactive%20Broadcast/cdn_streaming_android?platform=Android) to
+   * enable the CDN live streaming permission.
+   *
+   * @since v3.6.2
+   */
+  InvalidAppid = 15,
+  /**
+   * The streaming has been stopped normally. After you call [`removePublishStreamUrl`]{@link RtcEngine.removePublishStreamUrl} to stop streaming, the SDK returns this value.
+   *
+   * @since v3.4.5
    */
   UnPublishOK = 100,
 }
@@ -1756,6 +1898,14 @@ export enum RtmpStreamingState {
    * You can also call the [`addPublishStreamUrl`]{@link RtcEngine.addPublishStreamUrl} method to publish the RTMP or RTMPS streaming again.
    */
   Failure = 4,
+  /**
+   * 5: The SDK is disconnecting from the Agora streaming server and CDN.
+   * When you call remove or stop to stop the streaming normally, the SDK reports the streaming state
+   * as `Disconnecting`, `Idle` in sequence.
+   *
+   * @since v3.6.2
+   */
+  Disconnecting = 5,
 }
 
 /**
@@ -2283,10 +2433,13 @@ export enum WarningCode {
   SetClientRoleTimeout = 118,
   /**
    * 119: The client role is unauthorized.
+   *
+   * @deprecated Deprecated as of v3.7.0.
+   * Use [`ClientRoleChangeFailedReason`]{@link ClientRoleChangeFailedReason} reported in `ClientRoleChangeFailed` instead.
    */
   SetClientRoleNotAuthorized = 119,
   /**
-   * 121: The ticket to open the channel is invalid.
+   * 121: The SDK fails to join a channel.
    */
   OpenChannelInvalidTicket = 121,
   /**
@@ -2324,7 +2477,7 @@ export enum WarningCode {
   /**
    * 1029: During a call, `AudioSessionCategory` should be set to `AVAudioSessionCategoryPlayAndRecord`, and the SDK monitors this value. If the `AudioSessionCategory` is set to other values, this warning code is triggered and the SDK will forcefully set it back to `AVAudioSessionCategoryPlayAndRecord`.
    *
-   * @since v3.1.2.
+   * @since v3.1.2
    */
   AdmCategoryNotPlayAndRecord = 1029,
   /**
@@ -2351,7 +2504,7 @@ export enum WarningCode {
   /**
    * 1042: Audio device module: The audio recording device is different from the audio playback device, which may cause echoes problem. Agora recommends using the same audio device to record and playback audio.
    *
-   * @since v3.1.2.
+   * @since v3.1.2
    */
   AdmInconsistentDevices = 1042,
   /**
@@ -2501,9 +2654,21 @@ export enum RtmpStreamingEvent {
    */
   FailedLoadImage = 1,
   /**
-   * TODO(doc)
+   * The streaming URL is already being used for CDN live streaming. If you want to start new streaming, use a new streaming URL.
+   *
+   * @since v3.4.5
    */
   UrlAlreadyInUse = 2,
+  /**
+   * 3: The feature is not supported.
+   *
+   * @since v3.6.2
+   */
+  AdvancedFeatureNotSupport = 3,
+  /**
+   * 4: Reserved.
+   */
+  RequestTooOften = 4,
 }
 
 /**
@@ -2880,6 +3045,7 @@ export enum CaptureBrightnessLevelType {
 }
 
 /**
+ * @ignore
  * The reason why the super-resolution algorithm is not successfully enabled.
  */
 export enum SuperResolutionStateReason {
@@ -2902,6 +3068,8 @@ export enum SuperResolutionStateReason {
 }
 
 /**
+ * @ignore
+ *
  * The reason for the upload failure.
  *
  * @since v3.3.1.
@@ -2916,7 +3084,7 @@ export enum UploadErrorReason {
    */
   NetError = 1,
   /**
-   * 0: Agora 服务器错误，请稍后尝试。
+   * 2: An error occurs in the Agora server. Try uploading the log files later.
    */
   ServerError = 2,
 }
@@ -2924,20 +3092,25 @@ export enum UploadErrorReason {
 /**
  * The cloud proxy type.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 export enum CloudProxyType {
   /**
-   * 0: Do not use the cloud proxy.
+   * 0: Automatic mode. In this mode, the SDK attempts a direct connection to SD-RTN™ and
+   * automatically switches to TLS 443 if the attempt fails.
+   * As of v3.6.2, the SDK has this mode enabled by default.
    */
   None = 0,
   /**
-   * 1: The cloud proxy for the UDP protocol.
+   * 1: The cloud proxy for the UDP protocol, that is, Force UDP cloud proxy mode.
+   * In this mode, the SDK always transmits data over UDP.
    */
   UDP = 1,
   /**
-   * @ignore
-   * 2: The cloud proxy for the TCP (encryption) protocol.
+   * 2: The cloud proxy for the TCP (encryption) protocol, that is, Force TCP cloud proxy mode.
+   * In this mode, the SDK always transmits data over TLS 443.
+   *
+   * @since v3.6.2
    */
   TCP = 2,
 }
@@ -2945,7 +3118,7 @@ export enum CloudProxyType {
 /**
  * Quality of experience (QoE) of the local user when receiving a remote audio stream.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 export enum ExperienceQualityType {
   /**
@@ -2961,7 +3134,7 @@ export enum ExperienceQualityType {
 /**
  * The reason for poor QoE of the local user when receiving a remote audio stream.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 export enum ExperiencePoorReason {
   /**
@@ -2989,7 +3162,7 @@ export enum ExperiencePoorReason {
 /**
  * The options for SDK preset voice conversion effects.
  *
- * @since v3.3.1.
+ * @since v3.3.1
  */
 export enum VoiceConversionPreset {
   /**
@@ -3012,4 +3185,235 @@ export enum VoiceConversionPreset {
    * 50397952: A deep voice. To avoid audio distortion, ensure that you use this enumerator to process a male-sounding voice.
    */
   Bass = 50397952,
+}
+
+/**
+ * The type of the custom background image.
+ */
+export enum VirtualBackgroundSourceType {
+  /**
+   * (Default) The background image is a solid color.
+   */
+  Color = 1,
+  /**
+   * The background image is a file in PNG or JPG format.
+   */
+  Img = 2,
+  /**
+   * The background image is blurred.
+   *
+   * @since v3.5.2
+   */
+  Blur = 3,
+}
+
+/**
+ * The reason why the virtual background is not successfully enabled or the message that confirms success.
+ */
+export enum VirtualBackgroundSourceStateReason {
+  /**
+   * The virtual background is successfully enabled.
+   */
+  Success = 0,
+  /**
+   * The custom background image does not exist. Please check the value of source in [`VirtualBackgroundSource`]{@link VirtualBackgroundSource}.
+   */
+  ImageNotExist = 1,
+  /**
+   * The color format of the custom background image is invalid. Please check the value of color in [`VirtualBackgroundSource`]{@link VirtualBackgroundSource}.
+   */
+  ColorFormatNotSupported = 2,
+  /**
+   * The device does not support using the virtual background.
+   */
+  DeviceNotSupported = 3,
+}
+
+/**
+ * The information acquisition state, which is reported
+ * in [`RequestAudioFileInfo`]{@link RequestAudioFileInfo}.
+ *
+ * @since v3.5.2
+ */
+export enum AudioFileInfoError {
+  /** 0: Successfully get the information of an audio file.
+   */
+  Ok = 0,
+  /** 1: Fail to get the information of an audio file.
+   */
+  Failure = 1,
+}
+
+/**
+ * The channel mode, which is set in [`setAudioMixingDualMonoMode`]{@link setAudioMixingDualMonoMode}.
+ *
+ * @since v3.5.2
+ */
+export enum AudioMixingDualMonoMode {
+  /**
+   * 0: Original mode.
+   */
+  AUTO = 0,
+  /**
+   * 1: Left channel mode. This mode replaces the audio of the right channel
+   * with the audio of the left channel, which means the user can only hear
+   * the audio of the left channel.
+   */
+  L = 1,
+  /**
+   * 2: Right channel mode. This mode replaces the audio of the left channel with
+   * the audio of the right channel, which means the user can only hear the audio
+   * of the right channel.
+   */
+  R = 2,
+  /**
+   * 3: Mixed channel mode. This mode mixes the audio of the left channel and
+   * the right channel, which means the user can hear the audio of the left
+   * channel and the right channel at the same time.
+   */
+  MIX = 3,
+}
+
+/**
+ * The degree of blurring applied to the custom background image. See
+ *
+ * @since v3.5.2
+ */
+export enum VirtualBackgroundBlurDegree {
+  /**
+   * 1: The degree of blurring applied to the custom background image is low.
+   * The user can almost see the background clearly.
+   */
+  Low = 1,
+  /**
+   * The degree of blurring applied to the custom background image is medium.
+   * It is difficult for the user to recognize details in the background.
+   */
+  Medium = 2,
+  /**
+   * (Default) The degree of blurring applied to the custom background image is high.
+   * The user can barely see any distinguishing features in the background.
+   */
+  High = 3,
+}
+
+/** The video codec type of the output video stream.
+
+ @since v3.2.0
+ */
+export enum VideoCodecTypeForStream {
+  /** 1: (Default) H.264 */
+  H264 = 1,
+  /** 2: H.265 */
+  H265 = 2,
+}
+
+/** The proxy type.
+ *
+ * @since v3.6.2
+ */
+export enum ProxyType {
+  /** 0: Reserved for future use.
+   */
+  None = 0,
+  /** 1: The cloud proxy for the UDP protocol, that is, Force UDP cloud proxy mode.
+   * In this mode, the SDK always transmits data over UDP.
+   */
+  Udp = 1,
+  /** 2: The cloud proxy for the TCP (encryption) protocol, that is, Force TCP cloud proxy mode.
+   In this mode, the SDK always transmits data over TLS 443.
+   */
+  Tcp = 2,
+  /** 3: Reserved for future use.
+   */
+  Local = 3,
+  /** 4: Automatic mode. In this mode, the SDK attempts a direct connection to SD-RTN™ and automatically
+   switches to TLS 443 if the attempt fails.
+   */
+  TcpAutoFallback = 4,
+}
+
+/** API for future use.
+ * @ignore
+ */
+export enum ContentInspectResult {
+  Neutral = 1,
+  Sexy = 2,
+  Porn = 3,
+}
+
+/** API for future use.
+ * @ignore
+ */
+export enum WlAccReason {
+  WeakSignal = 0,
+
+  ChannelCongestion = 1,
+}
+
+/** API for future use.
+ * @ignore
+ */
+export enum WlAccAction {
+  CloseToWIFI = 0,
+
+  ConnectSSID = 1,
+
+  Check5G = 2,
+
+  ModifySSID = 3,
+}
+
+/**
+ * Reasons for a user role switch failure.
+ *
+ * @since v3.7.0
+ */
+export enum ClientRoleChangeFailedReason {
+  /**
+   * `1`: The number of hosts in the channel is already at the upper limit.
+   *
+   * **Note**
+   * This enumerator is reported only when the support for 128 users is enabled.
+   * The maximum number of hosts is based on the actual number of hosts configured when you enable
+   * the 128-user feature.
+   */
+  TooManyBroadcasters = 1,
+
+  /**
+   * `2`: The request is rejected by the Agora server.
+   * Agora recommends you prompt the user to try to switch their user role again.
+   */
+  NotAuthorized = 2,
+
+  /**
+   * `3`: The request is timed out.
+   * Agora recommends you prompt the user to check the network connection and try to switch their user role again.
+   */
+  RequestTimeOut = 3,
+
+  /**
+   * `4`: he SDK connection fails.
+   * You can use `reason` reported in the [`ConnectionStateChanged`]{@link RtcEngineEvents.ConnectionStateChanged} callback to troubleshoot the failure.
+   */
+  ConnectionFailed = 4,
+}
+/**
+ * The content hint of the screen sharing.
+ *
+ * @since v3.7.0
+ */
+export enum VideoContentHint {
+  /**
+   * (Default) No content hint.
+   */
+  None = 0,
+  /**
+   * Motion-intensive content. Choose this option if you prefer smoothness or when you are sharing a video clip, movie, or video game.
+   */
+  Motion = 1,
+  /**
+   * Motionless content. Choose this option if you prefer sharpness or when you are sharing a picture, PowerPoint slide, or text.
+   */
+  Details = 2,
 }

@@ -88,7 +88,10 @@
 					null,
 					null,
 					0,
-					new ChannelMediaOptions(true, true)
+					new ChannelMediaOptions({
+						publishLocalAudio: false,
+						publishLocalVideo: false,
+					})
 				);
 			},
 
@@ -106,7 +109,10 @@
 					null,
 					null,
 					0,
-					new ChannelMediaOptions(true, true)
+					new ChannelMediaOptions({
+						publishLocalAudio: false,
+						publishLocalVideo: false,
+					})
 				);
 			},
 			async addListener(rtcChannel) {

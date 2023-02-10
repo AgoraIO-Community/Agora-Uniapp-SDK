@@ -24,6 +24,10 @@ import type {
   VideoOutputOrientationMode,
   VideoQualityAdaptIndication,
   VideoStreamType,
+  VirtualBackgroundBlurDegree,
+  VirtualBackgroundSourceType,
+  VideoCodecTypeForStream,
+  VideoContentHint,
 } from './Enums';
 
 /**
@@ -45,11 +49,11 @@ export interface UserInfo {
  */
 export class VideoDimensions {
   /**
-   * The video resolution on the horizontal axis.
+   * The width (px) of the video encoding resolution.
    */
   width?: number;
   /**
-   * The video resolution on the vertical axis.
+   * The height (px) of the video encoding resolution.
    */
   height?: number;
 
@@ -328,35 +332,45 @@ export class VideoEncoderConfiguration {
  */
 export class BeautyOptions {
   /**
-   * The lightening contrast level.
+   * The contrast level, often used in conjunction with `lighteningLevel`.
+   * The higher the value, the greater the contrast level. See [`LighteningContrastLevel`]{@link LighteningContrastLevel}.
    */
   lighteningContrastLevel?: LighteningContrastLevel;
   /**
-   * The brightness level. The value ranges between 0.0 (original) and 1.0. The default value is 0.7.
+   * The brightening level, in the range [0.0,1.0], where 0.0 means the original brightening. The default value is 0.6. The higher the value, the greater the brightening level.
    */
   lighteningLevel?: number;
   /**
-   * The sharpness level. The value ranges between 0.0 (original) and 1.0.
-   * The default value is 0.5. This parameter is usually used to remove blemishes.
+   * The smoothness level, in the range [0.0,1.0], where 0.0 means the original smoothness.
+   * The default value is 0.5. The higher the value, the greater the smoothness level.
    */
   smoothnessLevel?: number;
   /**
-   * The redness level. The value ranges between 0.0 (original) and 1.0.
-   * The default value is 0.1. This parameter adjusts the red saturation level.
+   * The redness level, in the range [0.0,1.0], where 0.0 means the original redness.
+   * The default value is 0.1. The higher the value, the greater the redness level.
    */
   rednessLevel?: number;
+  /**
+   * The sharpness level, in the range [0.0,1.0], where 0.0 means the original sharpness.
+   * The default value is 0.3. The higher the value, the greater the sharpness level.
+   *
+   * @since v3.6.2
+   */
+  sharpnessLevel?: number;
 
   constructor(params?: {
     lighteningContrastLevel?: LighteningContrastLevel;
     lighteningLevel?: number;
     smoothnessLevel?: number;
     rednessLevel?: number;
+    sharpnessLevel?: number;
   }) {
     if (params) {
       this.lighteningContrastLevel = params.lighteningContrastLevel;
       this.lighteningLevel = params.lighteningLevel;
       this.smoothnessLevel = params.smoothnessLevel;
       this.rednessLevel = params.rednessLevel;
+      this.sharpnessLevel = params.sharpnessLevel;
     }
   }
 }
@@ -385,6 +399,24 @@ export class AgoraImage {
    * Height of the image on the broadcasting video.
    */
   height?: number;
+  /**
+   * The layer number of the watermark or background image.
+   *
+   * When you use the watermark array to add a watermark or multiple watermarks, you must pass a value to `zOrder` in the range [1,255];
+   * otherwise, the SDK reports an error. In other cases, `zOrder` can optionally be passed in the range [0,255],
+   * with 0 being the default value. `0` means the bottom layer and `255` means the top layer.
+   *
+   * @since v3.6.2
+   */
+  zOrder?: number;
+  /**
+   * The transparency of the watermark or background image. The value range is [0.0,1.0]:
+   * - `0.0`: Completely transparent.
+   * - `1.0`: (Default) Opaque.
+   *
+   * @since v3.6.2
+   */
+  alpha?: number;
 
   constructor(
     url: string,
@@ -393,6 +425,8 @@ export class AgoraImage {
       y?: number;
       width?: number;
       height?: number;
+      zOrder?: number;
+      alpha?: number;
     }
   ) {
     this.url = url;
@@ -401,6 +435,8 @@ export class AgoraImage {
       this.y = params.y;
       this.width = params.width;
       this.height = params.height;
+      this.zOrder = params.zOrder;
+      this.alpha = params.alpha;
     }
   }
 }
@@ -479,22 +515,28 @@ export class TranscodingUser {
 }
 
 /**
- * Color.
+ * Color for [`VirtualBackgroundSource`]{@link VirtualBackgroundSource}
  */
 export class Color {
   /**
-   * Red.
+   * Red value (0 - 255)
    */
   red: number;
   /**
-   * Green.
+   * Green value (0 - 255)
    */
   green: number;
   /**
-   * Blue.
+   * Blue value (0 - 255)
    */
   blue: number;
 
+  /**
+   * Create a color for [`VirtualBackgroundSource`]{@link VirtualBackgroundSource}
+   * @param red Red value (0 - 255)
+   * @param green Green value (0 - 255)
+   * @param blue Blue value (0 - 255)
+   */
   constructor(red: number, green: number, blue: number) {
     this.red = red;
     this.green = green;
@@ -507,13 +549,15 @@ export class Color {
  */
 export class LiveTranscoding {
   /**
-   * Width (pixel) of the video. The default value is 360. If you push video streams to the CDN, set the value of width × height to at least 64 × 64, or the SDK adjusts it to 64 x 64.
-   * If you push audio streams to the CDN, set the value of width × height to 0 × 0.
+   * Width (pixel) of the video. The default value is 360.
+   * - When pushing video streams to the CDN, the value range of `width` is [64,1920]. If the value is less than 64, Agora server automatically adjusts it to 64; if the value is greater than 1920, Agora server automatically adjusts it to 1920.
+   * - If you push audio streams to the CDN, set the value of width × height to 0 × 0.
    */
   width?: number;
   /**
-   * Height (pixel) of the video. The default value is 640. If you push video streams to the CDN, set the value of width × height to at least 64 × 64, or the SDK adjusts it to 64 x 64.
-   * If you push audio streams to the CDN, set the value of width × height to 0 × 0.
+   * Height (pixel) of the video. The default value is 640.
+   * - When pushing video streams to the CDN, the value range of `height` is [64,1080]. If the value is less than 64, Agora server automatically adjusts it to 64; if the value is greater than 1080, Agora server automatically adjusts it to 1080.
+   * - If you push audio streams to the CDN, set the value of width × height to 0 × 0.
    */
   height?: number;
   /**
@@ -537,15 +581,29 @@ export class LiveTranscoding {
    */
   videoGop?: number;
   /**
-   * The watermark image added to the CDN live publishing stream. Ensure that the format of the image is PNG. Once a watermark image is added,
-   * the audience of the CDN live publishing stream can see it.
+   * The watermark on the live video. The image format must be PNG.
    */
   watermark?: AgoraImage;
   /**
-   * The background image added to the CDN live publishing stream. Once a background image is added,
-   * the audience of the CDN live publishing stream can see it.
+   * The array of watermarks on the live video. You can use `watermarkList` to add one or more watermarks.
+   * The image format must be PNG.
+   *
+   * The total number of watermarks and background images on the live video must be greater than or equal to 0 and less than or equal to 10.
+   *
+   * @since v3.6.2
+   */
+  watermarkList?: AgoraImage[];
+  /**
+   * The background image on the live video. The format must be in the PNG format.
    */
   backgroundImage?: AgoraImage;
+  /**
+   * The array of background images on the live video. You can use `backgroundImageList` to add one or more background images. The image format must be PNG.
+   * The total number of watermarks and background images on the live video must be greater than or equal to 0 and less than or equal to 10.
+   *
+   * @since v3.6.2
+   */
+  backgroundImageList?: AgoraImage[];
   /**
    * Self-defined audio-sample rate: AudioSampleRateType.
    */
@@ -574,6 +632,12 @@ export class LiveTranscoding {
    */
   videoCodecProfile?: VideoCodecProfileType;
   /**
+   * The video codec type of the output video stream.
+   *
+   * @since v3.2.0
+   */
+  videoCodecType?: VideoCodecTypeForStream;
+  /**
    * Sets the background color.
    */
   backgroundColor?: Color;
@@ -582,9 +646,19 @@ export class LiveTranscoding {
    */
   userConfigExtraInfo?: string;
   /**
+   * The metadata sent to the CDN live client.
+   *
+   * @deprecated This property is deprecated.
+   */
+  metadata?: string;
+  /**
    * An TranscodingUser object managing the user layout configuration in the CDN live stream. Agora supports a maximum of 17 transcoding users in a CDN live stream channel.
    */
   transcodingUsers: TranscodingUser[];
+  /**
+   * @ignore
+   */
+  advancedFeatures?: Map<String, boolean>;
 
   constructor(
     transcodingUsers: TranscodingUser[],
@@ -596,14 +670,19 @@ export class LiveTranscoding {
       lowLatency?: boolean;
       videoGop?: number;
       watermark?: AgoraImage;
+      watermarkList?: AgoraImage[];
       backgroundImage?: AgoraImage;
+      backgroundImageList?: AgoraImage[];
       audioSampleRate?: AudioSampleRateType;
       audioBitrate?: number;
       audioChannels?: AudioChannel;
       audioCodecProfile?: AudioCodecProfileType;
       videoCodecProfile?: VideoCodecProfileType;
+      videoCodecType?: VideoCodecTypeForStream;
       backgroundColor?: Color;
       userConfigExtraInfo?: string;
+      metadata?: string;
+      advancedFeatures?: Map<String, boolean>;
     }
   ) {
     if (params) {
@@ -614,14 +693,19 @@ export class LiveTranscoding {
       this.lowLatency = params.lowLatency;
       this.videoGop = params.videoGop;
       this.watermark = params.watermark;
+      this.watermarkList = params.watermarkList;
       this.backgroundImage = params.backgroundImage;
+      this.backgroundImageList = params.backgroundImageList;
       this.audioSampleRate = params.audioSampleRate;
       this.audioBitrate = params.audioBitrate;
       this.audioChannels = params.audioChannels;
       this.audioCodecProfile = params.audioCodecProfile;
       this.videoCodecProfile = params.videoCodecProfile;
+      this.videoCodecType = params.videoCodecType;
       this.backgroundColor = params.backgroundColor;
       this.userConfigExtraInfo = params.userConfigExtraInfo;
+      this.metadata = params.metadata;
+      this.advancedFeatures = params.advancedFeatures;
     }
     this.transcodingUsers = transcodingUsers;
   }
@@ -955,11 +1039,25 @@ export class ChannelMediaOptions {
    */
   autoSubscribeVideo?: boolean;
   /**
-   * TODO(doc)
+   * Determines whether to publish the local audio stream when the user joins a channel:
+   * - `true`: (Default) Publish.
+   * - `false`: Do not publish.
+   *
+   * This member serves a similar function to the [`muteLocalAudioStream`]{@link RtcEngine.muteLocalAudioStream} method.
+   * After the user joins the channel, you can call the `muteLocalAudioStream` method to set whether to publish the local audio stream in the channel.
+   *
+   * @since v3.4.5
    */
   publishLocalAudio?: boolean;
   /**
-   * TODO(doc)
+   * Determines whether to publish the local video stream when the user joins a channel:
+   * - `true`: (Default) Publish.
+   * - `false`: Do not publish.
+   *
+   * This member serves a similar function to the [`muteLocalVideoStream`]{@link RtcEngine.muteLocalVideoStream} method.
+   * After the user joins the channel, you can call the `muteLocalVideoStream` method to set whether to publish the local video stream in the channel.
+   *
+   * @since v3.4.5
    */
   publishLocalVideo?: boolean;
 
@@ -985,11 +1083,12 @@ export class ChannelMediaOptions {
  */
 export class EncryptionConfig {
   /**
-   * Encryption mode. The default encryption mode is `AES128XTS`. See [`EncryptionMode`]{@link EncryptionMode}.
+   * Encryption mode. The default encryption mode is `AES128GCM2`.
+   * See [`EncryptionMode`]{@link EncryptionMode}.
    */
   encryptionMode?: EncryptionMode;
   /**
-   * Encryption key in string type.
+   * Encryption key in string type with unlimited length. Agora recommends using a 32-byte key.
    *
    * **Note**
    *
@@ -997,7 +1096,15 @@ export class EncryptionConfig {
    */
   encryptionKey?: string;
   /**
-   * TODO(doc)
+   * The salt with the length of 32 bytes. Agora recommends using OpenSSL to generate the salt on your server.
+   * For details, see *Media Stream Encryption*.
+   *
+   * @since v3.4.5
+   *
+   * Note: This parameter is only valid when you set the encryption mode as `AES128GCM2` or `AES256GCM2`.
+   * Ensure that this parameter meets the following requirements:
+   * - Android: This parameter is not 0.
+   * - iOS: This parameter is not nil or 0, and the data length is 32 bytes.
    */
   encryptionKdfSalt?: number[];
 
@@ -1095,7 +1202,8 @@ export interface RtcStats {
    *
    * **Note**
    *
-   * The `cpuTotalUsage` reported in the `LeaveChannel` callback is always 0.
+   * - The `cpuTotalUsage` reported in the `LeaveChannel` callback is always 0.
+   * - As of Android 8.1, you might not be able to get the CPU usage from this attribute due to system limitations.
    */
   cpuTotalUsage: number;
   /**
@@ -1103,7 +1211,8 @@ export interface RtcStats {
    *
    * **Note**
    *
-   * The `cpuAppUsage` reported in the `LeaveChannel` callback is always 0.
+   * - The `cpuAppUsage` reported in the `LeaveChannel` callback is always 0.
+   * - - As of Android 8.1, you might not be able to get the CPU usage from this attribute due to system limitations.
    */
   cpuAppUsage: number;
   /**
@@ -1157,7 +1266,7 @@ export interface AudioVolumeInfo {
    * - 1: The local user is speaking.
    *
    * **Note**
-   * - The `vad` parameter cannot report the voice activity status of the remote users. In the remote users' callback, `vad` = 0.
+   * - The `vad` parameter cannot report the voice activity status of the remote users. In the remote users' callback, `vad` is always 1.
    * - Ensure that you set `report_vad(true)` in the [`enableAudioVolumeIndication`]{@link RtcEngine.enableAudioVolumeIndication} method to enable the voice activity detection of the local user.
    */
   vad: number;
@@ -1609,7 +1718,7 @@ export class DataStreamConfig {
 /**
  * Configurations for the [`RtcEngine`]{@link RtcEngine}.
  *
- * @since v3.3.1
+ * @since v3.4.5
  */
 export class RtcEngineContext {
   /**
@@ -1650,9 +1759,10 @@ export class RtcEngineContext {
 }
 
 /**
- * @deprecated
  *
  * Configurations for the [`RtcEngine`]{@link RtcEngine}.
+ *
+ * @deprecated As of v3.4.5, this class is deprecated. Use [`RtcEngineContext`]{@link RtcEngineContext} instead.
  *
  * @since v3.3.1
  */
@@ -1668,14 +1778,14 @@ export class AudioRecordingConfiguration {
    * - On Android: `/sdcard/emulated/0/audio.aac`.
    * - On iOS: `/var/mobile/Containers/Data/audio.aac`.
    *
-   * @note
+   * **Note**
    * Ensure that the path you specify exists and is writable.
    */
   filePath: string;
   /**
    * Audio recording quality. See [`AudioRecordingQuality`]{@link AudioRecordingQuality}.
    *
-   * @note This parameter applies to AAC files only.
+   * **Note** This parameter applies to AAC files only.
    */
   recordingQuality?: AudioRecordingQuality;
   /**
@@ -1689,11 +1799,19 @@ export class AudioRecordingConfiguration {
    * - 44100
    * - 48000
    *
-   * @note
+   * **Note**
    * If this parameter is set to `44100` or `48000`, for better recording effects, Agora recommends recording WAV files or AAC files whose `recordingQuality` is `Medium` or `High`.
    *
    */
   recordingSampleRate?: AudioSampleRateType;
+  /**
+   * The recorded audio channel. The following values are supported:
+   * - `1`: (Default) Mono channel.
+   * - `2`: Dual channel.
+   *
+   * @since v3.6.2
+   */
+  recordingChannel?: number;
 
   constructor(
     filePath: string,
@@ -1701,6 +1819,7 @@ export class AudioRecordingConfiguration {
       recordingQuality?: AudioRecordingQuality;
       recordingPosition?: AudioRecordingPosition;
       recordingSampleRate?: AudioSampleRateType;
+      recordingChannel?: number;
     }
   ) {
     this.filePath = filePath;
@@ -1708,6 +1827,436 @@ export class AudioRecordingConfiguration {
       this.recordingQuality = params.recordingQuality;
       this.recordingPosition = params.recordingPosition;
       this.recordingSampleRate = params.recordingSampleRate;
+      this.recordingChannel = params.recordingChannel;
     }
   }
+}
+
+/**
+ * The custom background image.
+ *
+ * @since v3.5.0.3
+ */
+export class VirtualBackgroundSource {
+  /**
+   * The type of the custom background image. See [`VirtualBackgroundSourceType`]{@link VirtualBackgroundSourceType}.
+   */
+  backgroundSourceType?: VirtualBackgroundSourceType;
+  /**
+   * The color of the custom background image.
+   * The format is a hexadecimal integer defined by RGB, without the # sign, such as 0xFFB6C1 for light pink.
+   * The default value is 0xFFFFFF, which signifies white. The value range is [0x000000,0xffffff]. If the value is invalid, the SDK replaces the original background image with a white background image.
+   *
+   * **Note**
+   * This parameter takes effect only when the type of the custom background image is `Color`.
+   */
+  color?: Color;
+  /**
+   * The local absolute path of the custom background image. PNG and JPG formats are supported.
+   * If the path is invalid, the SDK replaces the original background image with a white background image.
+   *
+   * **Note**
+   * This parameter takes effect only when the type of the custom background image is `Img`.
+   */
+  source?: string;
+  /**
+   * The degree of blurring applied to the custom background image. See [`VirtualBackgroundBlurDegree`]{@link VirtualBackgroundBlurDegree}.
+   *
+   * **Since** v3.5.2
+   */
+  blur_degree?: VirtualBackgroundBlurDegree;
+
+  constructor(params?: {
+    backgroundSourceType?: VirtualBackgroundSourceType;
+    color?: Color;
+    source?: string;
+    blur_degree?: VirtualBackgroundBlurDegree;
+  }) {
+    if (params) {
+      this.backgroundSourceType = params.backgroundSourceType;
+      this.color = params.color;
+      this.source = params.source;
+      this.blur_degree = params.blur_degree;
+    }
+  }
+}
+
+/**
+ * The information of an audio file, which is reported in [`RequestAudioFileInfo`]{@link RequestAudioFileInfo}.
+ *
+ * @since v3.5.2
+ */
+export interface AudioFileInfo {
+  /** The file path.
+   */
+  filePath: string;
+  /** The file duration (ms).
+   */
+  durationMs: number;
+}
+
+/**
+ * The configuration of the audio call loop test.
+ *
+ * @since v3.5.2
+ */
+export class EchoTestConfiguration {
+  /**
+   * Whether to enable the audio device for the call loop test:
+   * - true: (Default) Enables the audio device. To test the audio device, set this parameter as `true`.
+   * - false: Disables the audio device.
+   */
+  enableAudio?: boolean;
+  /**
+   * Reversed for future use.
+   */
+  enableVideo?: boolean;
+  /**
+   * The token used to secure the audio call loop test. If you do not enable App Certificate in Agora
+   * Console, you do not need to pass a value in this parameter; if you have enabled App Certificate in Agora Console,
+   * you must pass a token in this parameter, the `uid` used when you generate the token must be 0xFFFFFFFF, and the
+   * channel name used must be the channel name that identifies each audio loop tested. For server-side
+   * token generation, see [Authenticate Your Users with Tokens](https://docs.agora.io/en/Interactive%20Broadcast/token_server?platform=All%20Platforms).
+   */
+  token?: string;
+  /**
+   * The channel name that identifies each audio call loop. To ensure proper loop test functionality, the
+   * channel name passed in to identify each loop test cannot be the same when users of the same project (App ID)
+   * perform audio call loop tests on different devices.
+   */
+  channelId?: string;
+
+  constructor(params?: {
+    enableAudio?: boolean;
+    enableVideo?: boolean;
+    token?: string;
+    channelId?: string;
+  }) {
+    if (params) {
+      this.enableAudio = params.enableAudio;
+      this.enableVideo = params.enableVideo;
+      this.token = params.token;
+      this.channelId = params.channelId;
+    }
+  }
+}
+
+/**
+ * Configurations for the local audio and video recording.
+ *
+ * @since v3.6.2
+ */
+export class MediaRecorderConfiguration {
+  /**
+   * The absolute path (including the filename extensions) for the recording file.
+   * For example:
+   * - Android: `/storage/emulated/0/Android/data/<package name>/files/example.mp4`
+   * - iOS: `/App Sandbox/Library/Caches/example.mp4`
+   *
+   * **Note**
+   * Ensure that the specified path exists and is writable.
+   */
+  storagePath: string;
+  /**
+   * The format of the recording file. The SDK currently supports only `1`, which is MP4 format.
+   */
+  containerFormat: number;
+  /**
+   * The recording content:
+   * - `0x1`: Only audio.
+   * - `0x2`: Only video.
+   * - `0x3`: (Default) Audio and video.
+   */
+  streamType: number;
+  /**
+   * The maximum recording duration, in milliseconds. The default value is `120000`.
+   */
+  maxDurationMs: number;
+  /**
+   * The interval (ms) of updating the recording information.
+   * The value range is [1000,10000]. Based on the set value of `recorderInfoUpdateInterval`,
+   * the SDK triggers the [`RecorderInfoUpdated`]{@link RtcEngineEvents.RecorderInfoUpdated} callback to report the updated recording information.
+   */
+  recorderInfoUpdateInterval: number;
+
+  constructor(
+    storagePath: string,
+    containerFormat: number,
+    streamType: number,
+    maxDurationMs: number,
+    recorderInfoUpdateInterval: number
+  ) {
+    this.storagePath = storagePath;
+    this.containerFormat = containerFormat;
+    this.streamType = streamType;
+    this.maxDurationMs = maxDurationMs;
+    this.recorderInfoUpdateInterval = recorderInfoUpdateInterval;
+  }
+}
+
+/**
+ * @ignore For future use
+ */
+export class ContentInspectModule {
+  type?: number;
+  interval?: number;
+}
+
+/**
+ * @ignore For future use
+ */
+export class ContentInspectConfig {
+  extraInfo?: string;
+  modules?: ContentInspectModule[];
+  moduleCount?: number;
+}
+
+/**
+ * @ignore For future use
+ */
+export class LocalAccessPointConfiguration {
+  ipList?: string[];
+  domainList?: string[];
+  verifyDomainName?: string;
+  mode?: number;
+}
+
+/**
+ * The video noise reduction options.
+ *
+ * @since v3.6.2
+ */
+export class VideoDenoiserOptions {
+  /**
+   * The video noise reduction mode：
+   * - `0`: (Default) Automatic mode. The SDK automatically enables or disables the video noise reduction feature according to the ambient light.
+   * - `1`: Manual mode. Users need to enable or disable the video noise reduction feature manually.
+   */
+  denoiserMode?: number;
+  /**
+   * The video noise reduction level:
+   *
+   * - `0`: (Default) Promotes video quality during video noise reduction.
+   * `0` balances performance consumption and video noise reduction quality.
+   * The performance consumption is moderate, the video noise reduction speed is moderate,
+   * and the overall video quality is optimal.
+   * - `1`: Promotes reducing performance consumption during video noise reduction.
+   * `1` prioritizes reducing performance consumption over video noise reduction quality.
+   * The performance consumption is lower, and the video noise reduction speed is faster.
+   * To avoid a noticeable shadowing effect (shadows trailing behind moving objects) in the processed video,
+   * Agora recommends that you use `1` when the camera is fixed.
+   * - `2`: Enhanced video noise reduction. `2` prioritizes video noise reduction quality over reducing
+   * performance consumption. The performance consumption is higher, the video noise reduction speed is slower,
+   * and the video noise reduction quality is better. If `0` is not enough for your video noise reduction needs, you can use `2`.
+   */
+  denoiserLevel?: number;
+}
+
+/**
+ * The low-light enhancement options.
+ *
+ * @since v3.6.2
+ */
+export class LowLightEnhanceOptions {
+  /**
+   * The low-light enhancement mode:
+   *
+   * - `0`: (Default) Automatic mode. The SDK automatically enables or disables the low-light enhancement feature according
+   * to the ambient light to compensate for the lighting level or prevent overexposure, as necessary.
+   * - `1`: Manual mode. Users need to enable or disable the low-light enhancement feature manually.
+   */
+  lowlightEnhanceMode?: number;
+  /**
+   * The low-light enhancement level:
+   *
+   * - `0`: (Default) Promotes video quality during low-light enhancement. It processes the brightness, details,
+   * and noise of the video image. The performance consumption is moderate, the processing speed is moderate, and
+   * the overall video quality is optimal.
+   * - `1`: Promotes performance during low-light enhancement. It processes the brightness and details of the video image.
+   * The processing speed is faster.
+   */
+  lowlightEnhanceLevel?: number;
+}
+
+/**
+ * The color enhancement options.
+ *
+ * @since v3.6.2
+ */
+export class ColorEnhanceOptions {
+  /**
+   * The level of color enhancement.
+   * The value range is [0.0,1.0]. `0.0` means no color enhancement is applied to the video.
+   * The higher the value, the higher the level of color enhancement.
+   * The default value is `0.5` on Android and `0.0` on iOS.
+   */
+  strengthLevel?: number;
+  /**
+   * The level of skin tone protection.
+   * The value range is [0.0,1.0].
+   * `0.0` means no skin tone protection.
+   * The higher the value, the higher the level of skin tone protection.
+   * The default value is `1.0`. When the level of color enhancement is higher,
+   * the portrait skin tone can be significantly distorted, so you need to set the level of skin
+   * tone protection; when the level of skin tone protection is higher, the color enhancement effect
+   * can be slightly reduced. Therefore, to get the best color enhancement effect, Agora recommends
+   * that you adjust strengthLevel and skinProtectLevel to get the most appropriate values.
+   */
+  skinProtectLevel?: number;
+}
+
+/**
+ * Information for the recording file.
+ *
+ * @since v3.6.2
+ */
+export interface RecorderInfo {
+  /**
+   * The absolute path of the recording file.
+   */
+  fileName: string;
+  /**
+   * The recording duration, in milliseconds.
+   */
+  durationMs: number;
+  /**
+   * The size in bytes of the recording file.
+   */
+  fileSize: number;
+}
+
+/**
+ * @ignore For future user
+ */
+export interface WlAccStats {
+  e2eDelayPercent: number;
+  frozenRatioPercent: number;
+  lossRatePercent: number;
+}
+
+/**
+ * The configuration of the screen sharing.
+ *
+ * @since v3.7.0
+ */
+export class ScreenCaptureParameters {
+  /**
+   * Determines whether to capture system audio during screen sharing:
+   * - `true`: Capture.
+   * - `false`: (Default) Do not capture.
+   *
+   * **Note**
+   * On Android, due to system limitations, capturing system audio is only available for Android API level 29
+   * and later (that is, Android 10 and later).
+   */
+  captureAudio?: boolean;
+  /**
+   * The audio configuration for the shared screen stream. See [`ScreenAudioParameters`]{@link ScreenAudioParameters}.
+   *
+   * **Note**
+   * This parameter is only available for scenarios where `captureAudio` is `true`.
+   */
+  audioParams?: ScreenAudioParameters;
+  /**
+   * Determines whether to capture the screen during screen sharing:
+   * - `true`: Capture.
+   * - `false`: (Default) Do not capture.
+   *
+   * **Note**
+   * On Android, due to system limitations, screen capture is only available for Android API level 21
+   * and later (that is, Android 5 and later).
+   */
+  captureVideo?: boolean;
+  /**
+   * The video configuration for the shared screen stream. See [`ScreenVideoParameters`]{@link ScreenVideoParameters}.
+   *
+   * **Note**
+   * This parameter is only available for scenarios where `captureVideo` is `false`.
+   */
+  videoParams?: ScreenVideoParameters;
+}
+
+/**
+ * The video configuration for the shared screen stream.
+ *
+ * Only available for scenarios where `captureVideo` is `true`.
+ *
+ * @since v3.7.0
+ */
+export class ScreenVideoParameters {
+  /**
+   * The video encoding bitrate (Kbps). For recommended values,
+   * see [Recommended video profiles](https://docs.agora.io/en/Interactive%20Broadcast/game_streaming_video_profile?platform=Android#recommended-video-profiles).
+   */
+  bitrate?: number;
+  /**
+   * The video encoding frame rate (fps). The default value is 15. For recommended values,
+   * see [Recommended video profiles](https://docs.agora.io/en/Interactive%20Broadcast/game_streaming_video_profile?platform=Android#recommended-video-profiles).
+   */
+  frameRate?: number;
+  /**
+   * The video encoding resolution. The default value is 1280 × 720. For recommended values,
+   * see [Recommended video profiles](https://docs.agora.io/en/Interactive%20Broadcast/game_streaming_video_profile?platform=Android#recommended-video-profiles).
+   *
+   * If the aspect ratio is different between `dimensions` and the screen, the SDK adjusts the video encoding resolution according to the
+   * following rules (using an example value for `dimensions` of 1280 × 720):
+   * - When the width and height of the screen are both lower than those of `dimensions`, the SDK uses the resolution of the screen for video encoding.
+   * For example, if the screen is 640 × 360, the SDK uses 640 × 360 for video encoding.
+   * - When either the width or height of the screen is higher than that of `dimension`, the SDK uses the maximum values that do not exceed those of `dimensions`
+   * while maintaining the aspect ratio of the screen for video encoding. For example, if the screen is 2000 × 1500, the SDK uses 960 × 720 for video encoding.
+   *
+   * **Note**
+   * - The billing of the screen sharing stream is based on the value of `dimensions`.
+   * When you do not pass in a value, Agora bills you at 1280 × 720; when you pass a value in,
+   * Agora bills you at that value. For details, see [Pricing for Real-time Communication](https://docs.agora.io/en/Interactive%20Broadcast/billing_rtc?platform=React%20Native).
+   * - This value does not indicate the orientation mode of the output ratio. For how to set the video orientation, see [`VideoOutputOrientationMode`]{@link VideoOutputOrientationMode}.
+   * - Whether the SDK can support a resolution at 720P depends on the performance of the device. If you set 720P but the device cannot support it, the video frame rate can be lower.
+   */
+  dimensions?: VideoDimensions;
+  /**
+   * The content hint of the screen sharing. See [`VideoContentHint`]{@link VideoContentHint}.
+   */
+  contentHint?: VideoContentHint;
+}
+
+/**
+ * The audio configuration for the shared screen stream.
+ *
+ * Only available for scenarios where `captureAudio` is `true`.
+ *
+ * @since v3.7.0
+ */
+export class ScreenAudioParameters {
+  /**
+   * The audio sample rate (Hz). The default value is 16000.
+   */
+  sampleRate?: number;
+  /**
+   * The number of audio channels. The default value is 2, indicating dual channels.
+   */
+  channels?: number;
+  /**
+   * The volume of the captured system audio. The value range is [0,100]. The default value is 100.
+   */
+  captureSignalVolume?: number;
+  /**
+   * Determines whether to capture the audio played by the current application:
+   * - `true`: Capture.
+   * - `false`: (Default) Do not capture.
+   */
+  allowCaptureCurrentApp?: boolean;
+}
+
+/**
+ * @ignore Contact support@agora.io.
+ *
+ * @since v3.7.0
+ */
+export class SpatialAudioParams {
+  speaker_azimuth?: number;
+  speaker_elevation?: number;
+  speaker_distance?: number;
+  speaker_orientation?: number;
+  enable_blur?: boolean;
+  enable_air_absorb?: boolean;
 }

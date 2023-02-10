@@ -1,8 +1,11 @@
 package io.agora.rtc.base
 
 import android.graphics.Rect
-import android.support.annotation.IntRange
+import androidx.annotation.IntRange
+import io.agora.rtc.AgoraMediaRecorder
+import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
+import io.agora.rtc.mediaio.AgoraDefaultSource
 import io.agora.rtc.models.UserInfo
 
 class RtcEngineEvents {
@@ -33,6 +36,7 @@ class RtcEngineEvents {
     const val LocalVideoStateChanged = "LocalVideoStateChanged"
     const val RemoteAudioStateChanged = "RemoteAudioStateChanged"
     const val LocalAudioStateChanged = "LocalAudioStateChanged"
+    const val RequestAudioFileInfo = "RequestAudioFileInfo"
     const val LocalPublishFallbackToAudioOnly = "LocalPublishFallbackToAudioOnly"
     const val RemoteSubscribeFallbackToAudioOnly = "RemoteSubscribeFallbackToAudioOnly"
     const val AudioRouteChanged = "AudioRouteChanged"
@@ -86,6 +90,16 @@ class RtcEngineEvents {
     const val RtmpStreamingEvent = "RtmpStreamingEvent"
     const val UserSuperResolutionEnabled = "UserSuperResolutionEnabled"
     const val UploadLogResult = "UploadLogResult"
+    const val VirtualBackgroundSourceEnabled = "VirtualBackgroundSourceEnabled"
+    const val SnapshotTaken = "SnapshotTaken"
+    const val RecorderStateChanged = "RecorderStateChanged"
+    const val RecorderInfoUpdated = "RecorderInfoUpdated"
+    const val ProxyConnected = "ProxyConnected"
+    const val ContentInspectResult = "ContentInspectResult"
+    const val WlAccMessage = "WlAccMessage"
+    const val WlAccStats = "WlAccStats"
+    const val ClientRoleChangeFailed = "ClientRoleChangeFailed"
+    const val LocalVoicePitchInHz = "LocalVoicePitchInHz"
 
     fun toMap(): Map<String, String> {
       return hashMapOf(
@@ -115,6 +129,7 @@ class RtcEngineEvents {
         "LocalVideoStateChanged" to LocalVideoStateChanged,
         "RemoteAudioStateChanged" to RemoteAudioStateChanged,
         "LocalAudioStateChanged" to LocalAudioStateChanged,
+        "RequestAudioFileInfo" to RequestAudioFileInfo,
         "LocalPublishFallbackToAudioOnly" to LocalPublishFallbackToAudioOnly,
         "RemoteSubscribeFallbackToAudioOnly" to RemoteSubscribeFallbackToAudioOnly,
         "AudioRouteChanged" to AudioRouteChanged,
@@ -167,7 +182,16 @@ class RtcEngineEvents {
         "VideoSubscribeStateChanged" to VideoSubscribeStateChanged,
         "RtmpStreamingEvent" to RtmpStreamingEvent,
         "UserSuperResolutionEnabled" to UserSuperResolutionEnabled,
-        "UploadLogResult" to UploadLogResult
+        "UploadLogResult" to UploadLogResult,
+        "VirtualBackgroundSourceEnabled" to VirtualBackgroundSourceEnabled,
+        "SnapshotTaken" to SnapshotTaken,
+        "RecorderStateChanged" to RecorderStateChanged,
+        "RecorderInfoUpdated" to RecorderInfoUpdated,
+        "ProxyConnected" to ProxyConnected,
+        "ContentInspectResult" to ContentInspectResult,
+        "WlAccMessage" to WlAccMessage,
+        "WlAccStats" to WlAccStats,
+        "ClientRoleChangeFailed" to ClientRoleChangeFailed
       )
     }
   }
@@ -175,7 +199,7 @@ class RtcEngineEvents {
 
 class RtcEngineEventHandler(
   private val emitter: (methodName: String, data: Map<String, Any?>?) -> Unit
-) : IRtcEngineEventHandler() {
+) : IRtcEngineEventHandler(), AgoraMediaRecorder.IMediaRecorderCallback {
   companion object {
     const val PREFIX = "io.agora.rtc."
   }
@@ -304,6 +328,9 @@ class RtcEngineEventHandler(
     @Annotations.AgoraLocalVideoStreamState localVideoState: Int,
     @Annotations.AgoraLocalVideoStreamError error: Int
   ) {
+    if (error == Constants.ERR_SCREEN_CAPTURE_PERMISSION_DENIED) {
+      RtcEngineManager.engine?.setVideoSource(AgoraDefaultSource())
+    }
     callback(RtcEngineEvents.LocalVideoStateChanged, localVideoState, error)
   }
 
@@ -321,6 +348,10 @@ class RtcEngineEventHandler(
     @Annotations.AgoraAudioLocalError error: Int
   ) {
     callback(RtcEngineEvents.LocalAudioStateChanged, state, error)
+  }
+
+  override fun onRequestAudioFileInfo(info: AudioFileInfo?, error: Int) {
+    callback(RtcEngineEvents.RequestAudioFileInfo, info?.toMap(), error)
   }
 
   override fun onLocalPublishFallbackToAudioOnly(isFallbackOrRecover: Boolean) {
@@ -678,5 +709,76 @@ class RtcEngineEventHandler(
     @Annotations.AgoraUploadErrorReason reason: Int
   ) {
     callback(RtcEngineEvents.UploadLogResult, requestId, success, reason)
+  }
+
+  override fun onVirtualBackgroundSourceEnabled(
+    enabled: Boolean,
+    @Annotations.AgoraVirtualBackgroundSourceStateReason reason: Int
+  ) {
+    callback(RtcEngineEvents.VirtualBackgroundSourceEnabled, enabled, reason)
+  }
+
+  override fun onSnapshotTaken(
+    channel: String?,
+    uid: Int,
+    filePath: String?,
+    width: Int,
+    height: Int,
+    errCode: Int
+  ) {
+    callback(
+      RtcEngineEvents.SnapshotTaken,
+      channel,
+      uid.toUInt().toLong(),
+      filePath,
+      width,
+      height,
+      errCode
+    )
+  }
+
+  override fun onRecorderStateChanged(state: Int, error: Int) {
+    callback(RtcEngineEvents.RecorderStateChanged, state, error)
+  }
+
+  override fun onRecorderInfoUpdated(info: AgoraMediaRecorder.RecorderInfo?) {
+    callback(RtcEngineEvents.RecorderInfoUpdated, info?.toMap())
+  }
+
+  override fun onProxyConnected(
+    channel: String?,
+    uid: Int,
+    proxyType: Int,
+    localProxyIp: String?,
+    elapsed: Int
+  ) {
+    callback(
+      RtcEngineEvents.ProxyConnected,
+      channel,
+      uid.toUInt().toLong(),
+      proxyType,
+      localProxyIp,
+      elapsed
+    )
+  }
+
+  override fun onContentInspectResult(result: Int) {
+    callback(RtcEngineEvents.ContentInspectResult, result)
+  }
+
+  override fun onWlAccMessage(reason: Int, action: Int, wlAccMsg: String?) {
+    callback(RtcEngineEvents.WlAccMessage, reason, action, wlAccMsg)
+  }
+
+  override fun onWlAccStats(currentStats: WlAccStats?, averageStats: WlAccStats?) {
+    callback(RtcEngineEvents.WlAccStats, currentStats?.toMap(), averageStats?.toMap())
+  }
+
+  override fun onClientRoleChangeFailed(reason: Int, currentRole: Int) {
+    callback(RtcEngineEvents.ClientRoleChangeFailed, reason, currentRole)
+  }
+
+  override fun onLocalVoicePitchInHz(pitchInHz: Int) {
+    callback(RtcEngineEvents.LocalVoicePitchInHz, pitchInHz)
   }
 }

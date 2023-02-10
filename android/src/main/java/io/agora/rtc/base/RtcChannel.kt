@@ -34,6 +34,8 @@ class IRtcChannel {
     fun unpublish(params: Map<String, *>, callback: Callback)
 
     fun getCallId(params: Map<String, *>, callback: Callback)
+
+    fun setAVSyncSource(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcAudioInterface {
@@ -72,6 +74,14 @@ class IRtcChannel {
     fun addPublishStreamUrl(params: Map<String, *>, callback: Callback)
 
     fun removePublishStreamUrl(params: Map<String, *>, callback: Callback)
+
+    fun startRtmpStreamWithoutTranscoding(params: Map<String, *>, callback: Callback)
+
+    fun startRtmpStreamWithTranscoding(params: Map<String, *>, callback: Callback)
+
+    fun updateRtmpTranscoding(params: Map<String, *>, callback: Callback)
+
+    fun stopRtmpStream(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcMediaRelayInterface {
@@ -80,6 +90,10 @@ class IRtcChannel {
     fun updateChannelMediaRelay(params: Map<String, *>, callback: Callback)
 
     fun stopChannelMediaRelay(params: Map<String, *>, callback: Callback)
+
+    fun pauseAllChannelMediaRelay(params: Map<String, *>, callback: Callback)
+
+    fun resumeAllChannelMediaRelay(params: Map<String, *>, callback: Callback)
   }
 
   interface RtcDualStreamInterface {
@@ -128,17 +142,20 @@ class IRtcChannel {
 class RtcChannelManager(
   private val emit: (methodName: String, data: Map<String, Any?>?) -> Unit
 ) : IRtcChannel.RtcChannelInterface {
-  private val rtcChannelMap = Collections.synchronizedMap(mutableMapOf<String, RtcChannel>())
-  private val mediaObserverMap = Collections.synchronizedMap(mutableMapOf<String, MediaObserver>())
+  companion object {
+    private val rtcChannelMap = Collections.synchronizedMap(mutableMapOf<String, RtcChannel>())
+    private val mediaObserverMap =
+      Collections.synchronizedMap(mutableMapOf<String, MediaObserver>())
+
+    operator fun get(channelId: String): RtcChannel? {
+      return rtcChannelMap[channelId]
+    }
+  }
 
   fun release() {
     rtcChannelMap.forEach { it.value.destroy() }
     rtcChannelMap.clear()
     mediaObserverMap.clear()
-  }
-
-  operator fun get(channelId: String): RtcChannel? {
-    return rtcChannelMap[channelId]
   }
 
   override fun create(params: Map<String, *>, callback: Callback) {
@@ -164,19 +181,19 @@ class RtcChannelManager(
     val role = (params["role"] as Number).toInt()
     (params["options"] as? Map<*, *>)?.let {
       callback.code(
-        this[params["channelId"] as String]?.setClientRole(
+        RtcChannelManager[params["channelId"] as String]?.setClientRole(
           role,
           mapToClientRoleOptions(it)
         )
       )
       return@setClientRole
     }
-    callback.code(this[params["channelId"] as String]?.setClientRole(role))
+    callback.code(RtcChannelManager[params["channelId"] as String]?.setClientRole(role))
   }
 
   override fun joinChannel(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.joinChannel(
+      RtcChannelManager[params["channelId"] as String]?.joinChannel(
         params["token"] as? String,
         params["optionalInfo"] as? String,
         (params["optionalUid"] as Number).toNativeUInt(),
@@ -187,7 +204,7 @@ class RtcChannelManager(
 
   override fun joinChannelWithUserAccount(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.joinChannelWithUserAccount(
+      RtcChannelManager[params["channelId"] as String]?.joinChannelWithUserAccount(
         params["token"] as? String,
         params["userAccount"] as String,
         mapToChannelMediaOptions(params["options"] as Map<*, *>)
@@ -196,32 +213,41 @@ class RtcChannelManager(
   }
 
   override fun leaveChannel(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.leaveChannel())
+    callback.code(RtcChannelManager[params["channelId"] as String]?.leaveChannel())
   }
 
   override fun renewToken(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.renewToken(params["token"] as String))
+    callback.code(RtcChannelManager[params["channelId"] as String]?.renewToken(params["token"] as String))
   }
 
   override fun getConnectionState(params: Map<String, *>, callback: Callback) {
-    callback.resolve(this[params["channelId"] as String]) { it.connectionState }
+    callback.resolve(RtcChannelManager[params["channelId"] as String]) { it.connectionState }
   }
 
   override fun publish(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.publish())
+    callback.code(RtcChannelManager[params["channelId"] as String]?.publish())
   }
 
   override fun unpublish(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.unpublish())
+    callback.code(RtcChannelManager[params["channelId"] as String]?.unpublish())
   }
 
   override fun getCallId(params: Map<String, *>, callback: Callback) {
-    callback.resolve(this[params["channelId"] as String]) { it.callId }
+    callback.resolve(RtcChannelManager[params["channelId"] as String]) { it.callId }
+  }
+
+  override fun setAVSyncSource(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      RtcChannelManager[params["channelId"] as String]?.setAVSyncSource(
+        params["channelId"] as String,
+        (params["uid"] as Number).toNativeUInt()
+      )
+    )
   }
 
   override fun adjustUserPlaybackSignalVolume(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.adjustUserPlaybackSignalVolume(
+      RtcChannelManager[params["channelId"] as String]?.adjustUserPlaybackSignalVolume(
         (params["uid"] as Number).toNativeUInt(),
         (params["volume"] as Number).toInt()
       )
@@ -230,7 +256,7 @@ class RtcChannelManager(
 
   override fun muteLocalAudioStream(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.muteLocalAudioStream(
+      RtcChannelManager[params["channelId"] as String]?.muteLocalAudioStream(
         params["muted"] as Boolean
       )
     )
@@ -238,7 +264,7 @@ class RtcChannelManager(
 
   override fun muteRemoteAudioStream(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.muteRemoteAudioStream(
+      RtcChannelManager[params["channelId"] as String]?.muteRemoteAudioStream(
         (params["uid"] as Number).toNativeUInt(),
         params["muted"] as Boolean
       )
@@ -246,16 +272,20 @@ class RtcChannelManager(
   }
 
   override fun muteAllRemoteAudioStreams(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.muteAllRemoteAudioStreams(params["muted"] as Boolean))
+    callback.code(RtcChannelManager[params["channelId"] as String]?.muteAllRemoteAudioStreams(params["muted"] as Boolean))
   }
 
   override fun setDefaultMuteAllRemoteAudioStreams(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.setDefaultMuteAllRemoteAudioStreams(params["muted"] as Boolean))
+    callback.code(
+      RtcChannelManager[params["channelId"] as String]?.setDefaultMuteAllRemoteAudioStreams(
+        params["muted"] as Boolean
+      )
+    )
   }
 
   override fun muteLocalVideoStream(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.muteLocalVideoStream(
+      RtcChannelManager[params["channelId"] as String]?.muteLocalVideoStream(
         params["muted"] as Boolean
       )
     )
@@ -263,7 +293,7 @@ class RtcChannelManager(
 
   override fun muteRemoteVideoStream(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.muteRemoteVideoStream(
+      RtcChannelManager[params["channelId"] as String]?.muteRemoteVideoStream(
         (params["uid"] as Number).toNativeUInt(),
         params["muted"] as Boolean
       )
@@ -271,25 +301,29 @@ class RtcChannelManager(
   }
 
   override fun muteAllRemoteVideoStreams(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.muteAllRemoteVideoStreams(params["muted"] as Boolean))
+    callback.code(RtcChannelManager[params["channelId"] as String]?.muteAllRemoteVideoStreams(params["muted"] as Boolean))
   }
 
   override fun setDefaultMuteAllRemoteVideoStreams(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.setDefaultMuteAllRemoteVideoStreams(params["muted"] as Boolean))
+    callback.code(
+      RtcChannelManager[params["channelId"] as String]?.setDefaultMuteAllRemoteVideoStreams(
+        params["muted"] as Boolean
+      )
+    )
   }
 
   override fun enableRemoteSuperResolution(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.enableRemoteSuperResolution(
+      RtcChannelManager[params["channelId"] as String]?.enableRemoteSuperResolution(
         (params["uid"] as Number).toNativeUInt(),
-        params["enable"] as Boolean
+        params["enabled"] as Boolean
       )
     )
   }
 
   override fun setRemoteVoicePosition(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.setRemoteVoicePosition(
+      RtcChannelManager[params["channelId"] as String]?.setRemoteVoicePosition(
         (params["uid"] as Number).toNativeUInt(),
         (params["pan"] as Number).toDouble(),
         (params["gain"] as Number).toDouble()
@@ -299,7 +333,7 @@ class RtcChannelManager(
 
   override fun setLiveTranscoding(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.setLiveTranscoding(
+      RtcChannelManager[params["channelId"] as String]?.setLiveTranscoding(
         mapToLiveTranscoding(
           params["transcoding"] as Map<*, *>
         )
@@ -309,7 +343,7 @@ class RtcChannelManager(
 
   override fun addPublishStreamUrl(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.addPublishStreamUrl(
+      RtcChannelManager[params["channelId"] as String]?.addPublishStreamUrl(
         params["url"] as String,
         params["transcodingEnabled"] as Boolean
       )
@@ -317,12 +351,43 @@ class RtcChannelManager(
   }
 
   override fun removePublishStreamUrl(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.removePublishStreamUrl(params["url"] as String))
+    callback.code(RtcChannelManager[params["channelId"] as String]?.removePublishStreamUrl(params["url"] as String))
+  }
+
+  override fun startRtmpStreamWithoutTranscoding(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      RtcChannelManager[params["channelId"] as String]?.startRtmpStreamWithoutTranscoding(
+        params["url"] as String
+      )
+    )
+  }
+
+  override fun startRtmpStreamWithTranscoding(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      RtcChannelManager[params["channelId"] as String]?.startRtmpStreamWithTranscoding(
+        params["url"] as String,
+        mapToLiveTranscoding(params["transcoding"] as Map<*, *>)
+      )
+    )
+  }
+
+  override fun updateRtmpTranscoding(params: Map<String, *>, callback: Callback) {
+    callback.code(
+      RtcChannelManager[params["channelId"] as String]?.updateRtmpTranscoding(
+        mapToLiveTranscoding(
+          params["transcoding"] as Map<*, *>
+        )
+      )
+    )
+  }
+
+  override fun stopRtmpStream(params: Map<String, *>, callback: Callback) {
+    callback.code(RtcChannelManager[params["channelId"] as String]?.stopRtmpStream(params["url"] as String))
   }
 
   override fun startChannelMediaRelay(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.startChannelMediaRelay(
+      RtcChannelManager[params["channelId"] as String]?.startChannelMediaRelay(
         mapToChannelMediaRelayConfiguration(params["channelMediaRelayConfiguration"] as Map<*, *>)
       )
     )
@@ -330,19 +395,27 @@ class RtcChannelManager(
 
   override fun updateChannelMediaRelay(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.updateChannelMediaRelay(
+      RtcChannelManager[params["channelId"] as String]?.updateChannelMediaRelay(
         mapToChannelMediaRelayConfiguration(params["channelMediaRelayConfiguration"] as Map<*, *>)
       )
     )
   }
 
   override fun stopChannelMediaRelay(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.stopChannelMediaRelay())
+    callback.code(RtcChannelManager[params["channelId"] as String]?.stopChannelMediaRelay())
+  }
+
+  override fun pauseAllChannelMediaRelay(params: Map<String, *>, callback: Callback) {
+    callback.code(RtcChannelManager[params["channelId"] as String]?.pauseAllChannelMediaRelay())
+  }
+
+  override fun resumeAllChannelMediaRelay(params: Map<String, *>, callback: Callback) {
+    callback.code(RtcChannelManager[params["channelId"] as String]?.resumeAllChannelMediaRelay())
   }
 
   override fun setRemoteVideoStreamType(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.setRemoteVideoStreamType(
+      RtcChannelManager[params["channelId"] as String]?.setRemoteVideoStreamType(
         (params["uid"] as Number).toNativeUInt(),
         (params["streamType"] as Number).toInt()
       )
@@ -350,12 +423,16 @@ class RtcChannelManager(
   }
 
   override fun setRemoteDefaultVideoStreamType(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.setRemoteDefaultVideoStreamType((params["streamType"] as Number).toInt()))
+    callback.code(
+      RtcChannelManager[params["channelId"] as String]?.setRemoteDefaultVideoStreamType(
+        (params["streamType"] as Number).toInt()
+      )
+    )
   }
 
   override fun setRemoteUserPriority(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.setRemoteUserPriority(
+      RtcChannelManager[params["channelId"] as String]?.setRemoteUserPriority(
         (params["uid"] as Number).toNativeUInt(),
         (params["userPriority"] as Number).toInt()
       )
@@ -370,7 +447,7 @@ class RtcChannelManager(
         data?.toMutableMap()?.apply { put("channelId", channelId) })
     }
     callback.code(
-      this[channelId]?.registerMediaMetadataObserver(
+      RtcChannelManager[channelId]?.registerMediaMetadataObserver(
         mediaObserver,
         IMetadataObserver.VIDEO_METADATA
       )
@@ -383,7 +460,7 @@ class RtcChannelManager(
   override fun unregisterMediaMetadataObserver(params: Map<String, *>, callback: Callback) {
     val channelId = params["channelId"] as String
     callback.code(
-      this[channelId]?.registerMediaMetadataObserver(
+      RtcChannelManager[channelId]?.registerMediaMetadataObserver(
         null,
         IMetadataObserver.VIDEO_METADATA
       )
@@ -408,12 +485,12 @@ class RtcChannelManager(
   }
 
   override fun setEncryptionSecret(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.setEncryptionSecret(params["secret"] as String))
+    callback.code(RtcChannelManager[params["channelId"] as String]?.setEncryptionSecret(params["secret"] as String))
   }
 
   override fun setEncryptionMode(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.setEncryptionMode(
+      RtcChannelManager[params["channelId"] as String]?.setEncryptionMode(
         when ((params["encryptionMode"] as Number).toInt()) {
           EncryptionConfig.EncryptionMode.AES_128_XTS.value -> "aes-128-xts"
           EncryptionConfig.EncryptionMode.AES_128_ECB.value -> "aes-128-ecb"
@@ -426,7 +503,7 @@ class RtcChannelManager(
 
   override fun enableEncryption(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.enableEncryption(
+      RtcChannelManager[params["channelId"] as String]?.enableEncryption(
         params["enabled"] as Boolean,
         mapToEncryptionConfig(params["config"] as Map<*, *>)
       )
@@ -435,7 +512,7 @@ class RtcChannelManager(
 
   override fun addInjectStreamUrl(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.addInjectStreamUrl(
+      RtcChannelManager[params["channelId"] as String]?.addInjectStreamUrl(
         params["url"] as String,
         mapToLiveInjectStreamConfig(params["config"] as Map<*, *>)
       )
@@ -443,11 +520,11 @@ class RtcChannelManager(
   }
 
   override fun removeInjectStreamUrl(params: Map<String, *>, callback: Callback) {
-    callback.code(this[params["channelId"] as String]?.removeInjectStreamUrl(params["url"] as String))
+    callback.code(RtcChannelManager[params["channelId"] as String]?.removeInjectStreamUrl(params["url"] as String))
   }
 
   override fun createDataStream(params: Map<String, *>, callback: Callback) {
-    val channel = this[params["channelId"] as String]
+    val channel = RtcChannelManager[params["channelId"] as String]
     (params["config"] as? Map<*, *>)?.let { config ->
       callback.code(channel?.createDataStream(mapToDataStreamConfig(config))) { it }
       return@createDataStream
@@ -462,7 +539,7 @@ class RtcChannelManager(
 
   override fun sendStreamMessage(params: Map<String, *>, callback: Callback) {
     callback.code(
-      this[params["channelId"] as String]?.sendStreamMessage(
+      RtcChannelManager[params["channelId"] as String]?.sendStreamMessage(
         (params["streamId"] as Number).toInt(),
         (params["message"] as String).toByteArray()
       )

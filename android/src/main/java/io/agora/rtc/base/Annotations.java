@@ -1,6 +1,6 @@
 package io.agora.rtc.base;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,6 +10,7 @@ import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngineConfig;
 import io.agora.rtc.video.BeautyOptions;
 import io.agora.rtc.video.VideoCanvas;
+import io.agora.rtc.video.VirtualBackgroundSource;
 
 @SuppressWarnings("deprecation")
 public class Annotations {
@@ -52,11 +53,13 @@ public class Annotations {
   @IntDef({
     AgoraAudioCodecProfileType.LC_AAC,
     AgoraAudioCodecProfileType.HE_AAC,
+    AgoraAudioCodecProfileType.HE_AAC_V2,
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraAudioCodecProfileType {
     int LC_AAC = 0;
     int HE_AAC = 1;
+    int HE_AAC_V2 = 2;
   }
 
   @IntDef({
@@ -156,6 +159,7 @@ public class Annotations {
     Constants.AUDIO_RECORDING_QUALITY_LOW,
     Constants.AUDIO_RECORDING_QUALITY_MEDIUM,
     Constants.AUDIO_RECORDING_QUALITY_HIGH,
+    Constants.AUDIO_RECORDING_QUALITY_ULTRA_HIGH
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraAudioRecordingQuality {
@@ -326,6 +330,10 @@ public class Annotations {
     Constants.RELAY_EVENT_PACKET_UPDATE_DEST_CHANNEL_NOT_CHANGE,
     Constants.RELAY_EVENT_PACKET_UPDATE_DEST_CHANNEL_IS_NULL,
     Constants.RELAY_EVENT_VIDEO_PROFILE_UPDATE,
+    Constants.RELAY_EVENT_PAUSE_SEND_PACKET_TO_DEST_CHANNEL_SUCCESS,
+    Constants.RELAY_EVENT_PAUSE_SEND_PACKET_TO_DEST_CHANNEL_FAILED,
+    Constants.RELAY_EVENT_RESUME_SEND_PACKET_TO_DEST_CHANNEL_SUCCESS,
+    Constants.RELAY_EVENT_RESUME_SEND_PACKET_TO_DEST_CHANNEL_FAILED,
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraChannelMediaRelayEvent {
@@ -374,7 +382,8 @@ public class Annotations {
     Constants.CONNECTION_CHANGED_RENEW_TOKEN,
     Constants.CONNECTION_CHANGED_CLIENT_IP_ADDRESS_CHANGED,
     Constants.CONNECTION_CHANGED_KEEP_ALIVE_TIMEOUT,
-    Constants.CONNECTION_CHANGED_PROXY_SERVER_INTERRUPTED,
+    Constants.CONNECTION_CHANGED_SAME_UID_LOGIN,
+    Constants.CONNECTION_CHANGED_TOO_MANY_BROADCASTERS,
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraConnectionChangedReason {
@@ -501,6 +510,7 @@ public class Annotations {
     Constants.ERR_VCM_ENCODER_INIT_ERROR,
     Constants.ERR_VCM_ENCODER_ENCODE_ERROR,
     Constants.ERR_VCM_ENCODER_SET_ERROR,
+    Constants.ERR_AUDIO_BT_NO_ROUTE,
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraErrorCode {
@@ -616,6 +626,10 @@ public class Annotations {
     Constants.RTMP_STREAM_PUBLISH_ERROR_NOT_AUTHORIZED,
     Constants.RTMP_STREAM_PUBLISH_ERROR_STREAM_NOT_FOUND,
     Constants.RTMP_STREAM_PUBLISH_ERROR_FORMAT_NOT_SUPPORTED,
+    Constants.RTMP_STREAM_PUBLISH_ERROR_NOT_BROADCASTER,
+    Constants.RTMP_STREAM_PUBLISH_ERROR_TRANSCODING_NO_MIX_STREAM,
+    Constants.RTMP_STREAM_PUBLISH_ERROR_NET_DOWN,
+    Constants.RTMP_STREAM_PUBLISH_ERROR_INVALID_APPID,
     Constants.RTMP_STREAM_UNPUBLISH_ERROR_OK,
   })
   @Retention(RetentionPolicy.SOURCE)
@@ -628,6 +642,7 @@ public class Annotations {
     Constants.RTMP_STREAM_PUBLISH_STATE_RUNNING,
     Constants.RTMP_STREAM_PUBLISH_STATE_RECOVERING,
     Constants.RTMP_STREAM_PUBLISH_STATE_FAILURE,
+    Constants.RTMP_STREAM_PUBLISH_STATE_DISCONNECTING
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraRtmpStreamingState {
@@ -669,6 +684,16 @@ public class Annotations {
     int BASELINE = 66;
     int MAIN = 77;
     int HIGH = 100;
+  }
+
+  @IntDef({
+    AgoraVideoCodecType.H264,
+    AgoraVideoCodecType.H265,
+  })
+  @Retention(RetentionPolicy.SOURCE)
+  public @interface AgoraVideoCodecType {
+    int H264 = 1;
+    int H265 = 2;
   }
 
   @IntDef({
@@ -835,6 +860,8 @@ public class Annotations {
   @IntDef({
     Constants.RTMP_STREAMING_EVENT_FAILED_LOAD_IMAGE,
     Constants.RTMP_STREAMING_EVENT_URL_ALREADY_IN_USE,
+    Constants.RTMP_STREAMING_EVENT_ADVANCED_FEATURE_NOT_SUPPORT,
+    Constants.RTMP_STREAMING_EVENT_REQUEST_TOO_OFTEN,
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraRtmpStreamingEvent {
@@ -963,5 +990,24 @@ public class Annotations {
   })
   @Retention(RetentionPolicy.SOURCE)
   public @interface AgoraSuperResolutionStateReason {
+  }
+
+  @IntDef({
+    VirtualBackgroundSource.BACKGROUND_COLOR,
+    VirtualBackgroundSource.BACKGROUND_IMG,
+    VirtualBackgroundSource.BACKGROUND_BLUR,
+  })
+  @Retention(RetentionPolicy.SOURCE)
+  public @interface AgoraVirtualBackgroundSourceType {
+  }
+
+  @IntDef({
+    Constants.VBS_STATE_REASON_SUCCESS,
+    Constants.VBS_STATE_REASON_IMAGE_NOT_EXIST,
+    Constants.VBS_STATE_REASON_COLOR_FORMAT_NOT_SUPPORTED,
+    Constants.VBS_STATE_REASON_DEVICE_NOT_SUPPORTED,
+  })
+  @Retention(RetentionPolicy.SOURCE)
+  public @interface AgoraVirtualBackgroundSourceStateReason {
   }
 }

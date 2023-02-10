@@ -1,16 +1,20 @@
 import type {
+  AudioFileInfo,
   AudioVolumeInfo,
   FacePositionInfo,
   LastmileProbeResult,
   LocalAudioStats,
   LocalVideoStats,
+  RecorderInfo,
   Rect,
   RemoteAudioStats,
   RemoteVideoStats,
   RtcStats,
   UserInfo,
+  WlAccStats,
 } from './Classes';
 import type {
+  AudioFileInfoError,
   AudioLocalError,
   AudioLocalState,
   AudioMixingReason,
@@ -40,14 +44,19 @@ import type {
   UserOfflineReason,
   VideoRemoteState,
   VideoRemoteStateReason,
+  VirtualBackgroundSourceStateReason,
   WarningCode,
+  ContentInspectResult,
+  ProxyType,
+  WlAccAction,
+  WlAccReason,
+  ClientRoleChangeFailedReason,
 } from './Enums';
 
 /**
  * @internal
  * @ignore
  */
-
 export type Listener = (...args: any[]) => any;
 
 /**
@@ -171,7 +180,7 @@ export type AudioVolumeCallback =
   (speakers: AudioVolumeInfo[], totalVolume: number) => void;
 export type UidCallback =
   /**
-   * @param uid User ID of the active speaker. A `uid` of 0 represents the local user.
+   * @param uid The user ID of the most active remote speaker. A `uid` of 0 represents the local user.
    */
   (uid: number) => void;
 export type ElapsedCallback =
@@ -388,7 +397,7 @@ export type VideoFrameWithUidCallback =
    * @param uid User ID of the remote user sending the video streams.
    * @param width Width (pixels) of the video stream.
    * @param height Height (pixels) of the video stream.
-   * @param elapsed Time elapsed (ms) from the local user calling [`joinChannel`]{@link RtcEngine.joinChannel} until this
+   * @param elapsed Time elapsed (ms) from the local user calling `joinChannel` until this
    * callback is triggered.
    */
   (uid: number, width: number, height: number, elapsed: number) => void;
@@ -489,13 +498,11 @@ export type RtmpStreamingEventCallback =
   (url: string, eventCode: RtmpStreamingEvent) => void;
 export type UserSuperResolutionEnabledCallback =
   /**
-   * @ignore
-   *
-   * @param uid The ID of the remote user.
-   * @param enabled Whether the super-resolution algorithm is successfully enabled:
-   *   - `true`: The super-resolution algorithm is successfully enabled.
-   *   - `false`: The super-resolution algorithm is not successfully enabled.
-   * @param reason The reason why the super-resolution algorithm is not successfully enabled. See [`SuperResolutionStateReason`]{@link enum.SuperResolutionStateReason}.
+   * @param uid The user ID of the remote user.
+   * @param enabled Whether super resolution is successfully enabled:
+   *   - `true`: Super resolution is successfully enabled.
+   *   - `false`: Super resolution is not successfully enabled.
+   * @param reason The reason why super resolution is not successfully enabled or the message that confirms success. See [`SuperResolutionStateReason`]{@link enum.SuperResolutionStateReason}.
    */
   (uid: number, enabled: boolean, reason: SuperResolutionStateReason) => void;
 export type UploadLogResultCallback =
@@ -509,6 +516,103 @@ export type UploadLogResultCallback =
    * @param reason The reason for the upload failure. See [`UploadErrorReason`]{@link UploadErrorReason}.
    */
   (requestId: string, success: boolean, reason: UploadErrorReason) => void;
+export type VirtualBackgroundSourceEnabledCallback =
+  /**
+   * @param enabled Whether the virtual background is successfully enabled:
+   *  - `true`: The virtual background is successfully enabled.
+   *  - `false`: The virtual background is not successfully enabled.
+   * @param reason The reason why the virtual background is not successfully enabled or the message that confirms success. See [`VirtualBackgroundSourceStateReason`]{@link VirtualBackgroundSourceStateReason}.
+   */
+  (enabled: boolean, reason: VirtualBackgroundSourceStateReason) => void;
+export type RequestAudioFileInfoCallback =
+  /**
+   * @param info The information of an audio file. See [`AudioFileInfo`]{@link AudioFileInfo}.
+   * @param error The information acquisition state. See [`AudioFileInfoError`]{@link AudioFileInfoError}.
+   */
+  (info: AudioFileInfo, error: AudioFileInfoError) => void;
+export type SnapshotTakenCallback =
+  /**
+   * @param channel The channel name.
+   * @param uid The user ID of the user. A `uid` of 0 indicates the local user.
+   * @param filePath The local path of the snapshot.
+   * @param width The width (px) of the snapshot.
+   * @param height The height (px) of the snapshot.
+   * @param errCode The message that confirms success or the reason why the snapshot is not successfully taken:
+   * - `0`: Success.
+   * - < 0: Failure:
+   *  - `-1`: The SDK fails to write data to a file or encode a JPEG image.
+   *  - `-2`: The SDK does not find the video stream of the specified user within one second after
+   * the [`takeSnapshot`]{@link takeSnapshot} method call succeeds.
+   */
+  (
+    channel: string,
+    uid: number,
+    filePath: string,
+    width: number,
+    height: number,
+    errCode: number
+  ) => void;
+export type ProxyConnectedCallback =
+  /**
+   * @param channel The channel name.
+   * @param uid The user ID.
+   * @param proxyType The proxy type connected. See [`ProxyType`]{@link ProxyType}.
+   * @param localProxyIp Reserved for future use.
+   * @param elapsed The time elapsed (ms) from the user calling `joinChannel` until this callback is triggered.
+   */
+  (
+    channel: string,
+    uid: number,
+    proxyType: ProxyType,
+    localProxyIp: string,
+    elapsed: number
+  ) => void;
+export type ClientRoleChangeCallback =
+  /**
+   * @param reason The reason for the user role switch failure. See [`ClientRoleChangeFailedReason`]{@link ClientRoleChangeFailedReason}.
+   * @param currentRole The current user role. See [`ClientRole`]{@link ClientRole}.
+   */
+  (reason: ClientRoleChangeFailedReason, currentRole: ClientRole) => void;
+export type RecorderStateChangedCallback =
+  /**
+   * @param reason The current recording state:
+   * - `-1`: An error occurs during the recording. See `error` message for the reason.
+   * - `2`: The audio and video recording is started.
+   * - `3`: The audio and video recording is stopped.
+   * @param state The reason for the state change:
+   * - `0`: No error occurs.
+   * - `1`: The SDK fails to write the recorded data to a file.
+   * - `2`: The SDK does not detect audio and video streams to be recorded, or audio and video streams are interrupted for more than five seconds during recording.
+   * - `3`: The recording duration exceeds the upper limit.
+   * - `4`: The recording configuration changes.
+   * -  `5`: The SDK detects audio and video streams from users using versions of the SDK earlier than v3.0.0 in the `Communication` channel profile.
+   */
+  (reason: number, state: number) => void;
+export type RecorderInfoCallback =
+  /**
+   * @param info Information for the recording file. See [`RecorderInfo`]{@link RecorderInfo}.
+   */
+  (info: RecorderInfo) => void;
+export type ContentInspectResultCallback =
+  /**
+   * @ignore For future use
+   */
+  (result: ContentInspectResult) => void;
+export type WlAccMessageCallback =
+  /**
+   * @ignore For future use
+   */
+  (reason: WlAccReason, action: WlAccAction, wlAccMsg: string) => void;
+export type WlAccStatsCallback =
+  /**
+   * @ignore For future use
+   */
+  (currentStats: WlAccStats, averageStats: WlAccStats) => void;
+export type LocalVoicePitchInHzCallback =
+  /**
+   * @param pitchInHz The voice pitch (Hz) of the local user.
+   */
+  (pitchInHz: number) => void;
 
 /**
  * Callbacks.
@@ -598,9 +702,11 @@ export interface RtcEngineEvents {
   UserInfoUpdated: UserInfoCallback;
 
   /**
-   * Occurs when the user role switches in live interactive streaming. For example, from a host to an audience or vice versa.
+   * Occurs when the user role switches successfully in the interactive live streaming.
    *
-   * The SDK triggers this callback when the local user switches the user role by calling [`setClientRole`]{@link RtcEngine.setClientRole} after joining the channel.
+   * In the `LiveBroadcasting` channel profile, when the local user successfully calls [`setClientRole`]{@link RtcEngine.setClientRole} to
+   * switch their user role after joining the channel, for example, from a host to an audience member or vice versa, the SDK triggers
+   * this callback to report the user role before and after the switch.
    *
    * @event ClientRoleChanged
    */
@@ -707,7 +813,7 @@ export interface RtcEngineEvents {
   AudioVolumeIndication: AudioVolumeCallback;
 
   /**
-   * Reports which user is the loudest speaker.
+   * Occurs when the most active remote speaker is detected.
    *
    * This callback reports the speaker with the highest accumulative volume during a certain period. If the user enables the audio volume indication by
    * calling [`enableAudioVolumeIndication`]{@link RtcEngine.enableAudioVolumeIndication}, this callback returns the uid of the active speaker whose voice is detected by the audio volume detection module of the SDK.
@@ -830,8 +936,8 @@ export interface RtcEngineEvents {
    * If you call [`setRemoteSubscribeFallbackOption`]{@link RtcEngine.setRemoteSubscribeFallbackOption} and set
    * option as [`AudioOnly`]{@link StreamFallbackOptions.AudioOnly},
    * this callback is triggered when the remotely subscribed media stream falls back to audio-only mode due
-   * to poor uplink conditions, or when the remotely subscribed media stream switches back to the video after
-   * the uplink network condition improves.
+   * to poor downlink conditions, or when the remotely subscribed media stream switches back to the video after
+   * the downlink network condition improves.
    *
    * @event RemoteSubscribeFallbackToAudioOnly
    */
@@ -905,6 +1011,9 @@ export interface RtcEngineEvents {
    *
    * Last mile refers to the connection between the local device and Agora's edge server. This callback reports once every two seconds the last mile network conditions of each user in the channel. If a channel includes multiple users, then this callback will be triggered as many times.
    *
+   * **Note**
+   * `txQuality` is `Unknown` when the user is not sending a stream; `rxQuality` is `Unknown` when the user is not receiving a stream.
+   *
    * @event NetworkQuality
    */
   NetworkQuality: NetworkQualityWithUidCallback;
@@ -955,11 +1064,6 @@ export interface RtcEngineEvents {
   /**
    * Occurs when the audio mixing file playback finishes.
    *
-   * @deprecated
-   *
-   * This callback is deprecated.
-   * Use [`AudioMixingStateChanged`]{@link AudioMixingStateChanged} instead.
-   *
    * You can start an audio mixing file playback by calling [`startAudioMixing`]{@link RtcEngine.startAudioMixing}. This callback is triggered when the audio mixing file playback finishes.
    *
    * If the [`startAudioMixing`]{@link RtcEngine.startAudioMixing} method call fails, an [`AudioMixingOpenError`]{@link WarningCode.AudioMixingOpenError} warning returns in the [`Warning`]{@link Warning} callback.
@@ -992,10 +1096,10 @@ export interface RtcEngineEvents {
   /**
    * Occurs when the state of the RTMP or RTMPS streaming changes.
    *
-   * The SDK triggers this callback to report the result of the local user calling [`addPublishStreamUrl`]{@link RtcEngine.addPublishStreamUrl} or [`removePublishStreamUrl`]{@link RtcEngine.removePublishStreamUrl}.
-   * This callback returns the URL and its current streaming state. When the streaming state is [`Failure`]{@link RtmpStreamingState.Failure}, see the errCode parameter for details.
+   * When the CDN live streaming state changes, the SDK triggers this callback to report the current state and the reason why the state has changed.
    *
-   * This callback indicates the state of the RTMP or RTMPS streaming. When exceptions occur, you can troubleshoot issues by referring to the detailed error descriptions in the `errCode` parameter.
+   * This callback indicates the state of the RTMP or RTMPS streaming. When exceptions occur,
+   * you can troubleshoot issues by referring to the detailed error descriptions in the `errCode` parameter.
    *
    * @event RtmpStreamingStateChanged
    */
@@ -1078,11 +1182,8 @@ export interface RtcEngineEvents {
   /**
    * Occurs when the first remote video frame is rendered.
    *
-   * @deprecated
-   *
-   * Use [`Starting`]{@link VideoRemoteState.Starting} or [`Decoding`]{@link VideoRemoteState.Decoding} in the [`RemoteVideoStateChanged`]{@link RemoteVideoStateChanged} callback instead.
-   *
-   * This callback is triggered after the first frame of the remote video is rendered on the video window. The application can retrieve the data of the time elapsed from the user joining the channel until the first video frame is displayed.
+   * This callback is triggered after the first frame of the remote video is rendered on the video window.
+   * The application can retrieve the data of the time elapsed from the user joining the channel until the first video frame is displayed.
    *
    * @event FirstRemoteVideoFrame
    */
@@ -1403,13 +1504,14 @@ export interface RtcEngineEvents {
   RtmpStreamingEvent: RtmpStreamingEventCallback;
 
   /**
-   * @ignore
+   * Reports whether the super resolution feature is successfully enabled. (beta feature)
    *
-   * Reports whether the super-resolution algorithm is enabled.
+   * @since v3.5.2
    *
-   * @since v3.3.1 (later)
+   * After calling [`enableRemoteSuperResolution`]{@link enableRemoteSuperResolution}, the SDK triggers this callback to report whether
+   * super resolution is successfully enabled. If it is not successfully enabled, use `reason` for troubleshooting.
    *
-   * After calling `enableRemoteSuperResolution`, the SDK triggers this callback to report whether the super-resolution algorithm is successfully enabled. If not successfully enabled, you can use reason for troubleshooting.
+   * @event UserSuperResolutionEnabled
    */
   UserSuperResolutionEnabled: UserSuperResolutionEnabledCallback;
 
@@ -1421,8 +1523,134 @@ export interface RtcEngineEvents {
    * @since v3.3.1 (later)
    *
    * After the method call of `uploadLogFile`, the SDK triggers this callback to report the result of uploading the log files. If the upload fails, refer to the `reason` parameter to troubleshoot.
+   *
+   * @event UploadLogResultCallback
    */
   UploadLogResult: UploadLogResultCallback;
+
+  /**
+   * @ignore
+   */
+  AirPlayIsConnected: EmptyCallback;
+
+  /**
+   * Reports whether the virtual background is successfully enabled.
+   *
+   * **since** v3.5.0.3
+   *
+   * After you call [`enableVirtualBackground`]{@link enableVirtualBackground}, the SDK triggers this callback to report whether the virtual background is successfully enabled.
+   *
+   * **Note**
+   *
+   * If the background image customized in the virtual background is in PNG or JPG format, the triggering of this callback is delayed until the image is read.
+   *
+   */
+  VirtualBackgroundSourceEnabled: VirtualBackgroundSourceEnabledCallback;
+
+  /**
+   * Reports the information of an audio file.
+   *
+   * @since v3.5.2
+   *
+   * After successfully calling [`getAudioFileInfo`]{@link getAudioFileInfo},
+   * the SDK triggers this callback to report the information of the audio file, such as the file path and
+   * duration.
+   *
+   * @event RequestAudioFileInfo
+   */
+  RequestAudioFileInfo: RequestAudioFileInfoCallback;
+
+  /**
+   * Reports the result of taking a video snapshot.
+   *
+   * @since v3.5.2
+   *
+   * After a successful [`takeSnapshot`]{@link RtcEngine.takeSnapshot} method call, the SDK triggers this callback to report whether the snapshot is successfully taken as well as the details for the snapshot taken.
+   *
+   * @event SnapshotTaken
+   */
+  SnapshotTaken: SnapshotTakenCallback;
+
+  /**
+   * Occurs when the recording state changes.
+   *
+   * @since v3.6.2
+   *
+   * When the local audio and video recording state changes, the SDK triggers this callback to report the current recording state and the reason for the change.
+   *
+   */
+  RecorderStateChanged: RecorderStateChangedCallback;
+
+  /**
+   * Occurs when the recording information is updated.
+   *
+   * @since v3.6.2
+   *
+   * After you successfully register this callback and enable the local audio and video recording,
+   * the SDK periodically triggers the `RecorderInfoUpdated` callback based on the set value of
+   * `recorderInfoUpdateInterval`.
+   *
+   * This callback reports the filename, duration, and size of the current recording file.
+   *
+   */
+  RecorderInfoUpdated: RecorderInfoCallback;
+
+  /**
+   * Reports the proxy connection state.
+   *
+   * @since v3.6.2
+   *
+   * You can use this callback to listen for the state of the SDK connecting to a proxy.
+   * For example, when a user calls [`setCloudProxy`]{@link RtcEngine.setCloudProxy} and joins a channel successfully,
+   * the SDK triggers this callback to report the user ID, the proxy type connected,
+   * and the time elapsed from the user calling `joinChannel` until this callback is triggered.
+   *
+   * @event ProxyConnectedCallback
+   */
+  ProxyConnected: ProxyConnectedCallback;
+
+  /**
+   * @ignore For future use
+   */
+  ContentInspectResult: ContentInspectResultCallback;
+
+  /**
+   * @ignore For future use
+   */
+  WlAccMessage: WlAccMessageCallback;
+
+  /**
+   * @ignore For future use
+   */
+  WlAccStats: WlAccStatsCallback;
+
+  /**
+   * Occurs when the user role switch fails in the interactive live streaming.
+   *
+   * @since v3.7.0
+   *
+   * In the `LiveBroadcasting` channel profile, when the local user calls [`setClientRole`]{@link RtcEngine.setClientRole} to
+   * switch their user role after joining the channel but the switch fails, the SDK triggers this callback to
+   * report the reason for the failure and the current user role.
+   *
+   * @event ClientRoleChangeCallback
+   */
+  ClientRoleChangeFailed: ClientRoleChangeCallback;
+
+  /**
+   * Reports the voice pitch of the local user.
+   *
+   * @since v3.7.0
+   *
+   * After the local audio capture is enabled and you call [`enableLocalVoicePitchCallback`]{@link enableLocalVoicePitchCallback},
+   * the SDK triggers the `LocalVoicePitchInHz` callback at the time interval set in `enableLocalVoicePitchCallback`.
+   *
+   * **Note**
+   * After this callback is enabled, if the user disables the local audio capture, for example,
+   * by calling [`enableLocalAudio(false)`]{@link RtcEngine.enableLocalAudio}, the SDK immediately stops sending
+   * the `LocalVoicePitchInHz` callback.
+   */
+  LocalVoicePitchInHz: LocalVoicePitchInHzCallback;
 }
 
 /**
@@ -1475,9 +1703,11 @@ export interface RtcChannelEvents {
   LeaveChannel: RtcStatsCallback;
 
   /**
-   * Occurs when the user role switches in a live interactive streaming channel. For example, from a host to an audience member or vice versa.
+   * Occurs when the user role switches successfully in the interactive live streaming.
    *
-   * The SDK triggers this callback when the local user switches the user role by calling the [`setClientRole`]{@link RtcChannel.setClientRole} method after joining the channel.
+   * In the `LiveBroadcasting` channel profile, when the local user successfully calls [`setClientRole`]{@link RtcChannel.setClientRole} to
+   * switch their user role after joining the channel, for example, from a host to an audience member or vice versa, the SDK triggers
+   * this callback to report the user role before and after the switch.
    *
    * @event ClientRoleChanged
    */
@@ -1559,7 +1789,7 @@ export interface RtcChannelEvents {
   RequestToken: EmptyCallback;
 
   /**
-   * Reports which user is the loudest speaker.
+   * Occurs when the most active remote speaker is detected.
    *
    * This callback reports the speaker with the highest accumulative volume during a certain period. If the user enables the audio volume indication by calling [`enableAudioVolumeIndication`]{@link RtcEngine.enableAudioVolumeIndication}, this callback returns the uid of the active speaker whose voice is detected by the audio volume detection module of the SDK.
    *
@@ -1606,7 +1836,9 @@ export interface RtcChannelEvents {
   /**
    * Occurs when the remote media stream falls back to audio-only stream due to poor network conditions or switches back to video stream after the network conditions improve.
    *
-   * If you call [`setRemoteSubscribeFallbackOption`]{@link RtcEngine.setRemoteSubscribeFallbackOption} and set option as [`AudioOnly`]{@link StreamFallbackOptions.AudioOnly}, this callback is triggered when the remote media stream falls back to audio-only mode due to poor uplink conditions, or when the remote media stream switches back to the video after the uplink network condition improves.
+   * If you call [`setRemoteSubscribeFallbackOption`]{@link RtcEngine.setRemoteSubscribeFallbackOption} and set option as [`AudioOnly`]{@link StreamFallbackOptions.AudioOnly},
+   * this callback is triggered when the remote media stream falls back to audio-only mode due to poor downlink
+   * conditions, or when the remote media stream switches back to the video after the downlink network condition improves.
    *
    * **Note**
    *
@@ -1628,6 +1860,9 @@ export interface RtcChannelEvents {
    * Reports the last mile network quality of each user in the channel once every two seconds.
    *
    * Last mile refers to the connection between the local device and Agora's edge server. This callback reports once every two seconds the last mile network conditions of each user in the channel. If a channel includes multiple users, then this callback will be triggered as many times.
+   *
+   * **Note**
+   * `txQuality` is `Unknown` when the user is not sending a stream; `rxQuality` is `Unknown` when the user is not receiving a stream.
    *
    * @event NetworkQuality
    */
@@ -1654,7 +1889,7 @@ export interface RtcChannelEvents {
   /**
    * Occurs when the state of the RTMP or RTMPS streaming changes.
    *
-   * The SDK triggers this callback to report the result of the local user calling the [`addPublishStreamUrl`]{@link RtcChannel.addPublishStreamUrl} or [`removePublishStreamUrl`]{@link RtcChannel.removePublishStreamUrl} method. This callback returns the URL and its current streaming state. When the streaming state is [`Failure`]{@link RtmpStreamingState.Failure}, see the errCode parameter for details.
+   * When the CDN live streaming state changes, the SDK triggers this callback to report the current state and the reason why the state has changed.
    *
    * This callback indicates the state of the RTMP or RTMPS streaming. When exceptions occur, you can troubleshoot issues by referring to the detailed error descriptions in the errCode parameter.
    *
@@ -1782,12 +2017,53 @@ export interface RtcChannelEvents {
   RtmpStreamingEvent: RtmpStreamingEventCallback;
 
   /**
-   * @ignore
-   * Reports whether the super-resolution algorithm is enabled.
+   * Reports whether the super resolution feature is successfully enabled. (beta feature)
    *
-   * @since v3.3.1 (later)
+   * @since v3.5.2
    *
-   * After calling `enableRemoteSuperResolution`, the SDK triggers this callback to report whether the super-resolution algorithm is successfully enabled. If not successfully enabled, you can use `reason` for troubleshooting.
+   * After calling [`enableRemoteSuperResolution`]{@link enableRemoteSuperResolution}, the SDK triggers this callback to report whether
+   * super resolution is successfully enabled. If it is not successfully enabled, use `reason` for troubleshooting.
+   *
+   * @event UserSuperResolutionEnabled
    */
   UserSuperResolutionEnabled: UserSuperResolutionEnabledCallback;
+
+  /**
+   * Reports the proxy connection state.
+   *
+   * @since v3.6.2
+   *
+   * You can use this callback to listen for the state of the SDK connecting to a proxy.
+   * For example, when a user calls [`setCloudProxy`]{@link RtcEngine.setCloudProxy} and joins a channel successfully,
+   * the SDK triggers this callback to report the user ID, the proxy type connected,
+   * and the time elapsed from the user calling `joinChannel` until this callback is triggered.
+   *
+   * @event ProxyConnectedCallback
+   */
+  ProxyConnected: ProxyConnectedCallback;
+
+  /**
+   * Occurs when the user role switch fails in the interactive live streaming.
+   *
+   * @since v3.7.0
+   *
+   * In the `LiveBroadcasting` channel profile, when the local user calls [`setClientRole`]{@link RtcChannel.setClientRole} to
+   * switch their user role after joining the channel but the switch fails, the SDK triggers this callback to
+   * report the reason for the failure and the current user role.
+   *
+   * @event ClientRoleChangeCallback
+   */
+  ClientRoleChangeFailed: ClientRoleChangeCallback;
+
+  /**
+   * Occurs when the first remote video frame is rendered.
+   *
+   * @since v3.7.0
+   *
+   * This callback is triggered after the first frame of the remote video is rendered on the video window.
+   * The application can retrieve the data of the time elapsed from the user joining the channel until the first video frame is displayed.
+   *
+   * @event FirstRemoteVideoFrame
+   */
+  FirstRemoteVideoFrame: VideoFrameWithUidCallback;
 }

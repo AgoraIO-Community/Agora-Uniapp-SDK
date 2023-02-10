@@ -8,3 +8,4 @@
 #import "AgoraRtcEngineKit.h"
 #import "AgoraRtcEngineModule.h"
 #import "AgoraRtcChannelModule.h"
+#import "RtcEnginePlugin.h"
