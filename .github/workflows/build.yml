@@ -12,6 +12,8 @@ jobs:
           unzip uni-app-sdk-android.zip
 
       - uses: actions/checkout@v3
+        with:
+          path: Agora-Uniapp-SDK
           
       - run: ls
       
@@ -22,7 +24,7 @@ jobs:
           
       - name: Modify gradle
         run: |
-          echo "project(':uniplugin_agora_rtc').projectDir = new File('../Agora-Uniapp-SDK', 'android')" >> settings.gradle
+          echo "project(':uniplugin_agora_rtc').projectDir = new File('../../Agora-Uniapp-SDK', 'android')" >> settings.gradle
         working-directory: Android-SDK@3.6.18.81676_20230117/UniPlugin-Hello-AS
           
       - name: Gradle build
@@ -43,13 +45,15 @@ jobs:
           unzip uni-app-sdk-ios.zip
           
       - uses: actions/checkout@v3
+        with:
+          path: Agora-Uniapp-SDK
       
       - run: ls
           
       - name: Modify Podfile
         run: |
           pod init
-          sed "s/# Pods for .*/pod 'AgoraRtcUniPlugin', :path => '\.\.\/Agora-Uniapp-SDK\/ios'/g" Podfile > tmp
+          sed "s/# Pods for .*/pod 'AgoraRtcUniPlugin', :path => '\.\.\/\.\.\/Agora-Uniapp-SDK\/ios'/g" Podfile > tmp
           mv tmp Podfile
         working-directory: SDK/HBuilder-uniPluginDemo
           
