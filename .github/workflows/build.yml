@@ -1,7 +1,19 @@
 name: Build Plugin
-run-name: ${{ github.actor }} triggered this job
+
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+    tags:
+      - v*.*.**
+  pull_request:
+    branches:
+      - master
+      - main
+      - release/*
+
 jobs:
   build-android:
     runs-on: ubuntu-latest
@@ -38,11 +50,20 @@ jobs:
           cp -rp android/build/outputs/aar/*.aar package/Agora-RTC/android/
         working-directory: Agora-Uniapp-SDK
         
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Agora-RTC
+          files: |
+            Agora-Uniapp-SDK/package/Agora-RTC/*/*.aar
+
       - uses: actions/upload-artifact@v3
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           name: Agora-RTC
           path: |
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.aar
+
   build-ios:
     runs-on: macos-latest
     env:
@@ -76,13 +97,24 @@ jobs:
           cp -rp ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Release-iphoneos/AgoraRtcUniPlugin/AgoraRtcUniPlugin.framework package/Agora-RTC/ios/
         working-directory: Agora-Uniapp-SDK
       
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Agora-RTC
+          files: |
+            Agora-Uniapp-SDK/package/Agora-RTC/*/*.framework
+            Agora-Uniapp-SDK/package/Agora-RTC/*/*.xcframework
+            !Agora-Uniapp-SDK/package/Agora-RTC/*/*Extension.xcframework
+      
       - uses: actions/upload-artifact@v3
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           name: Agora-RTC
           path: |
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.framework
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.xcframework
             !Agora-Uniapp-SDK/package/Agora-RTC/*/*Extension.xcframework
+
   build-ts:
     runs-on: ubuntu-latest
     steps:
@@ -94,13 +126,29 @@ jobs:
           cache: 'yarn'
       - run: yarn
       
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Agora-RTC
+          files: |
+            package/Agora-RTC/package.json
+            
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: Agora-RTC-JS
+          files: |
+            lib/module/
+
       - uses: actions/upload-artifact@v3
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           name: Agora-RTC
           path: |
             package/Agora-RTC/package.json
             
       - uses: actions/upload-artifact@v3
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           name: Agora-RTC-JS
           path: |
