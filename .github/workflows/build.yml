@@ -1,5 +1,9 @@
 name: Build Plugin
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
@@ -93,7 +97,7 @@ jobs:
         
       - name: Archive
         run: |
-          cp -rp ../${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/Pods/AgoraRtcEngine_iOS/*.xcframework package/Agora-RTC/ios/
+          cp -rp ../${{ env.SDK_ROOT }}/HBuilder-uniPluginDemo/Pods/AgoraRtcEngine_Special_iOS/*.xcframework package/Agora-RTC/ios/
           cp -rp ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Release-iphoneos/AgoraRtcUniPlugin/AgoraRtcUniPlugin.framework package/Agora-RTC/ios/
         working-directory: Agora-Uniapp-SDK
       
