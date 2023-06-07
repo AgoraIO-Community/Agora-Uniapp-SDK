@@ -42,4 +42,4 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.GIT_EMAIL }}"
           git config --global user.name "${{ secrets.GIT_USERNAME }}"
-          yarn release ${{ inputs.increment }} --ci --plugins.@release-it/bumper.out=src/package.json
+          yarn release ${{ inputs.increment }} --ci --plugins.@release-it/bumper.out=src/package.json --plugins.@release-it/bumper.out=package/Agora-RTC/package.json

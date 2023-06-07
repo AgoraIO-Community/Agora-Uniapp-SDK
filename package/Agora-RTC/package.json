@@ -30,8 +30,8 @@
       ],
       "integrateType": "aar",
       "dependencies": [
-        "io.agora.rtc:full-sdk:3.7.1",
-        "io.agora.rtc:full-screen-sharing:3.7.1",
+        "io.agora.rtc:agora-special-full:3.7.2.4",
+        "io.agora.rtc:full-screen-sharing:3.7.2.4",
         "org.jetbrains.kotlin:kotlin-stdlib:1.3.50"
       ],
       "compileOptions": {
