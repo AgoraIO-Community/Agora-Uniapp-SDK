@@ -135,6 +135,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
 
+      - run: |
+          zip -r Agora-RTC.zip Agora-RTC
+          zip -r Agora-RTC-JS.zip Agora-RTC-JS
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
