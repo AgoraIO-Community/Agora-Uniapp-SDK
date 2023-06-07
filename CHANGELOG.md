@@ -1,3 +1,17 @@
+## [3.7.2](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.4.6...v3.7.2) (2023-06-07)
+
+
+### Bug Fixes
+
+* `enableFaceDetection` not working ([16051e2](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/16051e22985f7aa011468d873019055579300a51))
+* CSD-56669 ([3fedaa1](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/3fedaa1a070b053ce05db0931ade6e8997985ad9))
+
+
+### Features
+
+* support vue3 ([3c2a546](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/3c2a54666cc06f1eca8bae3a1d8dda122a75896a))
+* update native to 3.7.2.4 ([dbf24b7](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/dbf24b71836215a67cfd0fd26404be8693b22af5))
+
 ## [3.7.1](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.4.6...v3.7.1) (2023-02-10)
 
 
