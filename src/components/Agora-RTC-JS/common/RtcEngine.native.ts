@@ -2857,8 +2857,8 @@ export default class RtcEngine implements RtcEngineInterface {
    * - `true`: Enable face detection.
    * - `false`: (Default) Disable face detection.
    */
-  enableFaceDetection(enable: boolean): Promise<void> {
-    return RtcEngine._callMethod('enableFaceDetection', { enable });
+  enableFaceDetection(enabled: boolean): Promise<void> {
+    return RtcEngine._callMethod('enableFaceDetection', { enabled });
   }
 
   /**
@@ -4342,7 +4342,7 @@ interface RtcVideoInterface {
     options: BeautyOptions
   ): Promise<void>;
 
-  enableRemoteSuperResolution(uid: number, enable: boolean): Promise<void>;
+  enableRemoteSuperResolution(uid: number, enabled: boolean): Promise<void>;
 
   setVideoDenoiserOptions(
     enabled: boolean,
@@ -4730,7 +4730,7 @@ interface RtcCameraInterface {
     positionYinView: number
   ): Promise<void>;
 
-  enableFaceDetection(enable: boolean): Promise<void>;
+  enableFaceDetection(enabled: boolean): Promise<void>;
 
   setCameraTorchOn(isOn: boolean): Promise<void>;
 
