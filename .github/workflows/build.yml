@@ -104,4 +104,4 @@ jobs:
         with:
           name: Agora-RTC-JS
           path: |
-            lib/commonjs/
+            lib/module/
