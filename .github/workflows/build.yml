@@ -53,16 +53,9 @@ jobs:
         run: |
           cp -rp android/build/outputs/aar/*.aar package/Agora-RTC/android/
         working-directory: Agora-Uniapp-SDK
-        
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          name: Agora-RTC
-          files: |
-            Agora-Uniapp-SDK/package/Agora-RTC/*/*.aar
 
       - uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         with:
           name: Agora-RTC
           path: |
@@ -101,17 +94,8 @@ jobs:
           cp -rp ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Release-iphoneos/AgoraRtcUniPlugin/AgoraRtcUniPlugin.framework package/Agora-RTC/ios/
         working-directory: Agora-Uniapp-SDK
       
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          name: Agora-RTC
-          files: |
-            Agora-Uniapp-SDK/package/Agora-RTC/*/*.framework
-            Agora-Uniapp-SDK/package/Agora-RTC/*/*.xcframework
-            !Agora-Uniapp-SDK/package/Agora-RTC/*/*Extension.xcframework
-      
       - uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         with:
           name: Agora-RTC
           path: |
@@ -129,31 +113,31 @@ jobs:
           node-version: '16'
           cache: 'yarn'
       - run: yarn
-      
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          name: Agora-RTC
-          files: |
-            package/Agora-RTC/package.json
-            
-      - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          name: Agora-RTC-JS
-          files: |
-            lib/module/
 
       - uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         with:
           name: Agora-RTC
           path: |
             package/Agora-RTC/package.json
             
       - uses: actions/upload-artifact@v3
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         with:
           name: Agora-RTC-JS
           path: |
             lib/module/
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: [build-android, build-ios, build-ts]
+    steps:
+      - uses: actions/download-artifact@v3
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            Agora-RTC.zip
+            Agora-RTC-JS.zip
