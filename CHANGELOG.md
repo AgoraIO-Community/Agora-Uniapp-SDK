@@ -1,3 +1,15 @@
+## [3.7.4-rc.1](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.7.2...v3.7.4-rc.1) (2026-04-09)
+
+
+### Bug Fixes
+
+* android compile version ([20b2200](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/20b22006b6bfcc87bd9907b2b73bd3780e2cf456))
+
+
+### Features
+
+* update native to 3.7.3.4 ([b6c4fed](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/commit/b6c4fedb0415a35e4891a2689123ad81db7635e6))
+
 ## [3.7.2](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.4.6...v3.7.2) (2023-06-07)
 
 
