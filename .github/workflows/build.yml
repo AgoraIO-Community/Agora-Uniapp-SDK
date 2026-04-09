@@ -57,7 +57,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         with:
-          name: Agora-RTC
+          name: Agora-RTC-android
           path: |
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.aar
 
@@ -97,7 +97,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         with:
-          name: Agora-RTC
+          name: Agora-RTC-ios
           path: |
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.framework
             Agora-Uniapp-SDK/package/Agora-RTC/*/*.xcframework
@@ -117,7 +117,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         with:
-          name: Agora-RTC
+          name: Agora-RTC-meta
           path: |
             package/Agora-RTC/package.json
             
@@ -134,6 +134,24 @@ jobs:
     needs: [build-android, build-ios, build-ts]
     steps:
       - uses: actions/download-artifact@v4
+        with:
+          name: Agora-RTC-android
+          path: Agora-RTC
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Agora-RTC-ios
+          path: Agora-RTC
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Agora-RTC-meta
+          path: Agora-RTC
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Agora-RTC-JS
+          path: Agora-RTC-JS
 
       - run: |
           zip -r Agora-RTC.zip Agora-RTC
