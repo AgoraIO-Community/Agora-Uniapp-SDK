@@ -1,3 +1,5 @@
+## [v3.7.4-rc.3](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.7.4-rc.2...vv3.7.4-rc.3) (2026-04-28)
+
 ## [3.7.4-rc.2](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.7.4-rc.1...v3.7.4-rc.2) (2026-04-09)
 
 ## [3.7.4-rc.1](https://github.com/AgoraIO-Community/Agora-Uniapp-SDK/compare/v3.7.2...v3.7.4-rc.1) (2026-04-09)
