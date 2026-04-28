@@ -136,12 +136,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: Agora-RTC-android
-          path: Agora-RTC/android
+          path: Agora-RTC
 
       - uses: actions/download-artifact@v4
         with:
           name: Agora-RTC-ios
-          path: Agora-RTC/ios
+          path: Agora-RTC
 
       - uses: actions/download-artifact@v4
         with:
